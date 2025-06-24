@@ -1,6 +1,8 @@
 'use client';
 
 import { Home, Menu, History, User } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 interface BottomNavItem {
@@ -33,15 +35,17 @@ const bottomNavItems: BottomNavItem[] = [
 ];
 
 export function BottomNavigation() {
+  const pathname = usePathname();
+
   return (
     <nav className="desktop:hidden bg-bg-100 fixed bottom-0 left-0 right-0 z-50 shadow-lg">
       <div className="flex h-16 items-center justify-around">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = item.href === '/'; // 현재는 홈페이지만 활성 상태로 설정
+          const isActive = pathname === item.href;
 
           return (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className={cn(
@@ -51,7 +55,7 @@ export function BottomNavigation() {
             >
               <Icon className="mb-1 h-5 w-5" />
               <span className="text-xs font-medium">{item.label}</span>
-            </a>
+            </Link>
           );
         })}
       </div>
