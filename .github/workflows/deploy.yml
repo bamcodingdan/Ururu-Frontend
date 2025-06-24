@@ -1,0 +1,28 @@
+name: Sync Fork Repository
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+jobs:
+  sync-fork:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 전체 이력 포함
+
+      - name: Push to fork repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
+        with:
+          source-directory: '.' # 루트 디렉토리 전체 복사
+          destination-github-username: 1000hyehyang
+          destination-repository-name: Ururu-Frontend
+          target-branch: main
+          user-email: ${{ secrets.OFFICIAL_ACCOUNT_EMAIL }}
+          commit-message: 'Sync from upstream main - ${{ github.sha }}'
