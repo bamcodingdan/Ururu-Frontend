@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Search, Bell, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
 // 데스크탑 헤더 컴포넌트
