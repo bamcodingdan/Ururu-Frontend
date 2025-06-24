@@ -107,17 +107,18 @@ function MobileHeader() {
               size="sm"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="p-2"
+              aria-label="검색"
             >
               <Search className="text-text-200 h-5 w-5" />
             </Button>
 
             {/* 알림 */}
-            <Button variant="ghost" size="sm" className="p-2">
+            <Button variant="ghost" size="sm" className="p-2" aria-label="알림">
               <Bell className="text-text-200 h-5 w-5" />
             </Button>
 
             {/* 장바구니 */}
-            <Button variant="ghost" size="sm" className="p-2">
+            <Button variant="ghost" size="sm" className="p-2" aria-label="장바구니">
               <ShoppingCart className="text-text-200 h-5 w-5" />
             </Button>
           </div>
