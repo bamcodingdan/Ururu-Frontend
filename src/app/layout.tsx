@@ -1,11 +1,11 @@
 import { Inter } from 'next/font/google';
 import { metadata } from '@/lib/metadata';
-import { HeadTags } from '@/components/layout/head-tags';
+import { viewport } from '@/lib/viewport';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export { metadata };
+export { metadata, viewport };
 
 export default function RootLayout({
   children,
@@ -14,9 +14,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <head>
-        <HeadTags />
-      </head>
       <body className={inter.className}>{children}</body>
     </html>
   );
