@@ -128,7 +128,7 @@ export function MainNav() {
                       <NavigationMenuLink asChild>
                         <Link
                           href={item.href}
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-bg-200 hover:text-text-200 focus:bg-bg-200 focus:text-text-200"
+                          className="block select-none space-y-2 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-bg-200 hover:text-text-200 focus:bg-bg-200 focus:text-text-200"
                         >
                           <div className="font-pretendard text-sm font-medium leading-none text-text-200">
                             {item.title}
