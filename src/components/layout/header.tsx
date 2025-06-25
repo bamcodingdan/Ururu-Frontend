@@ -13,7 +13,7 @@ function MobileHeader() {
 
   return (
     <header className="sticky top-0 z-40 bg-bg-100 desktop:hidden">
-      <div className="container">
+      <div className="px-6">
         <div className="flex h-16 items-center justify-between">
           {/* 로고 */}
           <div className="flex items-center">
