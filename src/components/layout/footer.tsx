@@ -44,6 +44,7 @@ export function Footer() {
             width={180}
             height={40}
             className="h-auto w-[96px] tablet:w-[96px] desktop:w-[128px]"
+            sizes="(max-width: 768px) 96px, (max-width: 1024px) 96px, 128px"
             priority
           />
           <button
