@@ -59,21 +59,6 @@ export function CustomLayout({
   showTopBar = false,
   showSearchBar = false,
   showMainNav = false,
-  showFooter = false,
-  showBottomNav = true,
-}: BaseLayoutProps & {
-  showTopBar?: boolean;
-  showSearchBar?: boolean;
-  showMainNav?: boolean;
-  showFooter?: boolean;
-  showBottomNav?: boolean;
-}) {
-export function CustomLayout({
-  children,
-  className = '',
-  showTopBar = false,
-  showSearchBar = false,
-  showMainNav = false,
   showMobileHeader = true,
   showFooter = false,
   showBottomNav = true,

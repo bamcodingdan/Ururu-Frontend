@@ -1,13 +1,5 @@
 'use client';
 
-export function TopBar() {
-  return (
-    <div className="desktop:block bg-bg-100 hidden">
-      <div className="container">
-        <div className="flex h-12 items-center justify-end">
-          <nav className="flex items-center space-x-6">
-'use client';
-
 import Link from 'next/link';
 
 export function TopBar() {
@@ -46,12 +38,6 @@ export function TopBar() {
             >
               마이페이지
             </Link>
-          </nav>
-        </div>
-      </div>
-    </div>
-  );
-}
           </nav>
         </div>
       </div>

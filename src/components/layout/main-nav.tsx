@@ -11,12 +11,12 @@ export function MainNav() {
     <div className="desktop:block bg-bg-100 hidden">
       <div className="container">
         <nav className="flex h-12 items-center space-x-8">
-          <a
+          <Link
             href="/category"
             className="text-text-200 hover:text-primary-300 text-sm transition-colors"
           >
             카테고리
-          </a>
+          </Link>
           <Link
             href="/"
             className={cn(
@@ -28,24 +28,24 @@ export function MainNav() {
           >
             홈
           </Link>
-          <a
+          <Link
             href="/ranking"
             className="text-text-200 hover:text-primary-300 text-sm transition-colors"
           >
             랭킹
-          </a>
-          <a
+          </Link>
+          <Link
             href="/short"
             className="text-text-200 hover:text-primary-300 text-sm transition-colors"
           >
             숏구
-          </a>
-          <a
+          </Link>
+          <Link
             href="/event"
             className="text-text-200 hover:text-primary-300 text-sm transition-colors"
           >
             이벤트
-          </a>
+          </Link>
         </nav>
       </div>
     </div>

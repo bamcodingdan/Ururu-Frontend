@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
@@ -16,11 +17,11 @@ const BIZ_INFO = [
 ];
 
 const FOOTER_LINKS = [
-  { label: '사업자정보확인', href: '#' },
-  { label: '이용약관', href: '/terms' },
-  { label: '개인정보처리방침', href: '/privacy' },
-  { label: '1:1 문의', href: '/contact' },
-  { label: '광고/제휴문의', href: '#' },
+  { label: '사업자정보확인', href: '#', isExternal: true },
+  { label: '이용약관', href: '/terms', isExternal: false },
+  { label: '개인정보처리방침', href: '/privacy', isExternal: false },
+  { label: '1:1 문의', href: '/contact', isExternal: false },
+  { label: '광고/제휴문의', href: '#', isExternal: true },
 ];
 
 export function Footer() {
@@ -85,15 +86,28 @@ export function Footer() {
 
         {/* 하단 링크 */}
         <nav className="tablet:text-sm desktop:text-sm text-text-300 mb-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] font-medium">
-          {FOOTER_LINKS.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="hover:text-primary-300 text-text-300 transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
+          {FOOTER_LINKS.map((link) => {
+            if (link.isExternal) {
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="hover:text-primary-300 text-text-300 transition-colors"
+                >
+                  {link.label}
+                </a>
+              );
+            }
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className="hover:text-primary-300 text-text-300 transition-colors"
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* 안내문구 */}
