@@ -68,12 +68,29 @@ export function CustomLayout({
   showFooter?: boolean;
   showBottomNav?: boolean;
 }) {
+export function CustomLayout({
+  children,
+  className = '',
+  showTopBar = false,
+  showSearchBar = false,
+  showMainNav = false,
+  showMobileHeader = true,
+  showFooter = false,
+  showBottomNav = true,
+}: BaseLayoutProps & {
+  showTopBar?: boolean;
+  showSearchBar?: boolean;
+  showMainNav?: boolean;
+  showMobileHeader?: boolean;
+  showFooter?: boolean;
+  showBottomNav?: boolean;
+}) {
   return (
     <div className={`bg-bg-100 min-h-screen ${className}`}>
       {showTopBar && <TopBar />}
       {showSearchBar && <SearchBar />}
       {showMainNav && <MainNav />}
-      <MobileHeader />
+      {showMobileHeader && <MobileHeader />}
       <main className="desktop:pb-0 min-h-[calc(100vh-4rem)] pb-16">{children}</main>
       {showFooter && <Footer />}
       {showBottomNav && <BottomNavigation />}
