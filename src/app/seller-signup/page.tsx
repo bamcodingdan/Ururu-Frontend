@@ -84,6 +84,21 @@ export default function SellerSignUpPage() {
   const getLength = (field: keyof typeof formData, max: number) =>
     `${formData[field]?.length || 0}/${max}자`;
 
+  // 전화번호 자동 하이픈 포맷팅 함수
+  const formatPhoneNumber = (value: string) => {
+    // 숫자만 추출
+    const numbers = value.replace(/[^0-9]/g, '');
+
+    // 길이에 따라 하이픈 추가
+    if (numbers.length <= 3) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
   const pinkBtn =
     'h-10 px-4 rounded-lg border border-primary-300 bg-primary-100 text-primary-300 text-sm font-medium hover:bg-primary-200 transition';
   const pinkOutlineBtn =
@@ -283,12 +298,17 @@ export default function SellerSignUpPage() {
               <Input
                 type="text"
                 placeholder="00-0000-0000"
-                value={formData.phone}
-                onChange={(e) => handleInputChange('phone', e.target.value.replace(/[^0-9-]/g, ''))}
+                value={formatPhoneNumber(formData.phone)}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
-                maxLength={11}
+                maxLength={13}
                 required
               />
+              <div className="mt-1 flex justify-end">
+                <span className="text-xs text-text-300">
+                  {formData.phone.replace(/[^0-9]/g, '').length}/11자
+                </span>
+              </div>
             </div>
 
             {/* 주소 */}
