@@ -63,6 +63,8 @@ export default function SellerSignUpPage() {
     return (
       formData.email &&
       formData.password &&
+      formData.passwordConfirm &&
+      formData.password === formData.passwordConfirm &&
       formData.brand &&
       formData.company &&
       formData.ceo &&
@@ -71,6 +73,25 @@ export default function SellerSignUpPage() {
       agreements.terms &&
       agreements.privacy
     );
+  };
+
+  // 비밀번호 일치 여부 확인
+  const isPasswordMatch = () => {
+    return (
+      formData.password &&
+      formData.passwordConfirm &&
+      formData.password === formData.passwordConfirm
+    );
+  };
+
+  // 비밀번호 확인 메시지
+  const getPasswordConfirmMessage = () => {
+    if (!formData.passwordConfirm) return '';
+    if (formData.password === formData.passwordConfirm) {
+      return '비밀번호가 일치합니다.';
+    } else {
+      return '비밀번호가 일치하지 않습니다.';
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -182,7 +203,18 @@ export default function SellerSignUpPage() {
                 maxLength={50}
                 required
               />
-              <div className="mt-1 flex justify-end">
+              <div className="mt-1 flex items-center justify-between">
+                {formData.passwordConfirm && (
+                  <span
+                    className={`text-xs ${
+                      formData.password === formData.passwordConfirm
+                        ? 'text-primary-300'
+                        : 'text-red-500'
+                    }`}
+                  >
+                    {getPasswordConfirmMessage()}
+                  </span>
+                )}
                 <span className="text-xs text-text-300">{getLength('passwordConfirm', 50)}</span>
               </div>
             </div>
