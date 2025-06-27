@@ -1,36 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { MinimalLayout } from '@/components/layout';
+import { useState } from 'react';
+import { CustomLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowUp, User, Store } from 'lucide-react';
+import { User, Store } from 'lucide-react';
 import Image from 'next/image';
 
 type LoginType = 'buyer' | 'seller';
 
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<LoginType>('buyer');
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // 스크롤 이벤트 핸들러
-  const handleScroll = () => {
-    setShowScrollTop(window.scrollY > 300);
-  };
-
-  // 맨 위로 스크롤
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  // useEffect로 스크롤 이벤트 리스너 관리
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   return (
-    <MinimalLayout>
+    <CustomLayout showTopBar={false} showSearchBar={false} showMainNav={false} showFooter={false}>
       <div className="bg-bg-100">
         {/* 로그인 컨테이너 */}
         <div className="container mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-4">
@@ -201,18 +184,7 @@ export default function LoginPage() {
             </div>
           )}
         </div>
-
-        {/* Floating Scroll to Top Button (태블릿/모바일) */}
-        {showScrollTop && (
-          <button
-            onClick={scrollToTop}
-            className="fixed bottom-20 right-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary-300 text-white shadow-lg transition-all hover:bg-primary-200 desktop:hidden"
-            aria-label="맨 위로 이동"
-          >
-            <ArrowUp className="h-5 w-5" />
-          </button>
-        )}
       </div>
-    </MinimalLayout>
+    </CustomLayout>
   );
 }
