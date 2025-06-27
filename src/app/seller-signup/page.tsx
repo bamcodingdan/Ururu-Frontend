@@ -134,6 +134,21 @@ export default function SellerSignUpPage() {
     }
   };
 
+  // 사업자등록번호 자동 하이픈 포맷팅 함수
+  const formatBusinessNumber = (value: string) => {
+    // 숫자만 추출
+    const numbers = value.replace(/[^0-9]/g, '');
+
+    // 길이에 따라 하이픈 추가 (123-45-67890 형식)
+    if (numbers.length <= 3) {
+      return numbers;
+    } else if (numbers.length <= 5) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5, 10)}`;
+    }
+  };
+
   // 브랜드명 중복 확인 함수
   const handleBrandDuplicateCheck = async () => {
     if (!formData.brand.trim()) {
@@ -353,16 +368,19 @@ export default function SellerSignUpPage() {
               <Input
                 id="businessNumber"
                 type="text"
-                placeholder="1234567890"
-                value={formData.businessNumber}
+                placeholder="123-45-67890"
+                value={formatBusinessNumber(formData.businessNumber)}
                 onChange={(e) =>
                   handleInputChange('businessNumber', e.target.value.replace(/[^0-9]/g, ''))
                 }
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
-                maxLength={10}
+                maxLength={12}
                 required
               />
-              <div className="mt-1 flex justify-end">
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-xs text-text-300">
+                  하이픈(-)을 제외하고 숫자만 입력해주세요
+                </span>
                 <span className="text-xs text-text-300">{getLength('businessNumber', 10)}</span>
               </div>
             </div>
@@ -371,22 +389,24 @@ export default function SellerSignUpPage() {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <label className="text-sm font-medium text-text-100">
-                  전화 번호 <span className="text-primary-300">*</span>
+                  휴대폰 번호 <span className="text-primary-300">*</span>
                 </label>
               </div>
               <Input
-                type="text"
-                placeholder="00-0000-0000"
+                id="phone"
+                type="tel"
+                placeholder="010-1234-5678"
                 value={formatPhoneNumber(formData.phone)}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                 maxLength={13}
                 required
               />
-              <div className="mt-1 flex justify-end">
+              <div className="mt-1 flex items-center justify-between">
                 <span className="text-xs text-text-300">
-                  {formData.phone.replace(/[^0-9]/g, '').length}/11자
+                  하이픈(-)을 제외하고 숫자만 입력해주세요
                 </span>
+                <span className="text-xs text-text-300">{getLength('phone', 11)}</span>
               </div>
             </div>
 
