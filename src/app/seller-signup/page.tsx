@@ -37,8 +37,8 @@ export default function SellerSignUpPage() {
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (field === 'brand') {
-      setBrandGuide('사용 가능한 브랜드명입니다.');
-      setBrandGuideType('success');
+      setBrandGuide('');
+      setBrandGuideType('guide');
     }
   };
 
@@ -94,11 +94,25 @@ export default function SellerSignUpPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormValid()) {
-      // 회원가입 로직 구현
-      console.log('회원가입 제출:', formData);
+      try {
+        // TODO: 실제 회원가입 API 호출 로직 구현
+        // const response = await signUpSeller(formData);
+        // if (response.success) {
+        //   // 회원가입 성공 처리 (로그인 페이지로 이동 등)
+        //   router.push('/login');
+        // }
+
+        // 임시 로직 (API 구현 전)
+        console.log('회원가입 제출:', formData);
+        alert('회원가입이 완료되었습니다! (API 미구현)');
+      } catch (error) {
+        console.error('회원가입 실패:', error);
+        // TODO: 사용자에게 에러 메시지 표시 (토스트, 알림 등)
+        alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -117,6 +131,35 @@ export default function SellerSignUpPage() {
       return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
     } else {
       return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
+  // 브랜드명 중복 확인 함수
+  const handleBrandDuplicateCheck = async () => {
+    if (!formData.brand.trim()) {
+      setBrandGuide('브랜드명을 입력해주세요.');
+      setBrandGuideType('error');
+      return;
+    }
+
+    try {
+      // TODO: 실제 브랜드명 중복 확인 API 호출
+      // const response = await checkBrandDuplicate(formData.brand);
+      // if (response.isDuplicate) {
+      //   setBrandGuide('이미 사용 중인 브랜드명입니다.');
+      //   setBrandGuideType('error');
+      // } else {
+      //   setBrandGuide('사용 가능한 브랜드명입니다.');
+      //   setBrandGuideType('success');
+      // }
+
+      // 임시 로직 (API 구현 전)
+      setBrandGuide('사용 가능한 브랜드명입니다.');
+      setBrandGuideType('success');
+    } catch (error) {
+      console.error('브랜드명 중복 확인 실패:', error);
+      setBrandGuide('중복 확인 중 오류가 발생했습니다.');
+      setBrandGuideType('error');
     }
   };
 
@@ -237,7 +280,11 @@ export default function SellerSignUpPage() {
                   maxLength={20}
                   required
                 />
-                <button type="button" className={pinkOutlineBtn + ' h-12 min-w-[120px] rounded-lg'}>
+                <button
+                  type="button"
+                  className={pinkOutlineBtn + ' h-12 min-w-[120px] rounded-lg'}
+                  onClick={handleBrandDuplicateCheck}
+                >
                   중복 확인
                 </button>
               </div>
