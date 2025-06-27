@@ -144,8 +144,12 @@ export default function SellerSignUpPage() {
                 value={formData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
+                maxLength={50}
                 required
               />
+              <div className="mt-1 flex justify-end">
+                <span className="text-xs text-text-300">{getLength('password', 50)}</span>
+              </div>
             </div>
 
             {/* 비밀번호 확인 */}
@@ -160,11 +164,15 @@ export default function SellerSignUpPage() {
                 value={formData.passwordConfirm}
                 onChange={(e) => handleInputChange('passwordConfirm', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
+                maxLength={50}
                 required
               />
+              <div className="mt-1 flex justify-end">
+                <span className="text-xs text-text-300">{getLength('passwordConfirm', 50)}</span>
+              </div>
             </div>
 
-            {/* 브랜드명 (중복확인 버튼 오른쪽) */}
+            {/* 브랜드명 */}
             <div>
               <div className="mb-2 flex items-center">
                 <label className="mr-2 text-sm font-medium text-text-100">
@@ -278,11 +286,12 @@ export default function SellerSignUpPage() {
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value.replace(/[^0-9-]/g, ''))}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
+                maxLength={11}
                 required
               />
             </div>
 
-            {/* 주소 (우편번호 상자+버튼 오른쪽, 도로명/지번/상세주소) */}
+            {/* 주소 */}
             <div>
               <div className="mb-2 flex items-center">
                 <label className="mr-2 text-sm font-medium text-text-100">
