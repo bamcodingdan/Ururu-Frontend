@@ -99,10 +99,8 @@ input[type='checkbox'].custom-checkbox:checked::after {
 }
 
 input[type='checkbox'].custom-checkbox:focus {
+  @apply ring-2 ring-primary-300;
   outline: none;
-  ring: 2px;
-  ring-color: var(--primary-300);
-  ring-offset: 0;
 }
 
 /* ──────────────
