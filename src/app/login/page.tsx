@@ -154,7 +154,6 @@ export default function LoginPage() {
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                   required
-                  aria-describedby="email-help"
                 />
               </div>
 
@@ -170,7 +169,6 @@ export default function LoginPage() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                   required
-                  aria-describedby="password-help"
                 />
               </div>
 
