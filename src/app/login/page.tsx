@@ -12,6 +12,20 @@ type LoginType = 'buyer' | 'seller';
 
 export default function LoginPage() {
   const [loginType, setLoginType] = useState<LoginType>('buyer');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSellerLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('판매자 로그인 시도:', formData);
+    // TODO: 실제 로그인 API 연동 예정
+  };
 
   return (
     <CustomLayout showTopBar={false} showSearchBar={false} showMainNav={false} showFooter={false}>
@@ -114,7 +128,7 @@ export default function LoginPage() {
 
           {/* 판매자 로그인 폼 */}
           {loginType === 'seller' && (
-            <div className="min-h-[320px] space-y-5">
+            <form onSubmit={handleSellerLogin} className="min-h-[320px] space-y-5">
               <div>
                 <label htmlFor="email" className="mb-2 block text-sm font-medium text-text-100">
                   이메일
@@ -123,7 +137,10 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="이메일을 입력하세요"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
+                  required
                 />
               </div>
 
@@ -135,17 +152,17 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="비밀번호를 입력하세요"
+                  value={formData.password}
+                  onChange={(e) => handleInputChange('password', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
+                  required
                 />
               </div>
 
               {/* 로그인 유지 & 비밀번호 찾기 */}
               <div className="flex items-center justify-between">
                 <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    className="mr-2 h-4 w-4 rounded border-bg-300 text-primary-300 focus:ring-primary-300"
-                  />
+                  <input type="checkbox" className="custom-checkbox mr-2" />
                   <span className="text-sm text-text-200">로그인 유지</span>
                 </label>
                 <button
@@ -158,6 +175,7 @@ export default function LoginPage() {
 
               {/* 로그인 버튼 */}
               <Button
+                type="submit"
                 size="lg"
                 className="h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100"
               >
@@ -182,7 +200,7 @@ export default function LoginPage() {
                   회원가입
                 </Link>
               </div>
-            </div>
+            </form>
           )}
         </div>
       </div>

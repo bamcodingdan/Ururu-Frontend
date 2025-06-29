@@ -97,22 +97,8 @@ export default function SellerSignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormValid()) {
-      try {
-        // TODO: 실제 회원가입 API 호출 로직 구현
-        // const response = await signUpSeller(formData);
-        // if (response.success) {
-        //   // 회원가입 성공 처리 (로그인 페이지로 이동 등)
-        //   router.push('/login');
-        // }
-
-        // 임시 로직 (API 구현 전)
-        console.log('회원가입 제출:', formData);
-        alert('회원가입이 완료되었습니다! (API 미구현)');
-      } catch (error) {
-        console.error('회원가입 실패:', error);
-        // TODO: 사용자에게 에러 메시지 표시 (토스트, 알림 등)
-        alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
-      }
+      console.log('회원가입 시도:', formData);
+      // TODO: 실제 회원가입 API 연동 예정
     }
   };
 
@@ -178,8 +164,6 @@ export default function SellerSignUpPage() {
     }
   };
 
-  const pinkBtn =
-    'h-10 px-4 rounded-lg border border-primary-300 bg-primary-100 text-primary-300 text-sm font-medium hover:bg-primary-200 transition';
   const pinkOutlineBtn =
     'h-10 px-4 rounded-lg border border-primary-300 bg-bg-100 text-primary-300 text-sm font-medium hover:bg-primary-100 transition';
 
@@ -455,7 +439,7 @@ export default function SellerSignUpPage() {
                   type="checkbox"
                   checked={agreements.all}
                   onChange={(e) => handleAgreementChange('all', e.target.checked)}
-                  className="mr-3 mt-0.5 h-4 w-4 rounded border-bg-300 text-primary-300 focus:ring-primary-300"
+                  className="custom-checkbox mr-3 mt-0.5"
                 />
                 <span className="text-sm font-medium text-text-100">전체 약관에 동의합니다</span>
               </label>
@@ -466,7 +450,7 @@ export default function SellerSignUpPage() {
                     type="checkbox"
                     checked={agreements.terms}
                     onChange={(e) => handleAgreementChange('terms', e.target.checked)}
-                    className="mr-3 mt-0.5 h-4 w-4 rounded border-bg-300 text-primary-300 focus:ring-primary-300"
+                    className="custom-checkbox mr-3 mt-0.5"
                   />
                   <span className="text-sm text-text-200">
                     <span className="text-primary-300 underline">이용약관</span>에 동의합니다 (필수)
@@ -478,7 +462,7 @@ export default function SellerSignUpPage() {
                     type="checkbox"
                     checked={agreements.privacy}
                     onChange={(e) => handleAgreementChange('privacy', e.target.checked)}
-                    className="mr-3 mt-0.5 h-4 w-4 rounded border-bg-300 text-primary-300 focus:ring-primary-300"
+                    className="custom-checkbox mr-3 mt-0.5"
                   />
                   <span className="text-sm text-text-200">
                     <span className="text-primary-300 underline">개인정보처리방침</span>에
@@ -491,7 +475,7 @@ export default function SellerSignUpPage() {
                     type="checkbox"
                     checked={agreements.marketing}
                     onChange={(e) => handleAgreementChange('marketing', e.target.checked)}
-                    className="mr-3 mt-0.5 h-4 w-4 rounded border-bg-300 text-primary-300 focus:ring-primary-300"
+                    className="custom-checkbox mr-3 mt-0.5"
                   />
                   <span className="text-sm text-text-200">
                     마케팅 정보 수신에 동의합니다 (선택)
