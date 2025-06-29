@@ -27,9 +27,9 @@ export default function TestPage() {
           break;
       }
 
-      setTestResult(`✅ 성공: ${JSON.stringify(result, null, 2)}`);
+      setTestResult(`성공: ${JSON.stringify(result, null, 2)}`);
     } catch (error: any) {
-      setTestResult(`❌ 실패: ${error.message}`);
+      setTestResult(`실패: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

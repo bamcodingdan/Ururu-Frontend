@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { ApiError } from '@/types/api';
 
 // 환경변수에서 API URL 가져오기 (개발/운영 환경 분리)
@@ -7,7 +7,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/a
 // axios 인스턴스 생성
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000, // 10초
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,14 +32,14 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     // 기본적인 응답 로깅 (개발 환경에서만)
     if (process.env.NODE_ENV === 'development') {
-      console.log('✅ API Response:', response.status, response.config.url);
+      console.log('API Response:', response.status, response.config.url);
     }
     return response;
   },
   (error) => {
     // 에러 로깅 (개발 환경에서만)
     if (process.env.NODE_ENV === 'development') {
-      console.error('❌ API Error:', error.response?.status, error.config?.url, error.message);
+      console.error('API Error:', error.response?.status, error.config?.url, error.message);
     }
     return Promise.reject(error);
   },
