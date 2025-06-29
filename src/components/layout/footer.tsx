@@ -2,8 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useUIStore } from '@/store';
 
 const BIZ_INFO = [
   { label: '상호명', value: '(주)밤코딩단' },
@@ -25,7 +25,7 @@ const FOOTER_LINKS = [
 ];
 
 export function Footer() {
-  const [open, setOpen] = useState(false);
+  const { footerExpanded, toggleFooter } = useUIStore();
 
   return (
     <footer
@@ -52,22 +52,22 @@ export function Footer() {
           <button
             type="button"
             className="flex items-center gap-1 text-[10px] font-medium text-text-200 transition-colors hover:text-primary-300 tablet:text-xs desktop:text-sm"
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
+            onClick={toggleFooter}
+            aria-expanded={footerExpanded}
             aria-controls="footer-biz-info"
-            aria-label={`사업자 정보 ${open ? '접기' : '펼치기'}`}
+            aria-label={`사업자 정보 ${footerExpanded ? '접기' : '펼치기'}`}
             style={{ fontWeight: 500 }}
           >
             사업자 정보
             <ChevronDown
-              className={`ml-1 h-4 w-4 transition-transform duration-200 ${open ? 'rotate-180' : 'rotate-0'}`}
+              className={`ml-1 h-4 w-4 transition-transform duration-200 ${footerExpanded ? 'rotate-180' : 'rotate-0'}`}
               aria-hidden="true"
             />
           </button>
         </div>
 
         {/* 사업자 정보 상세 (토글) */}
-        {open && (
+        {footerExpanded && (
           <div
             id="footer-biz-info"
             className="mb-8 w-full max-w-[1280px] rounded-xl bg-bg-200 px-8 py-10 text-left shadow-sm"

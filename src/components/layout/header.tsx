@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { Search, Bell, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
+import { useUIStore } from '@/store';
 
 // 태블릿/모바일 헤더 컴포넌트
 function MobileHeader() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { searchOpen, toggleSearch } = useUIStore();
 
   return (
     <header className="sticky top-0 z-40 bg-bg-100 desktop:hidden" role="banner">
@@ -35,10 +35,10 @@ function MobileHeader() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              onClick={toggleSearch}
               className="p-2"
               aria-label="검색"
-              aria-expanded={isSearchOpen}
+              aria-expanded={searchOpen}
               aria-controls="search-input"
             >
               <Search className="h-5 w-5 text-text-200" aria-hidden="true" />
@@ -59,7 +59,7 @@ function MobileHeader() {
         </div>
 
         {/* 검색바 */}
-        {isSearchOpen && (
+        {searchOpen && (
           <div className="pb-4" role="search">
             <div className="relative">
               <Search

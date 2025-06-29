@@ -1,29 +1,23 @@
 'use client';
 
-import { useState } from 'react';
 import { CustomLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { User, Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-type LoginType = 'buyer' | 'seller';
+import { useAuthStore } from '@/store';
 
 export default function LoginPage() {
-  const [loginType, setLoginType] = useState<LoginType>('buyer');
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const { loginType, loginFormData, setLoginType, setLoginFormData } = useAuthStore();
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setLoginFormData({ [field]: value });
   };
 
   const handleSellerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('판매자 로그인 시도:', formData);
+    console.log('판매자 로그인 시도:', loginFormData);
     // TODO: 실제 로그인 API 연동 예정
   };
 
@@ -156,7 +150,7 @@ export default function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="이메일을 입력하세요"
-                  value={formData.email}
+                  value={loginFormData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                   required
@@ -172,7 +166,7 @@ export default function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="비밀번호를 입력하세요"
-                  value={formData.password}
+                  value={loginFormData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                   required

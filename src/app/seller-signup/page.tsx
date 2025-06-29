@@ -1,75 +1,46 @@
 'use client';
 
-import { useState } from 'react';
 import { CustomLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Store, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuthStore } from '@/store';
 
 export default function SellerSignUpPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    passwordConfirm: '',
-    brand: '',
-    company: '',
-    ceo: '',
-    businessNumber: '',
-    phone: '',
-    zipcode: '',
-    addressRoad: '',
-    addressJibun: '',
-    addressDetail: '',
-  });
-
-  const [agreements, setAgreements] = useState({
-    all: false,
-    terms: false,
-    privacy: false,
-    marketing: false,
-  });
-
-  const [brandGuide, setBrandGuide] = useState('');
-  const [brandGuideType, setBrandGuideType] = useState<'success' | 'error' | 'guide'>('guide');
+  const {
+    signupFormData,
+    agreements,
+    brandGuide,
+    brandGuideType,
+    setSignupFormData,
+    setAgreements,
+    setBrandGuide,
+  } = useAuthStore();
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setSignupFormData({ [field]: value });
     if (field === 'brand') {
-      setBrandGuide('');
-      setBrandGuideType('guide');
+      setBrandGuide('', 'guide');
     }
   };
 
   const handleAgreementChange = (field: string, checked: boolean) => {
-    if (field === 'all') {
-      setAgreements({
-        all: checked,
-        terms: checked,
-        privacy: checked,
-        marketing: checked,
-      });
-    } else {
-      const newAgreements = { ...agreements, [field]: checked };
-      setAgreements({
-        ...newAgreements,
-        all: newAgreements.terms && newAgreements.privacy && newAgreements.marketing,
-      });
-    }
+    setAgreements({ [field]: checked });
   };
 
   const isFormValid = () => {
     return (
-      formData.email &&
-      formData.password &&
-      formData.passwordConfirm &&
-      formData.password === formData.passwordConfirm &&
-      formData.brand &&
-      formData.company &&
-      formData.ceo &&
-      formData.businessNumber &&
-      formData.phone &&
+      signupFormData.email &&
+      signupFormData.password &&
+      signupFormData.passwordConfirm &&
+      signupFormData.password === signupFormData.passwordConfirm &&
+      signupFormData.brand &&
+      signupFormData.company &&
+      signupFormData.ceo &&
+      signupFormData.businessNumber &&
+      signupFormData.phone &&
       agreements.terms &&
       agreements.privacy
     );
@@ -78,16 +49,16 @@ export default function SellerSignUpPage() {
   // 비밀번호 일치 여부 확인
   const isPasswordMatch = () => {
     return (
-      formData.password &&
-      formData.passwordConfirm &&
-      formData.password === formData.passwordConfirm
+      signupFormData.password &&
+      signupFormData.passwordConfirm &&
+      signupFormData.password === signupFormData.passwordConfirm
     );
   };
 
   // 비밀번호 확인 메시지
   const getPasswordConfirmMessage = () => {
-    if (!formData.passwordConfirm) return '';
-    if (formData.password === formData.passwordConfirm) {
+    if (!signupFormData.passwordConfirm) return '';
+    if (signupFormData.password === signupFormData.passwordConfirm) {
       return '비밀번호가 일치합니다.';
     } else {
       return '비밀번호가 일치하지 않습니다.';
@@ -97,13 +68,13 @@ export default function SellerSignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormValid()) {
-      console.log('회원가입 시도:', formData);
+      console.log('회원가입 시도:', signupFormData);
       // TODO: 실제 회원가입 API 연동 예정
     }
   };
 
-  const getLength = (field: keyof typeof formData, max: number) =>
-    `${formData[field]?.length || 0}/${max}자`;
+  const getLength = (field: keyof typeof signupFormData, max: number) =>
+    `${signupFormData[field]?.length || 0}/${max}자`;
 
   // 전화번호 자동 하이픈 포맷팅 함수
   const formatPhoneNumber = (value: string) => {
@@ -137,30 +108,25 @@ export default function SellerSignUpPage() {
 
   // 브랜드명 중복 확인 함수
   const handleBrandDuplicateCheck = async () => {
-    if (!formData.brand.trim()) {
-      setBrandGuide('브랜드명을 입력해주세요.');
-      setBrandGuideType('error');
+    if (!signupFormData.brand.trim()) {
+      setBrandGuide('브랜드명을 입력해주세요.', 'error');
       return;
     }
 
     try {
       // TODO: 실제 브랜드명 중복 확인 API 호출
-      // const response = await checkBrandDuplicate(formData.brand);
+      // const response = await checkBrandDuplicate(signupFormData.brand);
       // if (response.isDuplicate) {
-      //   setBrandGuide('이미 사용 중인 브랜드명입니다.');
-      //   setBrandGuideType('error');
+      //   setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
       // } else {
-      //   setBrandGuide('사용 가능한 브랜드명입니다.');
-      //   setBrandGuideType('success');
+      //   setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
       // }
 
       // 임시 로직 (API 구현 전)
-      setBrandGuide('사용 가능한 브랜드명입니다.');
-      setBrandGuideType('success');
+      setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
     } catch (error) {
       console.error('브랜드명 중복 확인 실패:', error);
-      setBrandGuide('중복 확인 중 오류가 발생했습니다.');
-      setBrandGuideType('error');
+      setBrandGuide('중복 확인 중 오류가 발생했습니다.', 'error');
     }
   };
 
@@ -203,7 +169,7 @@ export default function SellerSignUpPage() {
                 id="email"
                 type="email"
                 placeholder="이메일을 입력하세요"
-                value={formData.email}
+                value={signupFormData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                 required
@@ -219,7 +185,7 @@ export default function SellerSignUpPage() {
                 id="password"
                 type="password"
                 placeholder="******"
-                value={formData.password}
+                value={signupFormData.password}
                 onChange={(e) => handleInputChange('password', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                 maxLength={50}
@@ -239,17 +205,17 @@ export default function SellerSignUpPage() {
                 id="passwordConfirm"
                 type="password"
                 placeholder="비밀번호를 다시 입력하세요"
-                value={formData.passwordConfirm}
+                value={signupFormData.passwordConfirm}
                 onChange={(e) => handleInputChange('passwordConfirm', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                 maxLength={50}
                 required
               />
               <div className="mt-1 flex items-center justify-between">
-                {formData.passwordConfirm && (
+                {signupFormData.passwordConfirm && (
                   <span
                     className={`text-xs ${
-                      formData.password === formData.passwordConfirm
+                      signupFormData.password === signupFormData.passwordConfirm
                         ? 'text-primary-300'
                         : 'text-red-500'
                     }`}
@@ -273,7 +239,7 @@ export default function SellerSignUpPage() {
                   id="brand"
                   type="text"
                   placeholder="브랜드명을 입력해주세요"
-                  value={formData.brand}
+                  value={signupFormData.brand}
                   onChange={(e) => handleInputChange('brand', e.target.value)}
                   className="h-12 flex-1 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                   maxLength={20}
@@ -311,7 +277,7 @@ export default function SellerSignUpPage() {
                 id="company"
                 type="text"
                 placeholder="상호명을 입력해주세요"
-                value={formData.company}
+                value={signupFormData.company}
                 onChange={(e) => handleInputChange('company', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                 maxLength={20}
@@ -332,7 +298,7 @@ export default function SellerSignUpPage() {
                 id="ceo"
                 type="text"
                 placeholder="대표 이름을 입력해주세요"
-                value={formData.ceo}
+                value={signupFormData.ceo}
                 onChange={(e) => handleInputChange('ceo', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                 maxLength={20}
@@ -353,7 +319,7 @@ export default function SellerSignUpPage() {
                 id="businessNumber"
                 type="text"
                 placeholder="123-45-67890"
-                value={formatBusinessNumber(formData.businessNumber)}
+                value={formatBusinessNumber(signupFormData.businessNumber)}
                 onChange={(e) =>
                   handleInputChange('businessNumber', e.target.value.replace(/[^0-9]/g, ''))
                 }
@@ -380,7 +346,7 @@ export default function SellerSignUpPage() {
                 id="phone"
                 type="tel"
                 placeholder="010-1234-5678"
-                value={formatPhoneNumber(formData.phone)}
+                value={formatPhoneNumber(signupFormData.phone)}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
                 maxLength={13}
@@ -403,7 +369,7 @@ export default function SellerSignUpPage() {
               </div>
               <div className="mb-2 flex gap-2">
                 <div className="flex h-12 min-w-0 flex-1 items-center rounded-lg border border-bg-300 bg-bg-200 px-4 text-base text-text-300">
-                  {formData.zipcode || '우편번호'}
+                  {signupFormData.zipcode || '우편번호'}
                 </div>
                 <button type="button" className={pinkOutlineBtn + ' h-12 min-w-[120px] rounded-lg'}>
                   우편 번호
@@ -412,21 +378,21 @@ export default function SellerSignUpPage() {
               <Input
                 type="text"
                 placeholder="도로명"
-                value={formData.addressRoad}
+                value={signupFormData.addressRoad}
                 onChange={(e) => handleInputChange('addressRoad', e.target.value)}
                 className="mb-2 h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
               />
               <Input
                 type="text"
                 placeholder="지번"
-                value={formData.addressJibun}
+                value={signupFormData.addressJibun}
                 onChange={(e) => handleInputChange('addressJibun', e.target.value)}
                 className="mb-2 h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
               />
               <Input
                 type="text"
                 placeholder="상세주소를 입력해주세요"
-                value={formData.addressDetail}
+                value={signupFormData.addressDetail}
                 onChange={(e) => handleInputChange('addressDetail', e.target.value)}
                 className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300"
               />
