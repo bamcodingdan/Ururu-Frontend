@@ -56,21 +56,21 @@ export default function TestPage() {
             <Button
               onClick={() => handleTestApi('health')}
               disabled={isLoading}
-              className="bg-primary-300 text-white hover:bg-primary-200"
+              className="bg-primary-300 text-text-on hover:bg-primary-200"
             >
               {isLoading ? '테스트 중...' : '헬스체크'}
             </Button>
             <Button
               onClick={() => handleTestApi('get')}
               disabled={isLoading}
-              className="bg-primary-300 text-white hover:bg-primary-200"
+              className="bg-primary-300 text-text-on hover:bg-primary-200"
             >
               {isLoading ? '테스트 중...' : 'GET 테스트'}
             </Button>
             <Button
               onClick={() => handleTestApi('post')}
               disabled={isLoading}
-              className="bg-primary-300 text-white hover:bg-primary-200"
+              className="bg-primary-300 text-text-on hover:bg-primary-200"
             >
               {isLoading ? '테스트 중...' : 'POST 테스트'}
             </Button>
