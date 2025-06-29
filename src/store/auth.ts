@@ -93,11 +93,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAgreements: (agreements) =>
     set((state) => {
       const newAgreements = { ...state.agreements, ...agreements };
+
+      // "전체 동의" 체크박스가 변경된 경우 모든 개별 약관 동기화
+      if ('all' in agreements) {
+        newAgreements.terms = agreements.all!;
+        newAgreements.privacy = agreements.all!;
+        newAgreements.marketing = agreements.all!;
+      } else {
+        // 개별 약관이 변경된 경우 "전체 동의" 상태 업데이트
+        newAgreements.all = newAgreements.terms && newAgreements.privacy && newAgreements.marketing;
+      }
+
       return {
-        agreements: {
-          ...newAgreements,
-          all: newAgreements.terms && newAgreements.privacy && newAgreements.marketing,
-        },
+        agreements: newAgreements,
       };
     }),
 
