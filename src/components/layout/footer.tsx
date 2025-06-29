@@ -30,6 +30,8 @@ export function Footer() {
   return (
     <footer
       className="bg-bg-100 pb-12 pt-12 text-center text-text-300"
+      role="contentinfo"
+      aria-label="사이트 정보"
       style={{
         // 모바일/태블릿에서 하단 내비게이션 높이만큼 여유 padding
         paddingBottom: 'max(48px, env(safe-area-inset-bottom, 0px) + 48px)',
@@ -53,6 +55,7 @@ export function Footer() {
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-controls="footer-biz-info"
+            aria-label={`사업자 정보 ${open ? '접기' : '펼치기'}`}
             style={{ fontWeight: 500 }}
           >
             사업자 정보
@@ -68,6 +71,8 @@ export function Footer() {
           <div
             id="footer-biz-info"
             className="mb-8 w-full max-w-[1280px] rounded-xl bg-bg-200 px-8 py-10 text-left shadow-sm"
+            role="region"
+            aria-label="사업자 상세 정보"
           >
             <div className="flex flex-col gap-y-1 tablet:gap-y-2 desktop:gap-y-2">
               {BIZ_INFO.map((item) => (
@@ -86,7 +91,11 @@ export function Footer() {
         )}
 
         {/* 하단 링크 */}
-        <nav className="mb-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] font-medium text-text-300 tablet:text-xs desktop:text-sm">
+        <nav
+          className="mb-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] font-medium text-text-300 tablet:text-xs desktop:text-sm"
+          role="navigation"
+          aria-label="하단 링크"
+        >
           {FOOTER_LINKS.map((link) => {
             if (link.isExternal) {
               return (
@@ -94,6 +103,9 @@ export function Footer() {
                   key={link.label}
                   href={link.href}
                   className="text-text-300 transition-colors hover:text-primary-300"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${link.label} (새 창에서 열기)`}
                 >
                   {link.label}
                 </a>
