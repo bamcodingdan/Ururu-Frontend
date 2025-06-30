@@ -1,14 +1,9 @@
 import Image from 'next/image';
-
-// 더미 데이터 (시안과 동일하게)
-const profile = {
-  nickname: '우르르',
-  avatar: '/ururu-full-logo.png', // public 폴더 내 기본 이미지 사용
-  badges: ['민감성', '여름쿨톤'],
-  point: 12345,
-};
+import { myPageData } from '@/data/mypage';
 
 export function ProfileCard() {
+  const { profile } = myPageData;
+
   return (
     <section className="mx-auto flex w-full max-w-xl flex-col items-center rounded-xl bg-white px-5 py-4 shadow-[0_2px_12px_0_rgba(0,0,0,0.04)]">
       {/* 상단: 아바타/닉네임/뱃지/포인트 */}
@@ -41,7 +36,7 @@ export function ProfileCard() {
           </div>
           <div className="text-xs text-gray-400">우르르 포인트</div>
           <div className="text-base font-extrabold tracking-tight text-gray-900">
-            {profile.point.toLocaleString()}P
+            {profile.points.toLocaleString()}P
           </div>
         </div>
       </div>
