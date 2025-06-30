@@ -3,12 +3,8 @@ import { myPageData } from '@/data/mypage';
 import { ChevronRight } from 'lucide-react';
 
 export function OrderStatus() {
-  const { orderStats } = myPageData;
-  const statusItems = [
-    { label: '배송중', count: orderStats.shipping },
-    { label: '배송 완료', count: orderStats.completed },
-    { label: '취소/반품', count: orderStats.cancelled },
-  ];
+  const { orderStatuses } = myPageData;
+  const statusItems = orderStatuses;
 
   return (
     <section className="w-full bg-transparent">
