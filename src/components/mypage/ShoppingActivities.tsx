@@ -10,13 +10,19 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
-const iconMap: Record<string, React.ComponentType<any> | (() => JSX.Element)> = {
+const PointIcon = () => (
+  <div className="relative flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-400">
+    <span className="text-[8px] font-bold text-gray-400">P</span>
+  </div>
+);
+
+type IconComponent = React.ComponentType<{ className?: string }>;
+type CustomIconComponent = () => JSX.Element;
+type IconMapType = Record<string, IconComponent | CustomIconComponent>;
+
+const iconMap: IconMapType = {
   RefreshCwIcon: RefreshCw,
-  PointIcon: () => (
-    <div className="relative flex h-5 w-5 items-center justify-center rounded-md border border-solid border-gray-400">
-      <span className="text-[8px] font-bold text-gray-400">P</span>
-    </div>
-  ),
+  PointIcon,
   MessageSquareIcon: MessageSquare,
   TruckIcon: Truck,
   LogOutIcon: LogOut,
@@ -42,8 +48,8 @@ export function ShoppingActivities() {
                     href="#"
                     className="group flex items-center rounded-lg px-2 py-2 transition-colors hover:bg-pink-50"
                   >
-                    {typeof Icon === 'function' && Icon.name === 'PointIcon' ? (
-                      <Icon />
+                    {item.icon === 'PointIcon' ? (
+                      <PointIcon />
                     ) : (
                       <Icon className="mr-3 h-5 w-5 shrink-0 text-gray-400 group-hover:text-pink-400" />
                     )}
