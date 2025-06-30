@@ -38,7 +38,7 @@ export function MobileSidebarList() {
       {navigationSections.map((section, idx) => (
         <React.Fragment key={section.title}>
           <div className="flex w-full flex-col items-start gap-3">
-            <div className="mb-1 text-base font-bold text-text-100">{section.title}</div>
+            <div className="mb-1 text-base font-semibold text-text-100">{section.title}</div>
             {section.items.map((item) => (
               <div
                 key={item.label}
