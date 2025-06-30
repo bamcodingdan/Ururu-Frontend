@@ -14,7 +14,7 @@ export function Separator({
 }: SeparatorProps) {
   return (
     <div
-      role={decorative ? 'separator' : undefined}
+      role={!decorative ? 'separator' : undefined}
       aria-orientation={orientation}
       className={cn(
         'bg-border shrink-0',
