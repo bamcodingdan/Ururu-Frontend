@@ -229,7 +229,9 @@ export default function SellerSignUpPage() {
                 type="tel"
                 placeholder="010-1234-5678"
                 value={formatPhoneNumber(signupFormData.phone)}
-                onChange={(e) => handleInputChange('phone' as FormFieldType, e.target.value)}
+                onChange={(e) =>
+                  handleInputChange('phone' as FormFieldType, e.target.value.replace(/[^0-9]/g, ''))
+                }
                 className={FORM_STYLES.input.base}
                 maxLength={13}
                 required
