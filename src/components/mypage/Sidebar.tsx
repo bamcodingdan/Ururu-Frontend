@@ -5,7 +5,6 @@ import {
   FileTextIcon,
   RefreshCwIcon,
   MessageSquareIcon,
-  MapPinIcon,
   FileIcon,
   TruckIcon,
 } from 'lucide-react';
@@ -22,7 +21,6 @@ const getIcon = (iconName: string) => {
       </div>
     ),
     MessageSquareIcon: <MessageSquareIcon className="h-3 w-3 text-text-200" />,
-    MapPinIcon: <MapPinIcon className="h-3 w-3 text-text-200" />,
     TruckIcon: <TruckIcon className="h-3 w-3 text-text-200" />,
     LogOutIcon: <LogOutIcon className="h-3 w-3 text-text-200" />,
     UserXIcon: <UserXIcon className="h-3 w-3 text-text-200" />,
