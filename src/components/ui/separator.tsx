@@ -15,7 +15,7 @@ export function Separator({
   return (
     <div
       role={!decorative ? 'separator' : undefined}
-      aria-orientation={orientation}
+      aria-orientation={!decorative ? orientation : undefined}
       className={cn(
         'bg-border shrink-0',
         orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',
