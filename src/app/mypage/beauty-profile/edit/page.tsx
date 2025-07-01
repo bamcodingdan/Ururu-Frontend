@@ -18,8 +18,10 @@ import {
   BEAUTY_PROFILE_CONSTANTS,
 } from '@/constants/beauty-profile';
 import { useBeautyProfile } from '@/hooks/useBeautyProfile';
+import { useRouter } from 'next/navigation';
 
 export default function BeautyProfileEditPage() {
+  const router = useRouter();
   const {
     beautyProfileData,
     handleInputChange,
@@ -27,6 +29,14 @@ export default function BeautyProfileEditPage() {
     handleInterestCategoryToggle,
     handleSubmit,
   } = useBeautyProfile();
+
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: 실제 뷰티프로필 저장 API 연동 필요
+    console.log('뷰티프로필 저장:', beautyProfileData);
+    // 저장 후 뷰티 프로필 페이지로 이동
+    router.push('/mypage/beauty-profile');
+  };
 
   return (
     <NoFooterLayout className="bg-bg-100">
@@ -43,7 +53,7 @@ export default function BeautyProfileEditPage() {
                 뷰티프로필 수정
               </h1>
 
-              <form onSubmit={handleSubmit} className="w-full space-y-6">
+              <form onSubmit={handleFormSubmit} className="w-full space-y-6">
                 {/* 3-1. 피부 타입 */}
                 <FormField label="피부 타입 (중복 선택 가능)" required>
                   <SelectableButtonGroup

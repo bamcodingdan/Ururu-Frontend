@@ -66,9 +66,9 @@ export function ProfileCard() {
             ) : action.label === '뷰티 프로필' ? (
               <Link
                 key={action.label}
-                href="/mypage/beauty-profile-edit"
+                href="/mypage/beauty-profile"
                 className="flex-1"
-                aria-label="뷰티프로필 수정 페이지로 이동"
+                aria-label="뷰티프로필 페이지로 이동"
               >
                 <Button
                   variant="outline"
