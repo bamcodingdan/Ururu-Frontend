@@ -19,6 +19,7 @@ import {
 } from '@/constants/beauty-profile';
 import { useBeautyProfile } from '@/hooks/useBeautyProfile';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function BeautyProfileEditPage() {
   const router = useRouter();
@@ -34,8 +35,8 @@ export default function BeautyProfileEditPage() {
     e.preventDefault();
     // TODO: 실제 뷰티프로필 저장 API 연동 필요
     console.log('뷰티프로필 저장:', beautyProfileData);
-    // 저장 후 뷰티 프로필 페이지로 이동
-    router.push('/mypage/beauty-profile');
+    // 저장 후 마이페이지로 이동
+    router.push('/mypage');
   };
 
   return (
@@ -52,6 +53,22 @@ export default function BeautyProfileEditPage() {
               <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">
                 뷰티프로필 수정
               </h1>
+
+              {/* 알림 박스 */}
+              <div className="mb-8 flex items-start gap-3 rounded-lg bg-bg-100 p-6 shadow-sm">
+                <Image
+                  src="/ururu-gradient.svg"
+                  alt="우르르"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 flex-shrink-0"
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-text-300">
+                    뷰티 프로필을 설정하면 회원님만의 맞춤 서비스가 제공돼요!
+                  </p>
+                </div>
+              </div>
 
               <form onSubmit={handleFormSubmit} className="w-full space-y-6">
                 {/* 3-1. 피부 타입 */}

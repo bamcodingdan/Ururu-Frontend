@@ -41,8 +41,7 @@ export function BeautyProfileSummary({ summaryInfo }: BeautyProfileSummaryProps)
             <div className="flex justify-between">
               <span className="text-sm text-text-300">피부 고민</span>
               <span className="text-sm font-medium text-text-100">
-                {summaryInfo.skinConcerns?.slice(0, 2).join(', ')}
-                {summaryInfo.skinConcerns && summaryInfo.skinConcerns.length > 2 && ' 외'}
+                {summaryInfo.skinConcerns?.slice(0, 3).join(', ')}
               </span>
             </div>
           </div>
@@ -65,12 +64,6 @@ export function BeautyProfileSummary({ summaryInfo }: BeautyProfileSummaryProps)
             <div className="flex justify-between">
               <span className="text-sm text-text-300">선호 가격대</span>
               <span className="text-sm font-medium text-text-100">{summaryInfo.priceRange}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-text-300">피부 예민도</span>
-              <span className="text-sm font-medium text-text-100">
-                {summaryInfo.skinReaction === 'yes' ? '예민함' : '보통'}
-              </span>
             </div>
           </div>
         </div>

@@ -16,7 +16,7 @@ export const myPageData = {
   ],
 
   // 프로필 액션 버튼
-  profileActions: [{ label: '나의 리뷰' }, { label: '프로필 수정' }, { label: '뷰티 프로필' }],
+  profileActions: [{ label: '나의 리뷰' }, { label: '프로필 수정' }, { label: '뷰티 프로필 수정' }],
 
   // 사이드바 네비게이션
   navigationSections: [
