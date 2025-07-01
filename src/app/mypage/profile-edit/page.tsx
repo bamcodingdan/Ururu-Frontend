@@ -16,30 +16,17 @@ import { Camera } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-
-const GENDER_OPTIONS = [
-  { label: '여성', value: 'female' },
-  { label: '남성', value: 'male' },
-  { label: '선택 안함', value: 'none' },
-];
+import { GENDER_OPTIONS, DEFAULT_AGREEMENTS, VALIDATION_CONSTANTS } from '@/constants/validation';
 
 export default function ProfileEditPage() {
   const [nickname, setNickname] = useState('');
   const [gender, setGender] = useState('');
   const [birth, setBirth] = useState<Date | undefined>(undefined);
   const [phone, setPhone] = useState('');
-  const [agreements, setAgreements] = useState({
-    terms: true,
-    privacy: true,
-    marketing: false,
-    location: false,
-  });
+  const [agreements, setAgreements] = useState(DEFAULT_AGREEMENTS);
   const [profileImg, setProfileImg] = useState('/profile-image.svg');
-  const [nicknameCheck, setNicknameCheck] = useState('');
   const [nicknameGuide, setNicknameGuide] = useState('');
   const [nicknameGuideType, setNicknameGuideType] = useState<'success' | 'error' | 'base'>('base');
-
-  const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   const handleNicknameCheck = () => {
     if (!nickname.trim()) {
@@ -77,10 +64,7 @@ export default function ProfileEditPage() {
                   className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-6 cursor-pointer"
                 >
                   <input id="profile-upload" type="file" accept="image/*" className="hidden" />
-                  <span
-                    className="flex items-center justify-center rounded-full border border-bg-300 bg-bg-100 shadow-md hover:bg-bg-200"
-                    style={{ width: 64, height: 36 }}
-                  >
+                  <span className="flex h-9 w-16 items-center justify-center rounded-full border border-bg-300 bg-bg-100 shadow-md hover:bg-bg-200">
                     <Camera className="h-5 w-5 text-text-300" />
                     <span className="sr-only">프로필 사진 변경</span>
                   </span>
@@ -93,7 +77,10 @@ export default function ProfileEditPage() {
                   required
                   helperText={nicknameGuide}
                   helperTextType={nicknameGuideType}
-                  characterCount={{ current: nickname.length, max: 14 }}
+                  characterCount={{
+                    current: nickname.length,
+                    max: VALIDATION_CONSTANTS.MAX_LENGTHS.NICKNAME,
+                  }}
                 >
                   <div className="flex gap-2">
                     <Input
@@ -103,7 +90,7 @@ export default function ProfileEditPage() {
                         setNicknameGuide('');
                         setNicknameGuideType('base');
                       }}
-                      maxLength={14}
+                      maxLength={VALIDATION_CONSTANTS.MAX_LENGTHS.NICKNAME}
                       placeholder="닉네임을 입력해주세요"
                       className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus + ' flex-1'}
                     />
@@ -124,8 +111,7 @@ export default function ProfileEditPage() {
                         key={opt.value}
                         type="button"
                         variant={gender === opt.value ? 'default' : 'outline'}
-                        className={`h-12 flex-1 rounded-lg border text-sm font-medium transition ${gender === opt.value ? 'border-primary-300 bg-primary-300 text-text-on' : 'border-bg-300 bg-bg-100 text-text-300 hover:bg-bg-200'}`}
-                        style={{ minWidth: 0 }}
+                        className={`h-12 min-w-0 flex-1 rounded-lg border text-sm font-medium transition ${gender === opt.value ? 'border-primary-300 bg-primary-300 text-text-on' : 'border-bg-300 bg-bg-100 text-text-300 hover:bg-bg-200'}`}
                         onClick={() => setGender(opt.value)}
                       >
                         {opt.label}
@@ -158,7 +144,10 @@ export default function ProfileEditPage() {
                         selected={birth}
                         onSelect={setBirth}
                         captionLayout="dropdown"
-                        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                        disabled={(date) =>
+                          date > new Date() ||
+                          date < new Date(`${VALIDATION_CONSTANTS.BIRTH.MIN_YEAR}-01-01`)
+                        }
                         initialFocus
                       />
                     </PopoverContent>
@@ -168,7 +157,10 @@ export default function ProfileEditPage() {
                 <FormField
                   label="휴대폰 번호"
                   helperText="하이픈(-)을 제외하고 숫자만 입력해주세요"
-                  characterCount={{ current: phone.length, max: 11 }}
+                  characterCount={{
+                    current: phone.length,
+                    max: VALIDATION_CONSTANTS.PHONE.MAX_LENGTH,
+                  }}
                 >
                   <Input
                     type="tel"
@@ -176,7 +168,7 @@ export default function ProfileEditPage() {
                     onChange={(e) => setPhone(e.target.value.replace(/[^0-9]/g, ''))}
                     placeholder="010-1234-5678"
                     className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
-                    maxLength={13}
+                    maxLength={VALIDATION_CONSTANTS.PHONE.FORMATTED_MAX_LENGTH}
                   />
                 </FormField>
                 <Separator className="my-4" />

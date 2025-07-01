@@ -4,7 +4,7 @@ import { CustomLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, PasswordStrengthIndicator } from '@/components/form';
-import { Store, ArrowLeft } from 'lucide-react';
+import { Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
