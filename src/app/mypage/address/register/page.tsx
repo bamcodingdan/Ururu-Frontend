@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormField } from '@/components/form/FormField';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,11 +10,45 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { formatPhoneNumber } from '@/lib/format-utils';
 import { VALIDATION_CONSTANTS } from '@/constants/validation';
-import { useAddressRegister } from '@/hooks/useAddressRegister';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { mockAddressData, AddressData } from '@/data/address';
 
 export default function AddressRegisterPage() {
-  const { addressData, handleInputChange, handleCheckboxChange, handleSubmit, isFormValid } =
-    useAddressRegister();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const addressId = searchParams.get('id');
+  const isEditMode = Boolean(addressId);
+
+  const [addressData, setAddressData] = useState<Omit<AddressData, 'id'>>({
+    addressName: '',
+    isDefault: false,
+    phone: '',
+    zipcode: '',
+    addressRoad: '',
+    addressJibun: '',
+    addressDetail: '',
+  });
+
+  // 수정 모드일 때 기존 데이터 로드
+  useEffect(() => {
+    if (isEditMode && addressId && mockAddressData[Number(addressId)]) {
+      const existingData = mockAddressData[Number(addressId)];
+      const { id, ...dataWithoutId } = existingData;
+      setAddressData(dataWithoutId);
+    }
+  }, [isEditMode, addressId]);
+
+  const handleInputChange = (field: string, value: string | boolean) => {
+    setAddressData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: 실제 배송지 저장 API 연동 필요
+    console.log('배송지 저장:', addressData);
+    // 저장 후 배송지 관리 페이지로 이동
+    router.push('/mypage/address');
+  };
 
   return (
     <NoFooterLayout className="bg-bg-100">
@@ -27,10 +61,12 @@ export default function AddressRegisterPage() {
         <main className="mx-auto mt-0 flex w-full max-w-3xl flex-col gap-8 px-0 lg:mt-0">
           <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-none md:px-8">
             <CardContent className="p-0">
-              <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">배송지 등록</h1>
+              <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">
+                {isEditMode ? '배송지 수정' : '배송지 등록'}
+              </h1>
 
               <form onSubmit={handleSubmit} className="w-full space-y-6">
-                {/* 3-1. 배송지명 */}
+                {/* 배송지명 */}
                 <FormField
                   label="배송지명"
                   required
@@ -50,20 +86,20 @@ export default function AddressRegisterPage() {
                   />
                 </FormField>
 
-                {/* 3-2. 기본 배송지 설정 */}
+                {/* 기본 배송지 설정 */}
                 <div className="space-y-3">
                   <label className={FORM_STYLES.checkbox.container}>
                     <input
                       type="checkbox"
                       checked={addressData.isDefault}
-                      onChange={(e) => handleCheckboxChange('isDefault', e.target.checked)}
+                      onChange={(e) => handleInputChange('isDefault', e.target.checked)}
                       className={FORM_STYLES.checkbox.base}
                     />
                     <span className={FORM_STYLES.checkbox.label}>기본 배송지로 설정</span>
                   </label>
                 </div>
 
-                {/* 3-3. 연락처 */}
+                {/* 연락처 */}
                 <FormField
                   label="연락처"
                   required
@@ -86,7 +122,7 @@ export default function AddressRegisterPage() {
                   />
                 </FormField>
 
-                {/* 3-4. 주소 */}
+                {/* 주소 */}
                 <FormField label="주소" required>
                   <div className="mb-2 flex gap-2">
                     <div className={FORM_STYLES.zipcode.display}>
@@ -117,7 +153,7 @@ export default function AddressRegisterPage() {
                   />
                 </FormField>
 
-                {/* 3-5. 상세주소 */}
+                {/* 상세주소 */}
                 <FormField label="상세주소" required>
                   <Input
                     type="text"
@@ -132,7 +168,6 @@ export default function AddressRegisterPage() {
                 {/* 저장 버튼 */}
                 <Button
                   type="submit"
-                  disabled={!isFormValid()}
                   className={FORM_STYLES.button.submit + ' mt-6 text-sm font-medium'}
                 >
                   저장하기
