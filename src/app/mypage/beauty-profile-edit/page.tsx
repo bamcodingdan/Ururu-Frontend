@@ -45,7 +45,7 @@ export default function BeautyProfileEditPage() {
 
               <form onSubmit={handleSubmit} className="w-full space-y-6">
                 {/* 3-1. 피부 타입 */}
-                <FormField label="피부 타입" required>
+                <FormField label="피부 타입 (중복 선택 가능)" required>
                   <SelectableButtonGroup
                     options={SKIN_TYPE_OPTIONS}
                     selectedValue={beautyProfileData.skinType}
@@ -54,7 +54,7 @@ export default function BeautyProfileEditPage() {
                 </FormField>
 
                 {/* 3-2. 피부 톤 */}
-                <FormField label="피부 톤" required>
+                <FormField label="피부 톤 (중복 선택 가능)" required>
                   <SelectableButtonGroup
                     options={SKIN_TONE_OPTIONS}
                     selectedValue={beautyProfileData.skinTone}
@@ -108,7 +108,7 @@ export default function BeautyProfileEditPage() {
                 </FormField>
 
                 {/* 3-5. 관심 카테고리 */}
-                <FormField label="관심 카테고리" required>
+                <FormField label="관심 카테고리 (중복 선택 가능)" required>
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
                       {INTEREST_CATEGORY_OPTIONS.map((option) => {
