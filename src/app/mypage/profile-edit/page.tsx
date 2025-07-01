@@ -111,7 +111,7 @@ export default function ProfileEditPage() {
                         key={opt.value}
                         type="button"
                         variant={gender === opt.value ? 'default' : 'outline'}
-                        className={`h-12 min-w-0 flex-1 rounded-lg border text-sm font-medium transition ${gender === opt.value ? 'border-primary-300 bg-primary-300 text-text-on' : 'border-bg-300 bg-bg-100 text-text-300 hover:bg-bg-200'}`}
+                        className={`${FORM_STYLES.button.selectable.base} min-w-0 flex-1 ${gender === opt.value ? FORM_STYLES.button.selectable.selected : FORM_STYLES.button.selectable.unselected}`}
                         onClick={() => setGender(opt.value)}
                       >
                         {opt.label}
