@@ -57,7 +57,7 @@ export default function SellerSignUpPage() {
           </div>
 
           {/* 회원가입 폼 */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* 이메일 */}
             <FormField label="이메일" required>
               <Input
