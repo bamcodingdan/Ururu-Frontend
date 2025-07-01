@@ -173,46 +173,30 @@ export default function ProfileEditPage() {
                 </FormField>
                 <Separator className="my-4" />
                 {/* 약관 동의 */}
-                <div className="space-y-3">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={agreements.terms}
-                      onChange={(e) => setAgreements((a) => ({ ...a, terms: e.target.checked }))}
-                      className={FORM_STYLES.checkbox.base + ' custom-checkbox'}
-                      required
-                    />
-                    서비스 이용약관 (필수)
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={agreements.privacy}
-                      onChange={(e) => setAgreements((a) => ({ ...a, privacy: e.target.checked }))}
-                      className={FORM_STYLES.checkbox.base + ' custom-checkbox'}
-                      required
-                    />
-                    개인정보 처리방침 (필수)
-                  </label>
-                  <label className="flex items-center gap-2 text-sm">
+                <div className="mt-6 space-y-3">
+                  <label className="flex items-start">
                     <input
                       type="checkbox"
                       checked={agreements.marketing}
                       onChange={(e) =>
                         setAgreements((a) => ({ ...a, marketing: e.target.checked }))
                       }
-                      className={FORM_STYLES.checkbox.base + ' custom-checkbox'}
+                      className={FORM_STYLES.checkbox.base}
                     />
-                    마케팅 정보 수신 동의 (선택)
+                    <span className="text-sm text-text-200">
+                      마케팅 정보 수신에 동의합니다 (선택)
+                    </span>
                   </label>
-                  <label className="flex items-center gap-2 text-sm">
+                  <label className="flex items-start">
                     <input
                       type="checkbox"
                       checked={agreements.location}
                       onChange={(e) => setAgreements((a) => ({ ...a, location: e.target.checked }))}
-                      className={FORM_STYLES.checkbox.base + ' custom-checkbox'}
+                      className={FORM_STYLES.checkbox.base}
                     />
-                    위치 기반 서비스 이용약관
+                    <span className="text-sm text-text-200">
+                      위치 기반 서비스 이용약관에 동의합니다 (선택)
+                    </span>
                   </label>
                 </div>
                 <Button
