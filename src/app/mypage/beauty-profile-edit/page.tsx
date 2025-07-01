@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { FormField } from '@/components/form/FormField';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { SelectableButton, SelectableButtonGroup } from '@/components/ui/selectable-button';
 import { Sidebar } from '@/components/mypage/Sidebar';
 import { NoFooterLayout } from '@/components/layout/layouts';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,83 +15,17 @@ import {
   SKIN_CONCERN_OPTIONS,
   SKIN_REACTION_OPTIONS,
   INTEREST_CATEGORY_OPTIONS,
-  VALIDATION_CONSTANTS,
 } from '@/constants/validation';
-import { BeautyProfileFormData } from '@/types/form';
-import { X } from 'lucide-react';
+import { useBeautyProfile } from '@/hooks/useBeautyProfile';
 
 export default function BeautyProfileEditPage() {
-  const [beautyProfileData, setBeautyProfileData] = useState<BeautyProfileFormData>({
-    skinType: 'normal', // 중성 기본 선택
-    skinTone: 'neutral', // 뉴트럴톤 기본 선택
-    skinConcerns: ['none'], // 없음 기본 선택
-    skinReaction: 'no', // 없음 기본 선택
-    interestCategories: ['none'], // 없음 기본 선택
-    minPrice: '',
-    maxPrice: '',
-    productRequest: '',
-  });
-
-  const handleInputChange = (field: keyof BeautyProfileFormData, value: string | string[]) => {
-    setBeautyProfileData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSkinConcernToggle = (concern: string) => {
-    setBeautyProfileData((prev) => {
-      if (concern === 'none') {
-        // '없음'을 선택한 경우: 다른 모든 고민 해제하고 '없음'만 선택
-        return {
-          ...prev,
-          skinConcerns: ['none'],
-        };
-      } else {
-        // 다른 고민을 선택한 경우: '없음' 해제하고 해당 고민 토글
-        const newConcerns = prev.skinConcerns.includes(concern)
-          ? prev.skinConcerns.filter((c) => c !== concern)
-          : prev.skinConcerns.length < 3
-            ? [...prev.skinConcerns.filter((c) => c !== 'none'), concern]
-            : prev.skinConcerns.filter((c) => c !== 'none');
-
-        // 아무것도 선택되지 않은 경우 '없음'으로 설정
-        return {
-          ...prev,
-          skinConcerns: newConcerns.length > 0 ? newConcerns : ['none'],
-        };
-      }
-    });
-  };
-
-  const handleInterestCategoryToggle = (category: string) => {
-    setBeautyProfileData((prev) => {
-      if (category === 'none') {
-        // '없음'을 선택한 경우: 다른 모든 카테고리 해제하고 '없음'만 선택
-        return {
-          ...prev,
-          interestCategories: ['none'],
-        };
-      } else {
-        // 다른 카테고리를 선택한 경우: '없음' 해제하고 해당 카테고리 토글
-        const newCategories = prev.interestCategories.includes(category)
-          ? prev.interestCategories.filter((c) => c !== category)
-          : [...prev.interestCategories.filter((c) => c !== 'none'), category];
-
-        // 아무것도 선택되지 않은 경우 '없음'으로 설정
-        return {
-          ...prev,
-          interestCategories: newCategories.length > 0 ? newCategories : ['none'],
-        };
-      }
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: 실제 뷰티프로필 저장 API 연동 필요
-    console.log('뷰티프로필 저장:', beautyProfileData);
-  };
+  const {
+    beautyProfileData,
+    handleInputChange,
+    handleSkinConcernToggle,
+    handleInterestCategoryToggle,
+    handleSubmit,
+  } = useBeautyProfile();
 
   return (
     <NoFooterLayout className="bg-bg-100">
@@ -110,48 +45,20 @@ export default function BeautyProfileEditPage() {
               <form onSubmit={handleSubmit} className="w-full space-y-6">
                 {/* 3-1. 피부 타입 */}
                 <FormField label="피부 타입" required>
-                  <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-                    {SKIN_TYPE_OPTIONS.map((option) => (
-                      <Button
-                        key={option.value}
-                        type="button"
-                        variant={
-                          beautyProfileData.skinType === option.value ? 'default' : 'outline'
-                        }
-                        className={`${FORM_STYLES.button.selectable.base} ${
-                          beautyProfileData.skinType === option.value
-                            ? FORM_STYLES.button.selectable.selected
-                            : FORM_STYLES.button.selectable.unselected
-                        }`}
-                        onClick={() => handleInputChange('skinType', option.value)}
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
-                  </div>
+                  <SelectableButtonGroup
+                    options={SKIN_TYPE_OPTIONS}
+                    selectedValue={beautyProfileData.skinType}
+                    onSelect={(value) => handleInputChange('skinType', value)}
+                  />
                 </FormField>
 
                 {/* 3-2. 피부 톤 */}
                 <FormField label="피부 톤" required>
-                  <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4">
-                    {SKIN_TONE_OPTIONS.map((option) => (
-                      <Button
-                        key={option.value}
-                        type="button"
-                        variant={
-                          beautyProfileData.skinTone === option.value ? 'default' : 'outline'
-                        }
-                        className={`${FORM_STYLES.button.selectable.base} ${
-                          beautyProfileData.skinTone === option.value
-                            ? FORM_STYLES.button.selectable.selected
-                            : FORM_STYLES.button.selectable.unselected
-                        }`}
-                        onClick={() => handleInputChange('skinTone', option.value)}
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
-                  </div>
+                  <SelectableButtonGroup
+                    options={SKIN_TONE_OPTIONS}
+                    selectedValue={beautyProfileData.skinTone}
+                    onSelect={(value) => handleInputChange('skinTone', value)}
+                  />
                 </FormField>
 
                 {/* 3-3. 피부 고민 */}
@@ -194,21 +101,14 @@ export default function BeautyProfileEditPage() {
                     </p>
                     <div className="flex gap-2">
                       {SKIN_REACTION_OPTIONS.map((option) => (
-                        <Button
+                        <SelectableButton
                           key={option.value}
-                          type="button"
-                          variant={
-                            beautyProfileData.skinReaction === option.value ? 'default' : 'outline'
-                          }
-                          className={`${FORM_STYLES.button.selectable.base} min-w-0 flex-1 ${
-                            beautyProfileData.skinReaction === option.value
-                              ? FORM_STYLES.button.selectable.selected
-                              : FORM_STYLES.button.selectable.unselected
-                          }`}
+                          value={option.value}
+                          label={option.label}
+                          isSelected={beautyProfileData.skinReaction === option.value}
                           onClick={() => handleInputChange('skinReaction', option.value)}
-                        >
-                          {option.label}
-                        </Button>
+                          className="min-w-0 flex-1"
+                        />
                       ))}
                     </div>
                   </div>

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { FormField } from '@/components/form/FormField';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { SelectableButton } from '@/components/ui/selectable-button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Sidebar } from '@/components/mypage/Sidebar';
@@ -107,15 +108,14 @@ export default function ProfileEditPage() {
                 <FormField label="성별" required>
                   <div className="flex gap-2">
                     {GENDER_OPTIONS.map((opt) => (
-                      <Button
+                      <SelectableButton
                         key={opt.value}
-                        type="button"
-                        variant={gender === opt.value ? 'default' : 'outline'}
-                        className={`${FORM_STYLES.button.selectable.base} min-w-0 flex-1 ${gender === opt.value ? FORM_STYLES.button.selectable.selected : FORM_STYLES.button.selectable.unselected}`}
+                        value={opt.value}
+                        label={opt.label}
+                        isSelected={gender === opt.value}
                         onClick={() => setGender(opt.value)}
-                      >
-                        {opt.label}
-                      </Button>
+                        className="min-w-0 flex-1"
+                      />
                     ))}
                   </div>
                 </FormField>

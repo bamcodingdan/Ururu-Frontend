@@ -18,7 +18,6 @@ export const VALIDATION_CONSTANTS = {
     BUSINESS_NUMBER: 10,
     PHONE: 11,
     EMAIL: 100,
-    BEAUTY_PROFILE_NOTE: 200,
   },
 
   // 전화번호 관련

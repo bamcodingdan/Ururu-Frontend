@@ -11,11 +11,7 @@ export type FormFieldType =
   | 'zipcode'
   | 'addressRoad'
   | 'addressJibun'
-  | 'addressDetail'
-  | 'skinType'
-  | 'skinTone'
-  | 'skinConcerns'
-  | 'beautyNote';
+  | 'addressDetail';
 
 // 약관 동의 타입 정의
 export type AgreementType = 'all' | 'terms' | 'privacy' | 'marketing';
