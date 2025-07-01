@@ -21,7 +21,7 @@ export const FORM_STYLES = {
       'h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100 disabled:border-bg-300 disabled:text-text-300 disabled:hover:bg-bg-100',
     // 프로필 카드 버튼 스타일
     profileCard:
-      'h-8 w-full rounded-lg border-bg-300 bg-bg-100 px-1 text-[10px] font-medium text-text-300 hover:border-primary-300 hover:text-primary-300 md:h-12 md:rounded-xl md:px-2 md:text-base',
+      'h-8 w-full rounded-lg border-bg-300 bg-bg-100 px-1 text-[10px] font-medium text-text-300 hover:border-primary-300 hover:text-primary-300 md:h-12 md:rounded-xl md:px-2 md:text-sm',
     // 배송지 추가 버튼 스타일
     addressAdd:
       'h-12 w-full rounded-lg border border-bg-300 bg-bg-100 text-text-300 transition-colors hover:border-primary-300 hover:text-primary-300 disabled:border-bg-300 disabled:text-text-300 disabled:hover:bg-bg-100',
