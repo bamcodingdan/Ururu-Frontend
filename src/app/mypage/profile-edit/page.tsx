@@ -17,7 +17,8 @@ import { Camera } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
-import { GENDER_OPTIONS, DEFAULT_AGREEMENTS, VALIDATION_CONSTANTS } from '@/constants/validation';
+import { VALIDATION_CONSTANTS } from '@/constants/validation';
+import { GENDER_OPTIONS, DEFAULT_AGREEMENTS } from '@/constants/form-options';
 
 export default function ProfileEditPage() {
   const [nickname, setNickname] = useState('');

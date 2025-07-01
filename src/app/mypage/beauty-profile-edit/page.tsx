@@ -15,7 +15,8 @@ import {
   SKIN_CONCERN_OPTIONS,
   SKIN_REACTION_OPTIONS,
   INTEREST_CATEGORY_OPTIONS,
-} from '@/constants/validation';
+  BEAUTY_PROFILE_CONSTANTS,
+} from '@/constants/beauty-profile';
 import { useBeautyProfile } from '@/hooks/useBeautyProfile';
 
 export default function BeautyProfileEditPage() {
@@ -174,13 +175,13 @@ export default function BeautyProfileEditPage() {
                   label="이런 상품을 추천해주세요"
                   characterCount={{
                     current: beautyProfileData.productRequest.length,
-                    max: 500,
+                    max: BEAUTY_PROFILE_CONSTANTS.PRODUCT_REQUEST_MAX_LENGTH,
                   }}
                 >
                   <textarea
                     value={beautyProfileData.productRequest}
                     onChange={(e) => handleInputChange('productRequest', e.target.value)}
-                    maxLength={500}
+                    maxLength={BEAUTY_PROFILE_CONSTANTS.PRODUCT_REQUEST_MAX_LENGTH}
                     placeholder="EX) 건조한 겨울철에 특히 각질이 많이 일어나고, 향이 강한 제품을 피하고 싶어요."
                     className={`${FORM_STYLES.textarea.base} ${FORM_STYLES.textarea.focus} min-h-[120px] w-full`}
                     rows={5}
