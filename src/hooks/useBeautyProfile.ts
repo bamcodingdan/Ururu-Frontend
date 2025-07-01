@@ -73,7 +73,6 @@ export const useBeautyProfile = () => {
     (e: React.FormEvent) => {
       e.preventDefault();
       // TODO: 실제 뷰티프로필 저장 API 연동 필요
-      console.log('뷰티프로필 저장:', beautyProfileData);
     },
     [beautyProfileData],
   );
