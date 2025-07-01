@@ -72,22 +72,14 @@ export default function BeautyProfileEditPage() {
                           !isSelected && beautyProfileData.skinConcerns.length >= 3;
 
                         return (
-                          <Button
+                          <SelectableButton
                             key={option.value}
-                            type="button"
-                            variant={isSelected ? 'default' : 'outline'}
-                            disabled={isDisabled}
-                            className={`${FORM_STYLES.button.selectable.base} ${
-                              isSelected
-                                ? FORM_STYLES.button.selectable.selected
-                                : isDisabled
-                                  ? 'cursor-not-allowed border-bg-300 bg-bg-200 text-text-300'
-                                  : FORM_STYLES.button.selectable.unselected
-                            }`}
+                            value={option.value}
+                            label={option.label}
+                            isSelected={isSelected}
+                            isDisabled={isDisabled}
                             onClick={() => handleSkinConcernToggle(option.value)}
-                          >
-                            {option.label}
-                          </Button>
+                          />
                         );
                       })}
                     </div>
@@ -125,19 +117,13 @@ export default function BeautyProfileEditPage() {
                         );
 
                         return (
-                          <Button
+                          <SelectableButton
                             key={option.value}
-                            type="button"
-                            variant={isSelected ? 'default' : 'outline'}
-                            className={`${FORM_STYLES.button.selectable.base} ${
-                              isSelected
-                                ? FORM_STYLES.button.selectable.selected
-                                : FORM_STYLES.button.selectable.unselected
-                            }`}
+                            value={option.value}
+                            label={option.label}
+                            isSelected={isSelected}
                             onClick={() => handleInterestCategoryToggle(option.value)}
-                          >
-                            {option.label}
-                          </Button>
+                          />
                         );
                       })}
                     </div>
