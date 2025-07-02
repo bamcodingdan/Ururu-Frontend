@@ -12,6 +12,9 @@ export {
   SelectLabel,
   SelectTrigger,
   SelectValue,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
 } from './select';
 export {
   NavigationMenu,
