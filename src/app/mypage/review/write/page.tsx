@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { ReviewWriteForm } from '@/components/mypage/review/ReviewWriteForm';
 
