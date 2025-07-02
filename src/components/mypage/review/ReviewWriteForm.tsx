@@ -29,7 +29,6 @@ const initialReviewData: ReviewData = {
 
 export function ReviewWriteForm() {
   const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const objectUrlsRef = useRef<Set<string>>(new Set());
 
   // 컴포넌트 언마운트 시 객체 URL 정리
@@ -73,8 +72,7 @@ export function ReviewWriteForm() {
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    if (imageFiles.length + files.length <= 5) {
-      setImageFiles((prev) => [...prev, ...files]);
+    if (reviewData.images.length + files.length <= 5) {
       setReviewData((prev) => ({ ...prev, images: [...prev.images, ...files] }));
     }
   };
@@ -86,7 +84,6 @@ export function ReviewWriteForm() {
       revokeObjectUrl(url);
     }
 
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
     setReviewData((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   };
 
@@ -233,12 +230,12 @@ export function ReviewWriteForm() {
                   accept="image/*"
                   onChange={handleImageUpload}
                   className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-                  disabled={imageFiles.length >= 5}
+                  disabled={reviewData.images.length >= 5}
                 />
                 <div
                   className={cn(
                     'flex h-24 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed transition-colors md:h-32',
-                    imageFiles.length >= 5
+                    reviewData.images.length >= 5
                       ? 'cursor-not-allowed border-bg-300 bg-bg-200'
                       : 'hover:bg-primary-50 border-bg-300 bg-bg-100 hover:border-primary-300',
                   )}
@@ -246,7 +243,7 @@ export function ReviewWriteForm() {
                   <div className="flex flex-col items-center gap-2 text-center">
                     <Upload className="h-6 w-6 text-text-300 md:h-8 md:w-8" />
                     <span className="text-sm text-text-300">
-                      {imageFiles.length >= 5
+                      {reviewData.images.length >= 5
                         ? '최대 5장까지 업로드 가능합니다'
                         : '이미지를 업로드하세요'}
                     </span>
@@ -255,9 +252,9 @@ export function ReviewWriteForm() {
               </div>
 
               {/* 업로드된 이미지 리스트 */}
-              {imageFiles.length > 0 && (
+              {reviewData.images.length > 0 && (
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                  {imageFiles.map((file, index) => (
+                  {reviewData.images.map((file, index) => (
                     <div key={index} className="group relative">
                       <div className="relative aspect-square overflow-hidden rounded-lg shadow-sm">
                         <Image
