@@ -79,9 +79,7 @@ export const DetailMain: FC<DetailMainProps> = ({ product }) => {
               <button
                 key={thumb}
                 onClick={() => setMainImage(thumb)}
-                className={`min-h-[64px] min-w-[64px] rounded-xl transition-all md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px] ${
-                  mainImage === thumb ? 'ring-primary ring-2' : ''
-                }`}
+                className="min-h-[64px] min-w-[64px] rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px]"
                 aria-label={`썸네일 ${idx + 1}`}
               >
                 <Image
