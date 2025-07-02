@@ -93,12 +93,6 @@ export const useReviewWrite = ({ categoryId }: UseReviewWriteProps = {}) => {
   };
 
   const handleImageRemove = (index: number) => {
-    const fileToRemove = reviewData.images[index];
-    if (fileToRemove instanceof File) {
-      const url = URL.createObjectURL(fileToRemove);
-      revokeObjectUrl(url);
-    }
-
     setReviewData((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   };
 
