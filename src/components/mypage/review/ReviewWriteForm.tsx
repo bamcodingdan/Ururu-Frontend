@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/form';
@@ -30,6 +30,28 @@ const initialReviewData: ReviewData = {
 export function ReviewWriteForm() {
   const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const objectUrlsRef = useRef<Set<string>>(new Set());
+
+  // 컴포넌트 언마운트 시 객체 URL 정리
+  useEffect(() => {
+    return () => {
+      objectUrlsRef.current.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+      objectUrlsRef.current.clear();
+    };
+  }, []);
+
+  const createObjectUrl = (file: File): string => {
+    const url = URL.createObjectURL(file);
+    objectUrlsRef.current.add(url);
+    return url;
+  };
+
+  const revokeObjectUrl = (url: string) => {
+    URL.revokeObjectURL(url);
+    objectUrlsRef.current.delete(url);
+  };
 
   const handleRatingChange = (rating: number) => {
     setReviewData((prev) => ({ ...prev, rating }));
@@ -58,6 +80,12 @@ export function ReviewWriteForm() {
   };
 
   const handleImageRemove = (index: number) => {
+    const fileToRemove = reviewData.images[index];
+    if (fileToRemove instanceof File) {
+      const url = URL.createObjectURL(fileToRemove);
+      revokeObjectUrl(url);
+    }
+
     setImageFiles((prev) => prev.filter((_, i) => i !== index));
     setReviewData((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   };
@@ -233,7 +261,7 @@ export function ReviewWriteForm() {
                     <div key={index} className="group relative">
                       <div className="relative aspect-square overflow-hidden rounded-lg shadow-sm">
                         <Image
-                          src={URL.createObjectURL(file)}
+                          src={createObjectUrl(file)}
                           alt={`업로드된 이미지 ${index + 1}`}
                           fill
                           className="object-cover"
