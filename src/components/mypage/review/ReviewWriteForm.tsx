@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FormField } from '@/components/form';
@@ -8,95 +8,54 @@ import { Star, Upload, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FORM_STYLES } from '@/constants/form-styles';
 import Image from 'next/image';
+import { useReviewWrite } from '@/hooks/useReviewWrite';
 
-interface ReviewData {
-  rating: number;
-  moisturizing: string;
-  soothing: string;
-  irritation: string;
-  images: File[];
-  text: string;
+interface ReviewWriteFormProps {
+  categoryId?: number;
 }
 
-const initialReviewData: ReviewData = {
-  rating: 4,
-  moisturizing: '',
-  soothing: '',
-  irritation: '',
-  images: [],
-  text: '',
-};
+export function ReviewWriteForm({ categoryId }: ReviewWriteFormProps) {
+  const {
+    reviewData,
+    categoryOptions,
+    createObjectUrl,
+    handleRatingChange,
+    handleAttributeChange,
+    handleTextChange,
+    handleImageUpload,
+    handleImageRemove,
+    handleSubmit,
+    isFormValid,
+  } = useReviewWrite({ categoryId });
 
-export function ReviewWriteForm() {
-  const [reviewData, setReviewData] = useState<ReviewData>(initialReviewData);
-  const objectUrlsRef = useRef<Set<string>>(new Set());
-
-  // 컴포넌트 언마운트 시 객체 URL 정리
-  useEffect(() => {
-    return () => {
-      objectUrlsRef.current.forEach((url) => {
-        URL.revokeObjectURL(url);
-      });
-      objectUrlsRef.current.clear();
-    };
-  }, []);
-
-  const createObjectUrl = (file: File): string => {
-    const url = URL.createObjectURL(file);
-    objectUrlsRef.current.add(url);
-    return url;
-  };
-
-  const revokeObjectUrl = (url: string) => {
-    URL.revokeObjectURL(url);
-    objectUrlsRef.current.delete(url);
-  };
-
-  const handleRatingChange = (rating: number) => {
-    setReviewData((prev) => ({ ...prev, rating }));
-  };
-
-  const handleAttributeChange = (
-    attribute: keyof Pick<ReviewData, 'moisturizing' | 'soothing' | 'irritation'>,
-    value: string,
-  ) => {
-    setReviewData((prev) => ({ ...prev, [attribute]: value }));
-  };
-
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= 500) {
-      setReviewData((prev) => ({ ...prev, text: value }));
-    }
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (reviewData.images.length + files.length <= 5) {
-      setReviewData((prev) => ({ ...prev, images: [...prev.images, ...files] }));
-    }
-  };
-
-  const handleImageRemove = (index: number) => {
-    const fileToRemove = reviewData.images[index];
-    if (fileToRemove instanceof File) {
-      const url = URL.createObjectURL(fileToRemove);
-      revokeObjectUrl(url);
-    }
-
-    setReviewData((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('리뷰 데이터:', reviewData);
-    // TODO: API 호출 로직 추가
-  };
+  // 카테고리 옵션이 없는 경우 로딩 상태 표시
+  if (!categoryOptions) {
+    return (
+      <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-none md:px-8">
+        <CardContent className="p-0">
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="mb-4 text-lg font-medium text-text-300">
+                카테고리 정보를 불러오는 중...
+              </div>
+              <div className="text-sm text-text-400">잠시만 기다려주세요.</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-none md:px-8">
       <CardContent className="p-0">
         <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">리뷰 작성</h1>
+
+        {/* 카테고리 정보 */}
+        <div className="mb-4 text-center">
+          <span className="text-sm text-text-300">카테고리: </span>
+          <span className="text-sm font-medium text-text-100">{categoryOptions.categoryName}</span>
+        </div>
 
         {/* 알림 박스 */}
         <div className="mb-8 flex items-start gap-3 rounded-lg bg-bg-100 p-6 shadow-sm">
@@ -141,80 +100,28 @@ export function ReviewWriteForm() {
             </div>
           </FormField>
 
-          {/* 보습력 */}
-          <FormField label="보습력" required>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              {[
-                { value: 'good', label: '촉촉함이 오래가요' },
-                { value: 'normal', label: '무난해요' },
-                { value: 'bad', label: '건조함이 느껴져요' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => handleAttributeChange('moisturizing', option.value)}
-                  className={cn(
-                    FORM_STYLES.button.selectable.base,
-                    reviewData.moisturizing === option.value
-                      ? FORM_STYLES.button.selectable.selected
-                      : FORM_STYLES.button.selectable.unselected,
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </FormField>
-
-          {/* 진정 */}
-          <FormField label="진정" required>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              {[
-                { value: 'good', label: '피부 진정에 좋아요' },
-                { value: 'normal', label: '무난해요' },
-                { value: 'bad', label: '진정 효과가 없어요' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => handleAttributeChange('soothing', option.value)}
-                  className={cn(
-                    FORM_STYLES.button.selectable.base,
-                    reviewData.soothing === option.value
-                      ? FORM_STYLES.button.selectable.selected
-                      : FORM_STYLES.button.selectable.unselected,
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </FormField>
-
-          {/* 자극도 */}
-          <FormField label="자극도" required>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-              {[
-                { value: 'good', label: '자극 없이 순해요' },
-                { value: 'normal', label: '무난해요' },
-                { value: 'bad', label: '자극적이에요' },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  type="button"
-                  onClick={() => handleAttributeChange('irritation', option.value)}
-                  className={cn(
-                    FORM_STYLES.button.selectable.base,
-                    reviewData.irritation === option.value
-                      ? FORM_STYLES.button.selectable.selected
-                      : FORM_STYLES.button.selectable.unselected,
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </FormField>
+          {/* 카테고리별 속성 평가 */}
+          {categoryOptions.attributes.map((attribute) => (
+            <FormField key={attribute.name} label={attribute.name} required>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {attribute.options.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleAttributeChange(attribute.name, option.code)}
+                    className={cn(
+                      FORM_STYLES.button.selectable.base,
+                      reviewData.attributes[attribute.name] === option.code
+                        ? FORM_STYLES.button.selectable.selected
+                        : FORM_STYLES.button.selectable.unselected,
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </FormField>
+          ))}
 
           {/* 리뷰 이미지 첨부 */}
           <FormField
@@ -253,10 +160,10 @@ export function ReviewWriteForm() {
 
               {/* 업로드된 이미지 리스트 */}
               {reviewData.images.length > 0 && (
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                <div className="flex gap-3 overflow-x-auto pb-2">
                   {reviewData.images.map((file, index) => (
-                    <div key={index} className="group relative">
-                      <div className="relative aspect-square overflow-hidden rounded-lg shadow-sm">
+                    <div key={index} className="group relative flex-shrink-0">
+                      <div className="relative h-20 w-20 overflow-hidden rounded-lg shadow-sm md:h-24 md:w-24">
                         <Image
                           src={createObjectUrl(file)}
                           alt={`업로드된 이미지 ${index + 1}`}
@@ -268,11 +175,11 @@ export function ReviewWriteForm() {
                       <button
                         type="button"
                         onClick={() => handleImageRemove(index)}
-                        className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-text-100 text-text-on opacity-0 transition-opacity group-hover:opacity-100"
+                        className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-text-100 text-white opacity-0 transition-opacity group-hover:opacity-100"
                       >
                         <X className="h-4 w-4" />
                       </button>
-                      <p className="m-1 truncate text-xs text-text-300">{file.name}</p>
+                      <p className="mt-1 truncate text-xs text-text-300">{file.name}</p>
                     </div>
                   ))}
                 </div>
@@ -301,7 +208,11 @@ export function ReviewWriteForm() {
           </FormField>
 
           {/* 제출 버튼 */}
-          <Button type="submit" className={FORM_STYLES.button.submit + ' mt-6 text-sm font-medium'}>
+          <Button
+            type="submit"
+            className={FORM_STYLES.button.submit + ' mt-6 text-sm font-medium'}
+            disabled={!isFormValid}
+          >
             리뷰 작성 완료
           </Button>
         </form>
