@@ -5,6 +5,15 @@ export { Calendar, CalendarDayButton } from './calendar';
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
 export { Input } from './input';
 export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from './select';
+export {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
