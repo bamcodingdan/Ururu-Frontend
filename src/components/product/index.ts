@@ -10,3 +10,4 @@ export { Breadcrumb } from './Breadcrumb';
 export { ProductDetailImages } from './ProductDetailImages';
 export { LoadMoreButton } from './LoadMoreButton';
 export { ProductImage } from './ProductImage';
+export { ProductPurchaseInfoSection } from './ProductPurchaseInfoSection';

@@ -12,6 +12,7 @@ import { ProductDetailImages } from './ProductDetailImages';
 import { PRODUCT_DETAIL_TABS } from '@/constants/product-detail';
 import { PRODUCT_STYLES } from '@/constants/product-styles';
 import { PRODUCT_CONSTANTS } from '@/constants/product-constants';
+import { ProductPurchaseInfoSection } from './ProductPurchaseInfoSection';
 
 interface DetailMainProps {
   product: Product;
@@ -135,6 +136,9 @@ export const DetailMain = ({ product }: DetailMainProps) => {
 
       {/* 상품 상세 이미지들 - 탭 메뉴 하단 */}
       {activeTab === 0 && <ProductDetailImages product={product} className="mt-6" />}
+
+      {/* 구매정보 탭: 상품정보 제공고시/교환환불 안내 */}
+      {activeTab === 1 && <ProductPurchaseInfoSection />}
     </div>
   );
 };
