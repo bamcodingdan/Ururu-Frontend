@@ -4,6 +4,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField } from '@/components/form/FormField';
+import { FORM_STYLES } from '@/constants/form-styles';
 
 interface PointUsageProps {
   availablePoint: number;
@@ -19,13 +20,15 @@ export function PointUsage({
   onUseAllPoints,
 }: PointUsageProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* 보유 포인트 안내 */}
-      <p className="text-base text-text-100">
-        <span className="font-semibold text-primary-100">
-          우르르 포인트 {availablePoint.toLocaleString()}P
-        </span>
-      </p>
+      <div className="rounded-lg bg-none p-0">
+        <p className="text-sm text-text-100">
+          <span className="font-medium text-primary-300">
+            우르르 포인트 {availablePoint.toLocaleString()}P
+          </span>
+        </p>
+      </div>
 
       {/* 포인트 입력 */}
       <div className="flex gap-3">
@@ -35,14 +38,13 @@ export function PointUsage({
             placeholder="0P"
             value={pointAmount}
             onChange={(e) => onPointAmountChange(Number(e.target.value) || 0)}
-            className="text-right"
+            className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus + ' text-right'}
           />
         </FormField>
         <div className="flex items-end">
           <Button
-            variant="outline"
             onClick={onUseAllPoints}
-            className="hover:bg-primary-50 border-primary-100 text-primary-100"
+            className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px]'}
           >
             전액 사용
           </Button>
