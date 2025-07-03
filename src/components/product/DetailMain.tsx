@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useImageCarousel } from '@/hooks/useImageCarousel';
 import { ProductTabs } from './ProductTabs';
+import { ProductDetailImages } from './ProductDetailImages';
 import { PRODUCT_DETAIL_TABS } from '@/constants/product-detail';
 
 interface DetailMainProps {
@@ -129,6 +130,9 @@ export const DetailMain = ({ product }: DetailMainProps) => {
         onTabChange={setActiveTab}
         className="mt-6"
       />
+
+      {/* 상품 상세 이미지들 - 탭 메뉴 하단 */}
+      <ProductDetailImages product={product} className="mt-6" />
     </div>
   );
 };

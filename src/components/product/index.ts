@@ -7,3 +7,4 @@ export { OptionSelect } from './OptionSelect';
 export { ActionButtons } from './ActionButtons';
 export { ProductTabs } from './ProductTabs';
 export { Breadcrumb } from './Breadcrumb';
+export { ProductDetailImages } from './ProductDetailImages';
