@@ -1,16 +1,6 @@
 import type { Product } from '@/types/product';
+import type { CartItem } from '@/types/cart';
 import { mockProductData } from './mock-product';
-
-export interface CartItem {
-  id: string;
-  product: Product;
-  selectedOption: {
-    value: string;
-    label: string;
-  };
-  quantity: number;
-  isSelected: boolean;
-}
 
 export const mockCartData: CartItem[] = [
   {

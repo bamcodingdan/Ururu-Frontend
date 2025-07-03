@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { PriceDisplay } from './PriceDisplay';
 import { QuantityControl } from './QuantityControl';
-import type { CartItem as CartItemType } from '@/data/cart';
+import type { CartItem as CartItemType } from '@/types/cart';
 
 interface CartItemProps {
   item: CartItemType;
