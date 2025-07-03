@@ -5,12 +5,12 @@ import type { Product } from '@/types/product';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock } from 'lucide-react';
 
-interface HistoryProductCardProps {
+interface ProductCardProps {
   product: Product;
   className?: string;
 }
 
-export const HistoryProductCard = ({ product, className = '' }: HistoryProductCardProps) => {
+export const ProductCard = ({ product, className = '' }: ProductCardProps) => {
   return (
     <Link href={`/product/${product.id}`} className="block">
       <Card

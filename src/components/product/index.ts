@@ -11,4 +11,4 @@ export { ProductDetailImages } from './ProductDetailImages';
 export { LoadMoreButton } from './LoadMoreButton';
 export { ProductImage } from './ProductImage';
 export { ProductPurchaseInfoSection } from './ProductPurchaseInfoSection';
-export { HistoryProductCard } from './HistoryProductCard';
+export { ProductCard } from './ProductCard';

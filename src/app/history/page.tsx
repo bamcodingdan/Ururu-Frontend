@@ -1,5 +1,5 @@
 import React from 'react';
-import { HistoryProductCard } from '@/components/product';
+import { ProductCard } from '@/components/product';
 import { mockHistoryProducts } from '@/data/history';
 import { CustomLayout } from '@/components/layout/layouts';
 
@@ -24,7 +24,7 @@ export default function HistoryPage() {
         {/* 상품 그리드 */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {mockHistoryProducts.map((product) => (
-            <HistoryProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
 
