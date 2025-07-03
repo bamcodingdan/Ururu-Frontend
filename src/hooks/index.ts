@@ -1,5 +1,4 @@
 export * from './useAddress';
-export * from './useBeautyProfile';
 export * from './useBeautyProfileEdit';
 export * from './useBeautyProfileUtils';
 export * from './useMyPage';
