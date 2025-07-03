@@ -134,7 +134,7 @@ export const DetailMain = ({ product }: DetailMainProps) => {
       />
 
       {/* 상품 상세 이미지들 - 탭 메뉴 하단 */}
-      <ProductDetailImages product={product} className="mt-6" />
+      {activeTab === 0 && <ProductDetailImages product={product} className="mt-6" />}
     </div>
   );
 };
