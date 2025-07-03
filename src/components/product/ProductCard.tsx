@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/types/product';
@@ -11,6 +13,12 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product, className = '' }: ProductCardProps) => {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
     <Link href={`/product/${product.id}`} className="block">
       <Card
@@ -18,13 +26,22 @@ export const ProductCard = ({ product, className = '' }: ProductCardProps) => {
       >
         {/* 상품 이미지 - 정사각형 */}
         <div className="relative aspect-square w-full">
-          <Image
-            src={product.mainImage}
-            alt={product.name}
-            width={280}
-            height={280}
-            className="h-full w-full rounded-lg object-cover"
-          />
+          {!imageError ? (
+            <Image
+              src={product.mainImage}
+              alt={product.name}
+              width={280}
+              height={280}
+              className="h-full w-full rounded-lg object-cover"
+              priority={false}
+              onError={handleImageError}
+              unoptimized={false}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center rounded-lg bg-gray-200">
+              <span className="text-sm text-gray-500">이미지 로드 실패</span>
+            </div>
+          )}
         </div>
 
         <CardContent className="space-y-3 p-0 pt-3">
