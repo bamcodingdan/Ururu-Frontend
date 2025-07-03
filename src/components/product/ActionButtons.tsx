@@ -26,7 +26,7 @@ export const ActionButtons: FC<ActionButtonsProps> = ({
     <div className={`flex w-full items-center justify-between gap-1 ${className}`}>
       <Button
         variant="outline"
-        className={`flex ${buttonHeight} items-center gap-1 rounded-lg border-bg-300 px-6 transition hover:bg-bg-200 focus:ring-primary-300 active:bg-primary-200`}
+        className={`flex ${buttonHeight} items-center gap-1 rounded-lg border-bg-300 px-6 transition hover:bg-bg-200 focus:ring-primary-300 active:bg-bg-200`}
         onClick={onShare}
       >
         <Share className="h-6 w-6" />
@@ -34,7 +34,7 @@ export const ActionButtons: FC<ActionButtonsProps> = ({
       </Button>
       <Button
         variant="outline"
-        className={`flex ${buttonHeight} items-center gap-2.5 rounded-lg border-primary-300 px-6 text-primary-300 transition hover:bg-primary-100 focus:ring-primary-300 active:bg-primary-200 md:px-10`}
+        className={`flex ${buttonHeight} items-center gap-2.5 rounded-lg border-primary-300 px-6 text-primary-300 transition hover:bg-primary-100 focus:ring-primary-300 active:bg-primary-100 md:px-10`}
         onClick={onAddToCart}
       >
         <span className={`${textSize} text-primary-300`}>장바구니</span>

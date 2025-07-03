@@ -6,7 +6,6 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface LoadMoreButtonProps {
   isLoading: boolean;
-  remainingCount: number;
   onLoadMore: () => void;
   onShowLess?: () => void;
   showAll: boolean;

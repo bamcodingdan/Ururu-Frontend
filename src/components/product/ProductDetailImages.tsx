@@ -1,8 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { LoadMoreButton } from './LoadMoreButton';
 import { ProductImage } from './ProductImage';
+import { useProductImages } from '@/hooks';
+import { PRODUCT_STYLES } from '@/constants/product-styles';
+import { PRODUCT_CONSTANTS } from '@/constants/product-constants';
 import type { Product } from '@/types/product';
 
 interface ProductDetailImagesProps {
@@ -14,29 +17,20 @@ interface ProductDetailImagesProps {
 export const ProductDetailImages: React.FC<ProductDetailImagesProps> = ({
   product,
   className = '',
-  maxInitialImages = 1,
+  maxInitialImages = PRODUCT_CONSTANTS.INITIAL_IMAGES.DESKTOP,
 }) => {
-  const [showAllImages, setShowAllImages] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const initialImages = product.detailImages.slice(0, maxInitialImages);
-  const remainingImages = product.detailImages.slice(maxInitialImages);
-  const hasMoreImages = remainingImages.length > 0;
-
-  const handleLoadMore = async () => {
-    setIsLoading(true);
-    // 실제 API 호출을 시뮬레이션하기 위한 지연
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setShowAllImages(true);
-    setIsLoading(false);
-  };
-
-  const handleShowLess = () => {
-    setShowAllImages(false);
-  };
-
-  // 데스크탑에서만 펼치기 기능 사용
-  const displayedImages = showAllImages ? product.detailImages : initialImages;
+  const {
+    displayedImages,
+    remainingImages,
+    hasMoreImages,
+    showAllImages,
+    isLoading,
+    handleLoadMore,
+    handleShowLess,
+  } = useProductImages({
+    images: product.detailImages,
+    maxInitialImages,
+  });
 
   return (
     <div className={`w-full ${className}`}>
@@ -66,13 +60,12 @@ export const ProductDetailImages: React.FC<ProductDetailImagesProps> = ({
             {index === 0 && hasMoreImages && !showAllImages && (
               <>
                 {/* 블러 효과 오버레이 */}
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white via-white/80 to-transparent" />
+                <div className={PRODUCT_STYLES.blur} />
 
                 {/* 펼치기 버튼 */}
                 <div className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
                   <LoadMoreButton
                     isLoading={isLoading}
-                    remainingCount={remainingImages.length}
                     onLoadMore={handleLoadMore}
                     onShowLess={handleShowLess}
                     showAll={showAllImages}
@@ -88,7 +81,6 @@ export const ProductDetailImages: React.FC<ProductDetailImagesProps> = ({
           <div className="flex justify-center py-6">
             <LoadMoreButton
               isLoading={isLoading}
-              remainingCount={remainingImages.length}
               onLoadMore={handleLoadMore}
               onShowLess={handleShowLess}
               showAll={showAllImages}
