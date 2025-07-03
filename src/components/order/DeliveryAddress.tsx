@@ -101,7 +101,11 @@ export function DeliveryAddress({
           )}
 
           {/* 배송지 입력 폼 */}
-          <AddressFormFields addressData={newAddressData} onInputChange={onNewAddressChange} />
+          <AddressFormFields
+            addressData={newAddressData}
+            onInputChange={onNewAddressChange}
+            showDefaultCheckbox={false}
+          />
         </div>
       </CardContent>
     </Card>

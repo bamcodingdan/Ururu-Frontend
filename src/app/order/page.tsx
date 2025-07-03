@@ -117,26 +117,20 @@ export default function OrderPage() {
           </Card>
 
           {/* 최종 결제 금액 */}
-          <Card className="rounded-2xl border-0 bg-bg-100 shadow-none">
-            <CardContent className="p-4 md:p-6">
-              <PaymentSummary
-                totalProductPrice={totalProductPrice}
-                pointAmount={pointAmount}
-                shippingFee={shippingFee}
-                finalPrice={finalPrice}
-              />
-            </CardContent>
-          </Card>
+          <PaymentSummary
+            totalProductPrice={totalProductPrice}
+            pointAmount={pointAmount}
+            shippingFee={shippingFee}
+            finalPrice={finalPrice}
+          />
 
           {/* 결제하기 버튼 */}
-          <div className="sticky bottom-0 z-10 bg-white p-4 shadow-lg md:p-6">
-            <Button
-              onClick={handlePayment}
-              className="w-full bg-primary-100 py-4 text-lg font-semibold text-white hover:bg-primary-200"
-            >
-              결제하기
-            </Button>
-          </div>
+          <Button
+            onClick={handlePayment}
+            className="h-12 w-full rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90 md:h-14 md:text-base"
+          >
+            결제하기
+          </Button>
         </div>
       </div>
     </NoFooterLayout>
