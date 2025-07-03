@@ -28,7 +28,6 @@ export const mockCartData: CartItem[] = [
     product: {
       ...mockProductData,
       id: '2',
-      name: '[7월올영픽/산리오캐릭터즈] 롬앤 더 쥬시 래스팅 틴트 (+쉐이킹키링증정) 단품/기획 - 2번째 상품',
     },
     selectedOption: {
       value: 'option2',
@@ -42,7 +41,6 @@ export const mockCartData: CartItem[] = [
     product: {
       ...mockProductData,
       id: '3',
-      name: '[7월올영픽/산리오캐릭터즈] 롬앤 더 쥬시 래스팅 틴트 (+쉐이킹키링증정) 단품/기획 - 3번째 상품',
     },
     selectedOption: {
       value: 'option3',

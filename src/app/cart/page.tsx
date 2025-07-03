@@ -28,7 +28,7 @@ export default function CartPage() {
     return (
       <NoFooterLayout>
         <div className="container mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-12">
-          <h1 className="mb-8 text-center text-2xl font-bold text-text-100 md:text-3xl">
+          <h1 className="mb-8 text-center text-2xl font-semibold text-text-100 md:text-3xl">
             장바구니
           </h1>
           <div className="flex flex-col items-center justify-center py-16">
@@ -43,7 +43,7 @@ export default function CartPage() {
     <NoFooterLayout>
       <div className="container mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-12">
         {/* 페이지 타이틀 */}
-        <h1 className="mb-8 text-center text-2xl font-bold text-text-100 md:text-3xl">
+        <h1 className="mb-8 text-center text-2xl font-semibold text-text-100 md:text-3xl">
           장바구니
         </h1>
 

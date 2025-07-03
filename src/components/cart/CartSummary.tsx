@@ -30,7 +30,7 @@ export function CartSummary({
           {/* 타이틀과 총 결제금액 */}
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-text-100 md:text-xl">최종 결제 금액</h2>
-            <span className="text-xl font-bold text-text-100 md:text-2xl">
+            <span className="whitespace-nowrap text-xl font-bold text-text-100 md:text-2xl">
               {totalPrice.toLocaleString()}원
             </span>
           </div>
@@ -39,13 +39,13 @@ export function CartSummary({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-text-200 md:text-base">총 상품 금액</span>
-              <span className="text-sm text-text-100 md:text-base">
+              <span className="whitespace-nowrap text-sm text-text-100 md:text-base">
                 {totalProductPrice.toLocaleString()}원
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-text-200 md:text-base">배송비</span>
-              <span className="text-sm text-text-100 md:text-base">
+              <span className="whitespace-nowrap text-sm text-text-100 md:text-base">
                 {shippingFee === 0 ? '무료' : `${shippingFee.toLocaleString()}원`}
               </span>
             </div>

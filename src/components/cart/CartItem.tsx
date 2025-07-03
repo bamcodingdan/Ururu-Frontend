@@ -58,7 +58,7 @@ export function CartItem({ item, onToggleSelect, onUpdateQuantity, onRemove }: C
                 </h3>
 
                 {/* 옵션 정보 */}
-                <p className="mb-2 text-sm text-text-200 md:text-base">
+                <p className="mb-2 line-clamp-2 text-sm text-text-200 md:text-base">
                   옵션: {item.selectedOption.label}
                 </p>
 
@@ -67,11 +67,11 @@ export function CartItem({ item, onToggleSelect, onUpdateQuantity, onRemove }: C
 
                 {/* 가격 */}
                 <div className="flex items-center gap-2">
-                  <span className="text-lg font-bold text-text-100 md:text-xl">
+                  <span className="whitespace-nowrap text-lg font-bold text-text-100 md:text-xl">
                     {item.product.price.toLocaleString()}원
                   </span>
                   {item.product.originalPrice !== item.product.price && (
-                    <span className="text-sm text-text-300 line-through md:text-base">
+                    <span className="whitespace-nowrap text-sm text-text-300 line-through md:text-base">
                       {item.product.originalPrice.toLocaleString()}원
                     </span>
                   )}
@@ -90,8 +90,9 @@ export function CartItem({ item, onToggleSelect, onUpdateQuantity, onRemove }: C
               </Button>
             </div>
 
-            {/* 수량 조절 */}
-            <div className="mt-4 flex items-center justify-between">
+            {/* 수량 조절 및 총 가격 */}
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              {/* 수량 조절 */}
               <div className="flex items-center">
                 <Button
                   variant="outline"
@@ -116,9 +117,12 @@ export function CartItem({ item, onToggleSelect, onUpdateQuantity, onRemove }: C
               </div>
 
               {/* 총 가격 */}
-              <span className="text-lg font-bold text-text-100 md:text-xl">
-                {(item.product.price * item.quantity).toLocaleString()}원
-              </span>
+              <div className="flex items-center justify-between sm:justify-end">
+                <span className="text-xs text-text-200 sm:hidden">총 가격:</span>
+                <span className="whitespace-nowrap text-lg font-bold text-text-100 md:text-xl">
+                  {(item.product.price * item.quantity).toLocaleString()}원
+                </span>
+              </div>
             </div>
           </div>
         </div>
