@@ -8,3 +8,5 @@ export { ActionButtons } from './ActionButtons';
 export { ProductTabs } from './ProductTabs';
 export { Breadcrumb } from './Breadcrumb';
 export { ProductDetailImages } from './ProductDetailImages';
+export { LoadMoreButton } from './LoadMoreButton';
+export { ProductImage } from './ProductImage';

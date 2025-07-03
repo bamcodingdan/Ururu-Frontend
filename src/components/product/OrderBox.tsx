@@ -52,7 +52,7 @@ export const OrderBox = ({ product }: OrderBoxProps) => {
   return (
     <>
       {/* 데스크탑: 우측 고정 주문박스 */}
-      <Card className="sticky top-10 hidden w-[489px] flex-col items-start gap-1 rounded-2xl border-0 bg-bg-100 p-8 shadow-none xl:flex">
+      <Card className="sticky top-4 hidden w-[489px] flex-col items-start gap-1 rounded-2xl border-0 bg-bg-100 px-8 shadow-none xl:flex">
         {/* 브레드크럼 네비게이션 */}
         <Breadcrumb items={generateBreadcrumb(product.category)} className="mb-3" />
 
