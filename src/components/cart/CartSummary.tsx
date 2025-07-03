@@ -55,7 +55,7 @@ export function CartSummary({
 
       {/* 구매 버튼 */}
       <Button
-        className="h-14 w-full rounded-lg bg-primary-300 text-lg font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90 md:h-16 md:text-xl"
+        className="h-12 w-full rounded-lg bg-primary-300 text-base font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90 md:h-14"
         onClick={onPurchase}
         disabled={selectedCount === 0}
       >
