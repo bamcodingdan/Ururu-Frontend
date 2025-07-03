@@ -9,7 +9,7 @@ interface OrderItemProps {
 
 export function OrderItem({ item }: OrderItemProps) {
   return (
-    <div className="border-border-100 flex items-start gap-4 rounded-lg border bg-white p-4">
+    <div className="flex items-start gap-4 rounded-lg bg-bg-100 p-4">
       {/* 상품 이미지 */}
       <div className="flex-shrink-0">
         <img
