@@ -21,7 +21,7 @@ interface AddressFormFieldsProps {
 
 export function AddressFormFields({ addressData, onInputChange }: AddressFormFieldsProps) {
   return (
-    <>
+    <div className="space-y-6">
       {/* 배송지명 */}
       <FormField
         label="배송지명"
@@ -116,6 +116,6 @@ export function AddressFormFields({ addressData, onInputChange }: AddressFormFie
           required
         />
       </FormField>
-    </>
+    </div>
   );
 }
