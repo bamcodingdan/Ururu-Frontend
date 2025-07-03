@@ -2,9 +2,11 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Minus, Plus, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { PriceDisplay } from './PriceDisplay';
+import { QuantityControl } from './QuantityControl';
 import type { CartItem as CartItemType } from '@/data/cart';
 
 interface CartItemProps {
@@ -66,16 +68,11 @@ export function CartItem({ item, onToggleSelect, onUpdateQuantity, onRemove }: C
                 <p className="mb-3 text-sm text-text-200 md:text-base">수량: {item.quantity}개</p>
 
                 {/* 가격 */}
-                <div className="flex items-center gap-2">
-                  <span className="whitespace-nowrap text-lg font-bold text-text-100 md:text-xl">
-                    {item.product.price.toLocaleString()}원
-                  </span>
-                  {item.product.originalPrice !== item.product.price && (
-                    <span className="whitespace-nowrap text-sm text-text-300 line-through md:text-base">
-                      {item.product.originalPrice.toLocaleString()}원
-                    </span>
-                  )}
-                </div>
+                <PriceDisplay
+                  price={item.product.price}
+                  originalPrice={item.product.originalPrice}
+                  quantity={item.quantity}
+                />
               </div>
 
               {/* 삭제 버튼 */}
@@ -93,28 +90,7 @@ export function CartItem({ item, onToggleSelect, onUpdateQuantity, onRemove }: C
             {/* 수량 조절 및 총 가격 */}
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               {/* 수량 조절 */}
-              <div className="flex items-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-md border-bg-300 p-0 hover:bg-bg-200 active:bg-bg-200 md:h-10 md:w-10"
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={item.quantity <= 1}
-                >
-                  <Minus className="h-3 w-3 md:h-4 md:w-4" />
-                </Button>
-                <div className="flex h-8 w-16 items-center justify-center border-b border-t border-bg-300 bg-bg-100 text-sm font-medium text-text-100 md:h-10 md:w-20 md:text-base">
-                  {item.quantity}
-                </div>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-md border-bg-300 p-0 hover:bg-bg-200 active:bg-bg-200 md:h-10 md:w-10"
-                  onClick={() => handleQuantityChange(1)}
-                >
-                  <Plus className="h-3 w-3 md:h-4 md:w-4" />
-                </Button>
-              </div>
+              <QuantityControl quantity={item.quantity} onQuantityChange={handleQuantityChange} />
 
               {/* 총 가격 */}
               <div className="flex items-center justify-between sm:justify-end">

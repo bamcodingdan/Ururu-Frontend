@@ -30,11 +30,6 @@ export const useCart = (initialCartItems: CartItem[]) => {
     setCartItems((prev) => prev.filter((item) => item.id !== itemId));
   }, []);
 
-  // 선택된 상품들 삭제
-  const removeSelectedItems = useCallback(() => {
-    setCartItems((prev) => prev.filter((item) => !item.isSelected));
-  }, []);
-
   // 전체 선택 여부
   const isAllSelected = cartItems.length > 0 && cartItems.every((item) => item.isSelected);
 
@@ -47,7 +42,6 @@ export const useCart = (initialCartItems: CartItem[]) => {
     toggleSelectItem,
     updateQuantity,
     removeItem,
-    removeSelectedItems,
     isAllSelected,
     isPartiallySelected,
   };
