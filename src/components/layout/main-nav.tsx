@@ -18,7 +18,6 @@ export function MainNav() {
   const { pathname } = useSafePathname();
 
   const navItems = [
-    { href: '/', label: '홈' },
     { href: '/ranking', label: '랭킹' },
     { href: '/short', label: '숏구' },
     { href: '/event', label: '이벤트' },
