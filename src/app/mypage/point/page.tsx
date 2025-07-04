@@ -16,7 +16,7 @@ function NoticeCard() {
 function PointStatus() {
   return (
     <section className="flex flex-col items-center justify-center py-6">
-      <div className="mb-2 flex items-center">
+      <div className="mb-2 flex items-center gap-3">
         <PointIcon size="md" />
         <span className="text-lg font-bold text-text-100">보유 포인트</span>
       </div>
