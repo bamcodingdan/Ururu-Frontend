@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { FullLayout } from '@/components/layout';
-import { CategorySelector, RankingProductGrid } from '@/components/ranking';
+import { CategorySelector } from '@/components/ranking';
+import { ProductGrid } from '@/components/product';
 import { useRanking } from '@/hooks/useRanking';
 
 export default function RankingPage() {
@@ -13,9 +14,7 @@ export default function RankingPage() {
       <div className="container mx-auto max-w-[1248px] px-6 py-8 md:px-9 md:py-10 xl:px-12">
         {/* 페이지 헤더 */}
         <div className="mb-8">
-          <h1 className="mb-6 text-2xl font-bold text-text-100 md:text-3xl">
-            랭킹 TOP 100
-          </h1>
+          <h1 className="mb-6 text-2xl font-bold text-text-100 md:text-3xl">랭킹 TOP 100</h1>
           <p className="text-sm text-text-200 md:text-base">
             인기 상품들을 카테고리별로 확인해보세요!
           </p>
@@ -32,7 +31,7 @@ export default function RankingPage() {
 
         {/* 랭킹 상품 그리드 */}
         <div className="mb-8">
-          <RankingProductGrid products={rankingProducts} />
+          <ProductGrid products={rankingProducts.map((item) => item.product)} showRanking={true} />
         </div>
 
         {/* 빈 상태 처리 */}
