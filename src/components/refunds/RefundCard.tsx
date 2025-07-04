@@ -97,7 +97,7 @@ export function RefundCard({ refund }: RefundCardProps) {
 
       {/* 거부 사유 (거부된 경우만) */}
       {refund.status === 'REJECTED' && refund.rejectReason && (
-        <div className="mt-4 rounded-lg bg-bg-200 p-3">
+        <div className="mt-4 rounded-lg bg-bg-200 p-4">
           <div className="mb-1 text-sm font-medium text-text-100">거부 사유</div>
           <div className="text-sm text-text-200">{refund.rejectReason}</div>
         </div>
