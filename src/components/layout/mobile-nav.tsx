@@ -5,7 +5,7 @@ import {
   NavigationMenuItem,
   NavigationMenuList,
 } from '@/components/ui/navigation-menu';
-import { MAIN_NAV_ITEMS } from '@/constants/navigation';
+import { MOBILE_NAV_ITEMS } from '@/constants/navigation';
 import { NavigationLink } from './navigation-link';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 
@@ -17,7 +17,7 @@ export function MobileNav() {
       <div className="px-6">
         <NavigationMenu className="h-12">
           <NavigationMenuList className="space-x-2">
-            {MAIN_NAV_ITEMS.map((item) => (
+            {MOBILE_NAV_ITEMS.map((item) => (
               <NavigationMenuItem key={item.href}>
                 <NavigationLink item={item} isActive={isActive(item.href)} />
               </NavigationMenuItem>

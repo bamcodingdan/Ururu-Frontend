@@ -9,8 +9,16 @@ export interface BottomNavItem extends NavItem {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-// 메인 네비게이션 아이템 (데스크톱/모바일 공통)
-export const MAIN_NAV_ITEMS: NavItem[] = [
+// 데스크톱 메인 네비게이션 아이템
+export const DESKTOP_NAV_ITEMS: NavItem[] = [
+  { href: '/', label: '홈' },
+  { href: '/ranking', label: '랭킹' },
+  { href: '/short', label: '숏구' },
+  { href: '/event', label: '이벤트' },
+];
+
+// 모바일/태블릿 메인 네비게이션 아이템
+export const MOBILE_NAV_ITEMS: NavItem[] = [
   { href: '/ranking', label: '랭킹' },
   { href: '/short', label: '숏구' },
   { href: '/event', label: '이벤트' },

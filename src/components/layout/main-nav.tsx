@@ -8,7 +8,7 @@ import {
   NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import { categoryItems } from '@/data/categories';
-import { MAIN_NAV_ITEMS } from '@/constants/navigation';
+import { DESKTOP_NAV_ITEMS } from '@/constants/navigation';
 import { NavigationLink } from './navigation-link';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 
@@ -51,7 +51,7 @@ export function MainNav() {
               </NavigationMenuContent>
             </NavigationMenuItem>
 
-            {MAIN_NAV_ITEMS.map((item) => (
+            {DESKTOP_NAV_ITEMS.map((item) => (
               <NavigationMenuItem key={item.href}>
                 <NavigationLink item={item} isActive={isActive(item.href)} />
               </NavigationMenuItem>
