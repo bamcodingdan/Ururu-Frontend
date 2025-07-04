@@ -7,6 +7,7 @@ import {
   MessageSquareIcon,
   FileIcon,
   TruckIcon,
+  PackageIcon,
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { myPageData } from '@/data/mypage';
@@ -15,6 +16,7 @@ import Link from 'next/link';
 // 아이콘 매핑 함수
 const getIcon = (iconName: string) => {
   const iconMap: { [key: string]: React.ReactNode } = {
+    PackageIcon: <PackageIcon className="h-3 w-3 text-text-200" />,
     RefreshCwIcon: <RefreshCwIcon className="h-3 w-3 text-text-200" />,
     PointIcon: (
       <div className="relative flex h-3 w-3 items-center justify-center rounded-md border border-solid border-text-200">
