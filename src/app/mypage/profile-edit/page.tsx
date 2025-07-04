@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { ProfileFormFields, ProfileImageUpload } from '@/components/mypage/profile-edit';
 import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { PageHeader } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useProfileEdit } from '@/hooks/useProfileEdit';
 
@@ -31,9 +31,9 @@ export default function ProfileEditPage() {
 
   return (
     <MyPageLayout>
-      <Card className="w-full rounded-2xl border-0 bg-bg-100 py-6 shadow-none lg:px-8">
-        <CardContent className="p-0">
-          <h1 className="mb-6 text-center text-2xl font-semibold text-text-100">프로필 수정</h1>
+      <Card className={FORM_STYLES.card.base}>
+        <CardContent className={FORM_STYLES.card.content}>
+          <PageHeader title="프로필 수정" />
 
           {/* 프로필 이미지 */}
           <ProfileImageUpload profileImg={profileImg} />

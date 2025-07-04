@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { OrderStatusTabs, OrderCard } from '@/components/orders';
+import { EmptyState, PageHeader } from '@/components/common';
 import { orderStatusSummary, mockOrders } from '@/data/orders';
 import { OrderStatusFilter } from '@/types/order';
 
@@ -22,9 +23,7 @@ export default function OrdersPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
       {/* 페이지 헤더 */}
-      <div className="mb-0">
-        <h1 className="text-center text-2xl font-semibold text-text-100">주문/배송 조회</h1>
-      </div>
+      <PageHeader title="주문/배송 조회" />
 
       {/* 통계 정보 */}
       <div className="flex flex-col items-center gap-6 py-4">
@@ -56,10 +55,7 @@ export default function OrdersPage() {
       {/* 주문 내역 리스트 */}
       <div className="space-y-12">
         {filteredOrders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="text-lg font-medium text-text-200">주문 내역이 없습니다.</div>
-            <div className="text-sm text-text-200">첫 주문을 시작해보세요!</div>
-          </div>
+          <EmptyState title="주문 내역이 없습니다." description="첫 주문을 시작해보세요!" />
         ) : (
           filteredOrders.map((order) => <OrderCard key={order.id} order={order} />)
         )}

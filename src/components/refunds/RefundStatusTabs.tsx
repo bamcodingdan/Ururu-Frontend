@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import { RefundStatusSummary, RefundStatusFilter } from '@/types/refund';
+import { useDropdown } from '@/hooks';
+import { FORM_STYLES } from '@/constants/form-styles';
 
 interface RefundStatusTabsProps {
   summary: RefundStatusSummary;
@@ -11,14 +13,18 @@ interface RefundStatusTabsProps {
 }
 
 export function RefundStatusTabs({ summary, activeFilter, onFilterChange }: RefundStatusTabsProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const { isOpen: isDropdownOpen, dropdownRef, toggle, close } = useDropdown();
 
   const tabs = [
     {
       value: 'all' as const,
       label: '전체',
-      count: summary.initiated + summary.approved + summary.rejected + summary.completed + summary.failed,
+      count:
+        summary.initiated +
+        summary.approved +
+        summary.rejected +
+        summary.completed +
+        summary.failed,
     },
     { value: 'INITIATED' as const, label: '신청됨', count: summary.initiated },
     { value: 'APPROVED' as const, label: '승인됨', count: summary.approved },
@@ -29,26 +35,12 @@ export function RefundStatusTabs({ summary, activeFilter, onFilterChange }: Refu
 
   const selectedTab = tabs.find((tab) => tab.value === activeFilter);
 
-  // 드롭다운 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         type="button"
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center gap-2 rounded-lg border border-bg-300 bg-bg-100 px-3 py-2 text-sm font-medium text-text-100 transition-colors hover:bg-bg-200"
+        onClick={toggle}
+        className={`flex items-center gap-2 rounded-lg border border-bg-300 bg-bg-100 px-3 py-2 text-sm font-medium text-text-100 transition-colors ${FORM_STYLES.hover.bg200}`}
       >
         <span>{selectedTab?.label || '전체'}</span>
         <span className="rounded-full bg-bg-300 px-1.5 py-0.5 text-xs text-text-200">
@@ -65,9 +57,9 @@ export function RefundStatusTabs({ summary, activeFilter, onFilterChange }: Refu
               type="button"
               onClick={() => {
                 onFilterChange(tab.value);
-                setIsDropdownOpen(false);
+                close();
               }}
-              className="block w-full px-4 py-2 text-left text-sm text-text-100 first:rounded-t-lg last:rounded-b-lg hover:bg-bg-200"
+              className={`block w-full px-4 py-2 text-left text-sm text-text-100 first:rounded-t-lg last:rounded-b-lg ${FORM_STYLES.hover.bg200}`}
             >
               <div className="flex items-center justify-between">
                 <span>{tab.label}</span>

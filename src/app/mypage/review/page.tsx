@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/common';
 import { Plus, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { getAllCategoryIds, getReviewOptionsByCategoryId } from '@/data/review-options';
@@ -35,7 +36,7 @@ export default function ReviewPage() {
       <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
         {/* 페이지 헤더 */}
         <div className="mb-6">
-          <h1 className="text-center text-2xl font-semibold text-text-100">나의 리뷰</h1>
+          <PageHeader title="나의 리뷰" />
         </div>
 
         <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-none md:px-8">
