@@ -27,10 +27,7 @@ export default function AddressListPage() {
         {/* 배송지 추가 버튼 */}
         <div className="mb-4">
           <Link href="/mypage/address/register">
-            <Button
-              variant="outline"
-                          className={cn(FORM_STYLES.button.addressAdd)}
-            >
+            <Button variant="outline" className={cn(FORM_STYLES.button.addressAdd)}>
               배송지 추가하기
             </Button>
           </Link>
