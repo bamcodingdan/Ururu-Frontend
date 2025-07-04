@@ -33,7 +33,7 @@ function AddressRegisterContent() {
     <MyPageLayout>
       <Card className="w-full rounded-2xl border-0 bg-bg-100 py-6 shadow-none lg:px-8">
         <CardContent className="p-0">
-          <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">
+          <h1 className="mb-6 text-center text-2xl font-semibold text-text-100">
             {isEditMode ? '배송지 수정' : '배송지 등록'}
           </h1>
 

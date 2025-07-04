@@ -32,10 +32,16 @@ export default function ReviewPage() {
 
   return (
     <MyPageLayout>
-      <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-none md:px-8">
-        <CardContent className="p-0">
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-semibold md:text-2xl">나의 리뷰</h1>
+      <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
+        {/* 페이지 헤더 */}
+        <div className="mb-6">
+          <h1 className="text-center text-2xl font-semibold text-text-100">나의 리뷰</h1>
+        </div>
+
+        <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-none md:px-8">
+          <CardContent className="p-0">
+            <div className="mb-6 flex items-center justify-between">
+              <div></div>
             <div className="flex items-center gap-2">
               {/* 카테고리 선택 드롭다운 */}
               <div className="relative" ref={dropdownRef}>
@@ -92,6 +98,7 @@ export default function ReviewPage() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </MyPageLayout>
   );
 }

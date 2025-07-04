@@ -28,7 +28,7 @@ export default function BeautyProfileEditPage() {
     <MyPageLayout>
       <Card className="w-full rounded-2xl border-0 bg-bg-100 py-6 shadow-none lg:px-8">
         <CardContent className="p-0">
-          <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">뷰티프로필 수정</h1>
+          <h1 className="mb-6 text-center text-2xl font-semibold text-text-100">뷰티프로필 수정</h1>
 
           {/* 알림 박스 */}
           <NoticeBanner

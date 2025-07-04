@@ -22,8 +22,12 @@ export default function OrdersPage() {
   return (
     <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
       {/* 페이지 헤더 */}
+      <div className="mb-0">
+        <h1 className="text-center text-2xl font-semibold text-text-100">주문/배송 조회</h1>
+      </div>
+
+      {/* 통계 정보 */}
       <div className="flex flex-col items-center gap-6 py-4">
-        <h1 className="mb-2 text-xl font-semibold text-text-100 md:text-2xl">주문/배송 조회</h1>
         <div className="flex justify-center gap-16">
           <div className="flex flex-col items-center">
             <span className="text-3xl font-bold text-text-100 md:text-4xl">

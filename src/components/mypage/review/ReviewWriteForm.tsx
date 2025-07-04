@@ -49,7 +49,7 @@ export function ReviewWriteForm({ categoryId }: ReviewWriteFormProps) {
   return (
     <Card className="w-full rounded-2xl border-0 bg-bg-100 py-6 shadow-none lg:px-8">
       <CardContent className="p-0">
-        <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">리뷰 작성</h1>
+        <h1 className="mb-6 text-center text-2xl font-semibold text-text-100">리뷰 작성</h1>
 
         {/* 알림 박스 */}
         <div className="mb-8 flex items-start gap-3 rounded-lg bg-bg-100 p-6 shadow-sm">

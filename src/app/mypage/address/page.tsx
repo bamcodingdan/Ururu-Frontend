@@ -10,11 +10,14 @@ import { cn } from '@/lib/utils';
 export default function AddressListPage() {
   return (
     <MyPageLayout>
-      {/* 타이틀 */}
-      <h1 className="mb-6 text-center text-2xl font-semibold md:text-2xl">배송지 관리</h1>
+      <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
+        {/* 페이지 헤더 */}
+        <div className="mb-6">
+          <h1 className="text-center text-2xl font-semibold text-text-100">배송지 관리</h1>
+        </div>
 
-      {/* 안내 배너 */}
-      <NoticeBanner message="배송지는 최대 5개까지 등록할 수 있어요" />
+        {/* 안내 배너 */}
+        <NoticeBanner message="배송지는 최대 5개까지 등록할 수 있어요" />
 
       {/* 배송지 리스트 */}
       <div className="flex flex-col gap-4">
@@ -35,6 +38,7 @@ export default function AddressListPage() {
             배송지 추가하기
           </Button>
         </Link>
+      </div>
       </div>
     </MyPageLayout>
   );
