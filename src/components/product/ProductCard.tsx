@@ -14,6 +14,12 @@ interface ProductCardProps {
   className?: string;
 }
 
+const RANK_BADGE_STYLES = {
+  1: { variant: 'default' as const, color: 'bg-amber-400 text-white border-amber-400' },
+  2: { variant: 'secondary' as const, color: 'bg-slate-300 text-white border-slate-300' },
+  3: { variant: 'outline' as const, color: 'bg-amber-600 text-white border-amber-600' },
+} as const;
+
 export const ProductCard = ({ product, rank, className = '' }: ProductCardProps) => {
   const [imageError, setImageError] = useState(false);
 
@@ -21,18 +27,13 @@ export const ProductCard = ({ product, rank, className = '' }: ProductCardProps)
     setImageError(true);
   };
 
-  const getRankBadgeVariant = (rank: number) => {
-    if (rank === 1) return 'default';
-    if (rank === 2) return 'secondary';
-    if (rank === 3) return 'outline';
-    return 'outline';
-  };
-
-  const getRankBadgeColor = (rank: number) => {
-    if (rank === 1) return 'bg-amber-400 text-white border-amber-400';
-    if (rank === 2) return 'bg-slate-300 text-white border-slate-300';
-    if (rank === 3) return 'bg-amber-600 text-white border-amber-600';
-    return 'bg-bg-200 text-text-200 border-border-200';
+  const getRankBadgeStyle = (rank: number) => {
+    return (
+      RANK_BADGE_STYLES[rank as keyof typeof RANK_BADGE_STYLES] || {
+        variant: 'outline' as const,
+        color: 'bg-bg-200 text-text-200 border-border-200',
+      }
+    );
   };
 
   return (
@@ -44,8 +45,8 @@ export const ProductCard = ({ product, rank, className = '' }: ProductCardProps)
         {rank && (
           <div className="absolute left-2 top-2 z-[5]">
             <Badge
-              className={`${getRankBadgeColor(rank)} text-xs font-bold`}
-              variant={getRankBadgeVariant(rank)}
+              className={`${getRankBadgeStyle(rank).color} text-xs font-bold`}
+              variant={getRankBadgeStyle(rank).variant}
             >
               {rank}
             </Badge>
