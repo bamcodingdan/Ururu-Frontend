@@ -20,7 +20,7 @@ export default function OrdersPage() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+    <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
       {/* 페이지 헤더 */}
       <div className="flex flex-col items-center gap-6 py-4">
         <h1 className="mb-2 text-xl font-semibold text-text-100 md:text-2xl">주문/배송 조회</h1>

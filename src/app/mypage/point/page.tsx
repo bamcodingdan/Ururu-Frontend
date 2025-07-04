@@ -43,7 +43,7 @@ function PointHistoryList() {
 export default function PointPage() {
   return (
     <MyPageLayout>
-      <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+      <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
         <NoticeCard />
         <PointStatus />
         <EarnMethods />
