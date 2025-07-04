@@ -40,7 +40,7 @@ export default function BeautyProfileEditPage() {
               className="h-6 w-6 flex-shrink-0"
             />
             <div className="flex-1">
-              <p className="text-sm font-medium text-text-300">
+              <p className="text-sm font-medium text-text-200">
                 뷰티 프로필을 설정하면 회원님만의 맞춤 서비스가 제공돼요!
               </p>
             </div>

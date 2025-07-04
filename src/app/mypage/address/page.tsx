@@ -23,7 +23,7 @@ export default function AddressListPage() {
           className="h-6 w-6 flex-shrink-0"
         />
         <div className="flex-1">
-          <p className="text-sm font-medium text-text-300">
+          <p className="text-sm font-medium text-text-200">
             배송지는 최대 5개까지 등록할 수 있어요
           </p>
         </div>
