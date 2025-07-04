@@ -63,8 +63,7 @@ function EarnMethods() {
             <AccordionContent className="text-text-200">
               <div className="px-4 py-2">
                 <p className="text-sm">
-                  {method.label === '공구 참여' &&
-                    '공동구매에 참여하면 10P를 적립받을 수 있어요!'}
+                  {method.label === '공구 참여' && '공동구매에 참여하면 10P를 적립받을 수 있어요!'}
                   {method.label === '친구 초대' &&
                     '친구를 초대하고 첫 구매를 완료하면 100P를 적립받을 수 있어요!'}
                   {method.label === '리뷰 작성' && '상품 리뷰를 작성하면 50P를 적립받을 수 있어요!'}
@@ -87,12 +86,12 @@ function PointHistoryList() {
       <div className="space-y-6">
         {MOCK_POINT_HISTORY.map((group) => (
           <div key={group.date}>
-            <div className="mb-3 mt-2 text-base font-semibold text-text-100">{group.date}</div>
-            <div className="space-y-3">
+            <div className="mb-3 mt-2 text-sm font-semibold text-text-100">{group.date}</div>
+            <div className="space-y-4">
               {group.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between rounded-xl bg-bg-200 px-5 py-4 shadow-sm"
+                  className="flex items-center justify-between rounded-xl bg-bg-100 shadow-sm px-5 py-4 transition-all duration-200 hover:scale-[1.02]"
                 >
                   <div>
                     <div className="mb-1 font-medium text-text-100">{item.title}</div>
@@ -104,7 +103,7 @@ function PointHistoryList() {
                   </div>
                   <div
                     className={cn(
-                      'ml-4 text-xl font-semibold',
+                      'ml-4 text-base font-semibold',
                       item.amount > 0 ? 'text-primary-300' : 'text-text-300',
                     )}
                   >
