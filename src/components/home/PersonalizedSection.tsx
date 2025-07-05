@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/product';
@@ -13,6 +13,20 @@ interface PersonalizedSectionProps {
 
 export function PersonalizedSection({ products, className = '' }: PersonalizedSectionProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // 페이지네이션 상태
+  const PAGE_SIZE = 8;
+  const totalPages = Math.ceil(products.length / PAGE_SIZE);
+  const [currentPage, setCurrentPage] = useState(0);
+  const pagedProducts = products.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE);
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => (prev + 1) % totalPages);
+    // 모바일에서 스크롤 맨 앞으로 이동
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  };
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -31,7 +45,7 @@ export function PersonalizedSection({ products, className = '' }: PersonalizedSe
   return (
     <section className={`w-full ${className}`}>
       {/* 섹션 헤더 */}
-      <div className="mb-6">
+      <div className="mb-6 text-center">
         <h2 className="text-xl font-bold text-text-100 md:text-2xl">취향 맞춤</h2>
         <p className="mt-1 text-sm text-text-200 md:text-base">
           회원님만을 위한 맞춤 상품을 추천해드려요
@@ -45,36 +59,18 @@ export function PersonalizedSection({ products, className = '' }: PersonalizedSe
           className="scrollbar-hide flex gap-4 overflow-x-auto"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {products.map((product) => (
-            <div key={product.id} className="w-48 flex-shrink-0">
+          {pagedProducts.map((product) => (
+            <div key={product.id} className="w-60 flex-shrink-0">
               <ProductCard product={product} />
             </div>
           ))}
         </div>
-
-        {/* 스크롤 버튼 */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-bg-100/80 absolute left-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full text-text-100 hover:bg-bg-100"
-          onClick={scrollLeft}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="bg-bg-100/80 absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full text-text-100 hover:bg-bg-100"
-          onClick={scrollRight}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
       </div>
 
       {/* 데스크탑: 그리드 레이아웃 */}
       <div className="hidden md:block">
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
-          {products.map((product) => (
+          {pagedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
@@ -84,10 +80,22 @@ export function PersonalizedSection({ products, className = '' }: PersonalizedSe
           <Button
             variant="outline"
             className="border-primary-300 text-primary-300 hover:bg-primary-100"
+            onClick={handleNextPage}
           >
-            더 많은 추천 상품 보기
+            AI 추천 더보기 {currentPage + 1}|{totalPages}
           </Button>
         </div>
+      </div>
+
+      {/* 모바일: 더보기 버튼 */}
+      <div className="mt-8 text-center md:hidden">
+        <Button
+          variant="outline"
+          className="border-primary-300 text-primary-300 hover:bg-primary-100"
+          onClick={handleNextPage}
+        >
+          AI 추천 더보기 {currentPage + 1}|{totalPages}
+        </Button>
       </div>
     </section>
   );

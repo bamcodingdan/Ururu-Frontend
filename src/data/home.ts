@@ -107,7 +107,8 @@ export const realtimeBestProducts: Product[] = [
 ];
 
 // 개인화 추천 상품
-export const personalizedProducts: Product[] = [
+// 40개 mock 데이터 생성 (기존 5개 상품 반복)
+const basePersonalized = [
   {
     id: 'rec1',
     name: '[추천] 건성 피부를 위한 보습 크림',
@@ -224,6 +225,11 @@ export const personalizedProducts: Product[] = [
     options: [],
   },
 ];
+export const personalizedProducts: Product[] = Array.from({ length: 40 }, (_, i) => ({
+  ...basePersonalized[i % basePersonalized.length],
+  id: `rec${i + 1}`,
+  name: `[AI추천] ${basePersonalized[i % basePersonalized.length].name} #${i + 1}`,
+}));
 
 // 카테고리별 랭킹 상품
 export const categoryRankings: CategoryRanking[] = [

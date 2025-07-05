@@ -40,7 +40,7 @@ export function RealtimeBestSection({ products, className = '' }: RealtimeBestSe
             {/* 상품 정보 */}
             <div className="min-w-0 flex-1">
               {/* 마감 문구 */}
-              <div className="mb-1 inline-block rounded-md bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-300">
+              <div className="mb-1 inline-block rounded-md bg-primary-100 px-3 py-1 text-xs font-medium text-primary-300">
                 공구 마감까지 {product.remainingDays}일 남았어요!
               </div>
               <h3 className="mb-1 line-clamp-2 text-sm font-medium text-text-100">
@@ -78,7 +78,7 @@ export function RealtimeBestSection({ products, className = '' }: RealtimeBestSe
               {/* 상품 정보 */}
               <div className="min-w-0 flex-1">
                 {/* 마감 문구 */}
-                <div className="mb-1 inline-block rounded-md bg-primary-100 px-3 py-1 text-xs font-semibold text-primary-300">
+                <div className="mb-1 inline-block rounded-md bg-primary-100 px-3 py-1 text-xs font-medium text-primary-300">
                   공구 마감까지 {product.remainingDays}일 남았어요!
                 </div>
                 <h3 className="mb-1 line-clamp-2 text-sm font-medium text-text-100">
