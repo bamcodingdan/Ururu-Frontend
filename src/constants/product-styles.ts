@@ -13,6 +13,14 @@ export const PRODUCT_STYLES = {
     back: 'flex h-10 w-10 items-center justify-center bg-bg-100 transition md:h-12 md:w-12',
     floating:
       'flex h-10 w-10 items-center justify-center rounded-lg border-bg-300 p-0 transition hover:bg-primary-100 focus:ring-primary-300 active:bg-primary-100 md:h-12 md:w-12',
+    tab: 'flex flex-1 items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-all md:py-3 md:text-base',
+  },
+
+  // 탭 관련 스타일
+  tab: {
+    container: 'flex w-full max-w-[480px] rounded-lg bg-bg-200 p-1 md:max-w-none',
+    active: 'bg-bg-100 text-text-100 shadow-sm',
+    inactive: 'text-text-200 hover:text-text-100',
   },
 
   // 컨테이너 관련 스타일
