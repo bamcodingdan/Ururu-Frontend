@@ -25,7 +25,7 @@ export const ProductTabs: FC<ProductTabsProps> = ({
       role="tablist"
       aria-label="상세 탭 메뉴"
     >
-      {tabs.map((tab) => (
+      {tabs.map((tab, idx) => (
         <button
           key={tab.label}
           className={cn(
