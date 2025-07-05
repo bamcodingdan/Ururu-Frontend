@@ -9,7 +9,6 @@ import { OrderItem, PointUsage, PaymentSummary, DeliveryAddress } from '@/compon
 import { mockCartData } from '@/data/cart';
 import { mockAddressData } from '@/data/address';
 import type { CartItem as CartItemType } from '@/types/cart';
-import type { AddressData } from '@/data/address';
 
 export default function OrderPage() {
   // 배송지 관련 상태

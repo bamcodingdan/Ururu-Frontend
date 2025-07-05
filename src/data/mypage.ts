@@ -5,16 +5,6 @@ interface NavigationItem {
   href?: string;
 }
 
-interface ProfileAction {
-  label: string;
-  href?: string;
-}
-
-interface NavigationSection {
-  title: string;
-  items: NavigationItem[];
-}
-
 // 마이페이지 mock 데이터
 export const myPageData = {
   // 프로필 정보
