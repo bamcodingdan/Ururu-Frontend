@@ -1,73 +1,62 @@
-import React from 'react';
-import { Clock, CheckCircle, XCircle, Ban } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface StatusBadgeProps {
-  status:
-    | 'in_progress'
-    | 'confirmed'
-    | 'failed'
-    | 'INITIATED'
-    | 'APPROVED'
-    | 'REJECTED'
-    | 'COMPLETED'
-    | 'FAILED';
+  status: 'in_progress' | 'confirmed' | 'failed' | 'refund_pending' | 'COMPLETED' | 'REJECTED';
   className?: string;
 }
 
 export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
-  let icon, text, bg, textColor;
+  const getStatusConfig = (status: StatusBadgeProps['status']) => {
+    switch (status) {
+      case 'in_progress':
+        return {
+          label: '진행중',
+          className: 'bg-primary-100 text-primary-300',
+        };
+      case 'confirmed':
+        return {
+          label: '확정',
+          className: 'bg-bg-200 text-text-100',
+        };
+      case 'failed':
+        return {
+          label: '실패',
+          className: 'bg-bg-200 text-text-300',
+        };
+      case 'refund_pending':
+        return {
+          label: '환불 대기중',
+          className: 'bg-bg-200 text-text-200',
+        };
+      case 'COMPLETED':
+        return {
+          label: '환불 완료',
+          className: 'bg-bg-200 text-text-100',
+        };
+      case 'REJECTED':
+        return {
+          label: '환불 거절',
+          className: 'bg-bg-200 text-text-300',
+        };
+      default:
+        return {
+          label: '알 수 없음',
+          className: 'bg-bg-200 text-text-200',
+        };
+    }
+  };
 
-  // 기존 공구 상태
-  if (status === 'in_progress') {
-    icon = <Clock className="mr-1 h-4 w-4 text-primary-300" />;
-    text = '공구 진행중';
-    bg = 'bg-primary-100';
-    textColor = 'text-primary-300';
-  } else if (status === 'confirmed') {
-    icon = <CheckCircle className="mr-1 h-4 w-4 text-primary-300" />;
-    text = '공구 확정';
-    bg = 'bg-primary-100';
-    textColor = 'text-primary-300';
-  } else if (status === 'failed') {
-    icon = <XCircle className="mr-1 h-4 w-4 text-text-300" />;
-    text = '공구 실패';
-    bg = 'bg-bg-200';
-    textColor = 'text-text-300';
-  }
-  // 환불 상태
-  else if (status === 'INITIATED') {
-    icon = <Clock className="mr-1 h-4 w-4 text-primary-300" />;
-    text = '신청됨';
-    bg = 'bg-primary-100';
-    textColor = 'text-primary-300';
-  } else if (status === 'APPROVED') {
-    icon = <CheckCircle className="mr-1 h-4 w-4 text-primary-300" />;
-    text = '승인됨';
-    bg = 'bg-primary-100';
-    textColor = 'text-primary-300';
-  } else if (status === 'REJECTED') {
-    icon = <Ban className="mr-1 h-4 w-4 text-text-300" />;
-    text = '거부됨';
-    bg = 'bg-bg-200';
-    textColor = 'text-text-300';
-  } else if (status === 'COMPLETED') {
-    icon = <CheckCircle className="mr-1 h-4 w-4 text-primary-300" />;
-    text = '완료됨';
-    bg = 'bg-primary-100';
-    textColor = 'text-primary-300';
-  } else if (status === 'FAILED') {
-    icon = <XCircle className="mr-1 h-4 w-4 text-text-300" />;
-    text = '실패';
-    bg = 'bg-bg-200';
-    textColor = 'text-text-300';
-  }
+  const config = getStatusConfig(status);
 
   return (
     <span
-      className={`flex items-center rounded-lg px-3 py-1.5 text-xs font-medium ${bg} ${textColor} ${className}`}
+      className={cn(
+        'inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-medium',
+        config.className,
+        className,
+      )}
     >
-      {icon}
-      {text}
+      {config.label}
     </span>
   );
 }

@@ -9,11 +9,15 @@ import { OrderStatusFilter } from '@/types/order';
 export default function OrdersPage() {
   const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>('all');
 
+  // failed 상태 주문 제외하고 필터링
   const filteredOrders = useMemo(() => {
+    const validOrders = mockOrders.filter((order) => order.status !== 'failed');
+
     if (activeFilter === 'all') {
-      return mockOrders;
+      return validOrders;
     }
-    return mockOrders.filter((order) => order.status === activeFilter);
+
+    return validOrders.filter((order) => order.status === activeFilter);
   }, [activeFilter]);
 
   const handleFilterChange = (filter: OrderStatusFilter) => {
@@ -41,6 +45,12 @@ export default function OrdersPage() {
               {orderStatusSummary.confirmed}
             </span>
             <span className="mt-2 text-base font-medium text-text-200 md:text-lg">확정된 공구</span>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-bold text-text-100 md:text-4xl">
+              {orderStatusSummary.refundPending}
+            </span>
+            <span className="mt-2 text-base font-medium text-text-200 md:text-lg">환불 대기중</span>
           </div>
         </div>
       </div>

@@ -9,6 +9,9 @@ interface RefundCardProps {
 }
 
 export function RefundCard({ refund }: RefundCardProps) {
+  // 공구 실패로 인한 자동 환불인지 확인
+  const isFailedOrderRefund = refund.type === 'OTHER' && refund.reason.includes('공구 실패');
+
   return (
     <div className="rounded-lg bg-bg-100 py-6">
       {/* 환불 헤더 */}
@@ -28,6 +31,21 @@ export function RefundCard({ refund }: RefundCardProps) {
           <StatusBadge status={refund.status} />
         </div>
       </div>
+
+      {/* 공구 실패 자동 환불인 경우 특별 표시 */}
+      {isFailedOrderRefund && (
+        <div className="mb-4 rounded-lg border border-bg-300 bg-bg-200 p-3">
+          <div className="mb-1 flex items-center space-x-2">
+            <span className="text-sm font-medium text-text-100">공구 실패 자동 환불</span>
+            {refund.refundedAt && (
+              <span className="text-xs text-text-200">
+                {refund.refundedAt.toLocaleDateString('ko-KR')} 완료
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-text-200">{refund.reason}</p>
+        </div>
+      )}
 
       {/* 환불 상품들 */}
       <div className="space-y-6">
@@ -71,16 +89,15 @@ export function RefundCard({ refund }: RefundCardProps) {
           <div className="flex items-center justify-between">
             <span className="text-sm text-text-200">환불 사유</span>
             <span className="text-sm font-medium text-text-100">
-              {getRefundTypeLabel(refund.type)}
+              {isFailedOrderRefund ? '공구 실패' : getRefundTypeLabel(refund.type)}
             </span>
           </div>
-          {/* 예상 완료일 (승인된 경우만) */}
-          {refund.status === 'APPROVED' && refund.estimatedCompletionDate && (
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-text-200">예상 완료일</span>
-              <span className="text-sm font-medium text-text-100">
-                {formatDate(refund.estimatedCompletionDate)}
-              </span>
+          {/* 공구 실패인 경우 추가 안내 */}
+          {isFailedOrderRefund && (
+            <div className="rounded-lg bg-bg-200 p-3">
+              <div className="text-xs text-text-200">
+                공구 목표 달성에 실패하여 자동으로 환불 처리되었습니다.
+              </div>
             </div>
           )}
           {/* 환불 완료일 (완료된 경우만) */}

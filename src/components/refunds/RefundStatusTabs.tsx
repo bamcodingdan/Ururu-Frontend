@@ -19,18 +19,10 @@ export function RefundStatusTabs({ summary, activeFilter, onFilterChange }: Refu
     {
       value: 'all' as const,
       label: '전체',
-      count:
-        summary.initiated +
-        summary.approved +
-        summary.rejected +
-        summary.completed +
-        summary.failed,
+      count: summary.completed + summary.rejected,
     },
-    { value: 'INITIATED' as const, label: '신청됨', count: summary.initiated },
-    { value: 'APPROVED' as const, label: '승인됨', count: summary.approved },
-    { value: 'REJECTED' as const, label: '거부됨', count: summary.rejected },
-    { value: 'COMPLETED' as const, label: '완료됨', count: summary.completed },
-    { value: 'FAILED' as const, label: '실패', count: summary.failed },
+    { value: 'COMPLETED' as const, label: '환불 완료', count: summary.completed },
+    { value: 'REJECTED' as const, label: '환불 거절', count: summary.rejected },
   ];
 
   const selectedTab = tabs.find((tab) => tab.value === activeFilter);

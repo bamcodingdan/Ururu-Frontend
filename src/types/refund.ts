@@ -9,9 +9,8 @@ export interface RefundItem {
   refundAmount: number;
 }
 
-// 백엔드 ERD에 맞춘 타입 정의
 export type RefundType = 'CHANGE_OF_MIND' | 'DEFECTIVE_PRODUCT' | 'DELIVERY_ISSUE' | 'OTHER';
-export type RefundStatus = 'INITIATED' | 'APPROVED' | 'REJECTED' | 'COMPLETED' | 'FAILED';
+export type RefundStatus = 'COMPLETED' | 'REJECTED'; // 신청됨/실패/승인 제거
 export type RefundScope = 'FULL_ORDER' | 'INDIVIDUAL_GROUP_BUY'; // 전체 주문 환불 vs 개별 공구 환불
 
 export interface Refund {
@@ -34,20 +33,12 @@ export interface Refund {
 }
 
 export interface RefundStatusSummary {
-  initiated: number;
-  approved: number;
-  rejected: number;
   completed: number;
-  failed: number;
+  rejected: number;
 }
 
-export type RefundStatusFilter =
-  | 'all'
-  | 'INITIATED'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'COMPLETED'
-  | 'FAILED';
+export type RefundStatusFilter = 'all' | 'COMPLETED' | 'REJECTED';
+
 export type RefundTypeFilter =
   | 'all'
   | 'CHANGE_OF_MIND'
@@ -55,13 +46,12 @@ export type RefundTypeFilter =
   | 'DELIVERY_ISSUE'
   | 'OTHER';
 
-// 환불 타입을 한국어로 변환하는 함수
 export const getRefundTypeLabel = (type: RefundType): string => {
   switch (type) {
     case 'CHANGE_OF_MIND':
       return '단순 변심';
     case 'DEFECTIVE_PRODUCT':
-      return '상품 결함';
+      return '하자/오배송';
     case 'DELIVERY_ISSUE':
       return '배송 문제';
     case 'OTHER':
@@ -71,19 +61,12 @@ export const getRefundTypeLabel = (type: RefundType): string => {
   }
 };
 
-// 환불 상태를 한국어로 변환하는 함수
 export const getRefundStatusLabel = (status: RefundStatus): string => {
   switch (status) {
-    case 'INITIATED':
-      return '신청됨';
-    case 'APPROVED':
-      return '승인됨';
-    case 'REJECTED':
-      return '거부됨';
     case 'COMPLETED':
-      return '완료됨';
-    case 'FAILED':
-      return '실패';
+      return '환불 완료';
+    case 'REJECTED':
+      return '환불 거절';
     default:
       return '알 수 없음';
   }

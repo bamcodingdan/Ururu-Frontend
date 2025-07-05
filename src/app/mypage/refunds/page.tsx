@@ -3,17 +3,18 @@
 import React, { useState, useMemo } from 'react';
 import { RefundStatusTabs, RefundCard } from '@/components/refunds';
 import { EmptyState, PageHeader } from '@/components/common';
-import { refundStatusSummary, mockRefunds } from '@/data/refunds';
-import { RefundStatusFilter, Refund } from '@/types/refund';
+import { allRefunds, refundStatusSummary } from '@/data/refunds';
+import { RefundStatusFilter } from '@/types/refund';
 
 export default function RefundsPage() {
   const [activeFilter, setActiveFilter] = useState<RefundStatusFilter>('all');
 
   const filteredRefunds = useMemo(() => {
     if (activeFilter === 'all') {
-      return mockRefunds;
+      return allRefunds;
     }
-    return mockRefunds.filter((refund: Refund) => refund.status === activeFilter);
+
+    return allRefunds.filter((refund) => refund.status === activeFilter);
   }, [activeFilter]);
 
   const handleFilterChange = (filter: RefundStatusFilter) => {
@@ -33,11 +34,11 @@ export default function RefundsPage() {
       />
 
       {/* 취소/환불 내역 리스트 */}
-      <div className="space-y-4">
+      <div className="space-y-12">
         {filteredRefunds.length === 0 ? (
           <EmptyState title="취소/환불 내역이 없습니다." description="안전한 쇼핑을 도와드려요!" />
         ) : (
-          filteredRefunds.map((refund: Refund) => <RefundCard key={refund.id} refund={refund} />)
+          filteredRefunds.map((refund) => <RefundCard key={refund.id} refund={refund} />)
         )}
       </div>
     </div>

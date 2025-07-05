@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
-import { OrderStatusFilter, OrderStatusSummary } from '@/types/order';
+import { OrderStatusSummary, OrderStatusFilter } from '@/types/order';
 import { useDropdown } from '@/hooks';
 import { FORM_STYLES } from '@/constants/form-styles';
 
@@ -19,10 +19,11 @@ export function OrderStatusTabs({ summary, activeFilter, onFilterChange }: Order
     {
       value: 'all' as const,
       label: '전체',
-      count: summary.inProgress + summary.confirmed + (summary.failed || 0),
+      count: summary.inProgress + summary.confirmed + summary.refundPending, // failed 제외
     },
     { value: 'in_progress' as const, label: '진행중인 공구', count: summary.inProgress },
     { value: 'confirmed' as const, label: '확정된 공구', count: summary.confirmed },
+    { value: 'refund_pending' as const, label: '환불 대기중', count: summary.refundPending },
   ];
 
   const selectedTab = tabs.find((tab) => tab.value === activeFilter);
