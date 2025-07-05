@@ -10,18 +10,13 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
     switch (status) {
       case 'in_progress':
         return {
-          label: '진행중',
+          label: '공구 진행중',
           className: 'bg-primary-100 text-primary-300',
         };
       case 'confirmed':
         return {
-          label: '확정',
-          className: 'bg-bg-200 text-text-100',
-        };
-      case 'failed':
-        return {
-          label: '실패',
-          className: 'bg-bg-200 text-text-300',
+          label: '공구 확정',
+          className: 'bg-primary-100 text-primary-200 border border-primary-200',
         };
       case 'refund_pending':
         return {
@@ -31,7 +26,7 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
       case 'COMPLETED':
         return {
           label: '환불 완료',
-          className: 'bg-bg-200 text-text-100',
+          className: 'bg-primary-100 text-primary-200 border border-primary-200',
         };
       case 'REJECTED':
         return {

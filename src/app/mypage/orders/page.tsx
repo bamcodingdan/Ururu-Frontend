@@ -31,26 +31,30 @@ export default function OrdersPage() {
 
       {/* 통계 정보 */}
       <div className="flex flex-col items-center gap-6 py-4">
-        <div className="flex justify-center gap-16">
+        <div className="flex justify-center gap-4 md:gap-16">
           <div className="flex flex-col items-center">
-            <span className="text-3xl font-bold text-text-100 md:text-4xl">
+            <span className="text-2xl font-bold text-text-100 md:text-4xl">
               {orderStatusSummary.inProgress}
             </span>
-            <span className="mt-2 text-base font-medium text-text-200 md:text-lg">
-              진행중인 공구
+            <span className="mt-2 whitespace-nowrap text-center text-sm font-medium text-text-200 md:text-lg">
+              공구 진행중
             </span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-3xl font-bold text-text-100 md:text-4xl">
+            <span className="text-2xl font-bold text-text-100 md:text-4xl">
               {orderStatusSummary.confirmed}
             </span>
-            <span className="mt-2 text-base font-medium text-text-200 md:text-lg">확정된 공구</span>
+            <span className="mt-2 whitespace-nowrap text-center text-sm font-medium text-text-200 md:text-lg">
+              공구 확정
+            </span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-3xl font-bold text-text-100 md:text-4xl">
+            <span className="text-2xl font-bold text-text-100 md:text-4xl">
               {orderStatusSummary.refundPending}
             </span>
-            <span className="mt-2 text-base font-medium text-text-200 md:text-lg">환불 대기중</span>
+            <span className="mt-2 whitespace-nowrap text-center text-sm font-medium text-text-200 md:text-lg">
+              환불 대기중
+            </span>
           </div>
         </div>
       </div>
