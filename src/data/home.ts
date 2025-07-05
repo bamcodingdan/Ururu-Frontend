@@ -1,0 +1,474 @@
+import type { Product } from '@/types/product';
+
+export interface HeroBanner {
+  id: string;
+  image: string;
+}
+
+export interface CategoryRanking {
+  category: string;
+  products: Product[];
+}
+
+export const heroBanners: HeroBanner[] = [
+  {
+    id: '1',
+    image:
+      'https://image.oliveyoung.co.kr/uploads/images/display/90000010001/397/961135372203537732.jpg',
+  },
+  {
+    id: '2',
+    image:
+      'https://image.oliveyoung.co.kr/uploads/images/display/90000010001/397/1559266877485266171.jpg',
+  },
+  {
+    id: '3',
+    image:
+      'https://image.oliveyoung.co.kr/uploads/images/display/90000010001/397/4670995120691803997.jpg',
+  },
+  {
+    id: '4',
+    image:
+      'https://image.oliveyoung.co.kr/uploads/images/display/90000021579/263/5543181993520385572.jpg',
+  },
+];
+
+// 실시간 베스트 상품 (1-3위)
+export const realtimeBestProducts: Product[] = [
+  {
+    id: 'best1',
+    name: '[올영픽] 토너/에센스 베스트셀러 모음전',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315370ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 15000,
+    originalPrice: 25000,
+    discountRate: 40,
+    point: 450,
+    participants: 1234,
+    targetParticipants: 2000,
+    remainingDays: 5,
+    category: { main: 'skincare', sub: 'toner' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'best2',
+    name: '[단독] 클렌징 폼 베스트 3종 세트',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315371ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 22000,
+    originalPrice: 35000,
+    discountRate: 37,
+    point: 660,
+    participants: 987,
+    targetParticipants: 1500,
+    remainingDays: 3,
+    category: { main: 'skincare', sub: 'cleansing' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'best3',
+    name: '[한정] 선케어 베스트 5종 모음',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315372ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 18000,
+    originalPrice: 28000,
+    discountRate: 36,
+    point: 540,
+    participants: 756,
+    targetParticipants: 1200,
+    remainingDays: 7,
+    category: { main: 'skincare', sub: 'sunscreen' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+];
+
+// 개인화 추천 상품
+export const personalizedProducts: Product[] = [
+  {
+    id: 'rec1',
+    name: '[추천] 건성 피부를 위한 보습 크림',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315370ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 12000,
+    originalPrice: 20000,
+    discountRate: 40,
+    point: 360,
+    participants: 432,
+    targetParticipants: 800,
+    remainingDays: 4,
+    category: { main: 'skincare', sub: 'moisturizer' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'rec2',
+    name: '[맞춤] 민감성 피부용 진정 세럼',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315371ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 16000,
+    originalPrice: 24000,
+    discountRate: 33,
+    point: 480,
+    participants: 321,
+    targetParticipants: 600,
+    remainingDays: 6,
+    category: { main: 'skincare', sub: 'serum' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'rec3',
+    name: '[개인화] 지성 피부용 오일 컨트롤',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315372ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 14000,
+    originalPrice: 22000,
+    discountRate: 36,
+    point: 420,
+    participants: 234,
+    targetParticipants: 500,
+    remainingDays: 2,
+    category: { main: 'skincare', sub: 'oil-control' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'rec4',
+    name: '[추천] 주름 개선 안티에이징',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/options/item/2025/6/7642808485052705032.jpg',
+    thumbnails: [],
+    detailImages: [],
+    price: 25000,
+    originalPrice: 38000,
+    discountRate: 34,
+    point: 750,
+    participants: 567,
+    targetParticipants: 1000,
+    remainingDays: 8,
+    category: { main: 'skincare', sub: 'anti-aging' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'rec5',
+    name: '[맞춤] 미백 화이트닝 에센스',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/options/item/2025/6/7839022337601283246.jpg',
+    thumbnails: [],
+    detailImages: [],
+    price: 18000,
+    originalPrice: 28000,
+    discountRate: 36,
+    point: 540,
+    participants: 345,
+    targetParticipants: 700,
+    remainingDays: 5,
+    category: { main: 'skincare', sub: 'whitening' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+];
+
+// 카테고리별 랭킹 상품
+export const categoryRankings: CategoryRanking[] = [
+  {
+    category: '스킨케어',
+    products: [
+      {
+        id: 'skincare1',
+        name: '[1위] 토너 베스트셀러',
+        mainImage:
+          'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315370ko.jpg?l=ko',
+        thumbnails: [],
+        detailImages: [],
+        price: 15000,
+        originalPrice: 25000,
+        discountRate: 40,
+        point: 450,
+        participants: 1234,
+        targetParticipants: 2000,
+        remainingDays: 5,
+        category: { main: 'skincare', sub: 'toner' },
+        shippingInfo: {
+          type: '우르르 배송',
+          description: '평균 4일 이내 배송',
+          shippingFee: '3,000원',
+        },
+        rewardTiers: [],
+        options: [],
+      },
+      {
+        id: 'skincare2',
+        name: '[2위] 에센스 베스트',
+        mainImage:
+          'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315371ko.jpg?l=ko',
+        thumbnails: [],
+        detailImages: [],
+        price: 22000,
+        originalPrice: 35000,
+        discountRate: 37,
+        point: 660,
+        participants: 987,
+        targetParticipants: 1500,
+        remainingDays: 3,
+        category: { main: 'skincare', sub: 'essence' },
+        shippingInfo: {
+          type: '우르르 배송',
+          description: '평균 4일 이내 배송',
+          shippingFee: '3,000원',
+        },
+        rewardTiers: [],
+        options: [],
+      },
+      {
+        id: 'skincare3',
+        name: '[3위] 크림 베스트',
+        mainImage:
+          'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315372ko.jpg?l=ko',
+        thumbnails: [],
+        detailImages: [],
+        price: 18000,
+        originalPrice: 28000,
+        discountRate: 36,
+        point: 540,
+        participants: 756,
+        targetParticipants: 1200,
+        remainingDays: 7,
+        category: { main: 'skincare', sub: 'cream' },
+        shippingInfo: {
+          type: '우르르 배송',
+          description: '평균 4일 이내 배송',
+          shippingFee: '3,000원',
+        },
+        rewardTiers: [],
+        options: [],
+      },
+    ],
+  },
+  {
+    category: '메이크업',
+    products: [
+      {
+        id: 'makeup1',
+        name: '[1위] 립스틱 베스트',
+        mainImage:
+          'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/options/item/2025/6/7642808485052705032.jpg',
+        thumbnails: [],
+        detailImages: [],
+        price: 12000,
+        originalPrice: 20000,
+        discountRate: 40,
+        point: 360,
+        participants: 432,
+        targetParticipants: 800,
+        remainingDays: 4,
+        category: { main: 'makeup', sub: 'lip' },
+        shippingInfo: {
+          type: '우르르 배송',
+          description: '평균 4일 이내 배송',
+          shippingFee: '3,000원',
+        },
+        rewardTiers: [],
+        options: [],
+      },
+      {
+        id: 'makeup2',
+        name: '[2위] 파운데이션 베스트',
+        mainImage:
+          'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/options/item/2025/6/7839022337601283246.jpg',
+        thumbnails: [],
+        detailImages: [],
+        price: 16000,
+        originalPrice: 24000,
+        discountRate: 33,
+        point: 480,
+        participants: 321,
+        targetParticipants: 600,
+        remainingDays: 6,
+        category: { main: 'makeup', sub: 'foundation' },
+        shippingInfo: {
+          type: '우르르 배송',
+          description: '평균 4일 이내 배송',
+          shippingFee: '3,000원',
+        },
+        rewardTiers: [],
+        options: [],
+      },
+      {
+        id: 'makeup3',
+        name: '[3위] 마스카라 베스트',
+        mainImage:
+          'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/options/item/2025/6/4453299188002602854.jpg',
+        thumbnails: [],
+        detailImages: [],
+        price: 14000,
+        originalPrice: 22000,
+        discountRate: 36,
+        point: 420,
+        participants: 234,
+        targetParticipants: 500,
+        remainingDays: 2,
+        category: { main: 'makeup', sub: 'mascara' },
+        shippingInfo: {
+          type: '우르르 배송',
+          description: '평균 4일 이내 배송',
+          shippingFee: '3,000원',
+        },
+        rewardTiers: [],
+        options: [],
+      },
+    ],
+  },
+];
+
+// 쇼핑 히스토리 기반 추천
+export const historyBasedProducts: Product[] = [
+  {
+    id: 'history1',
+    name: '숏폼에서 본 그 제품 - 토너',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315370ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 15000,
+    originalPrice: 25000,
+    discountRate: 40,
+    point: 450,
+    participants: 1234,
+    targetParticipants: 2000,
+    remainingDays: 5,
+    category: { main: 'skincare', sub: 'toner' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'history2',
+    name: '최근 본 상품 - 에센스',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315371ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 22000,
+    originalPrice: 35000,
+    discountRate: 37,
+    point: 660,
+    participants: 987,
+    targetParticipants: 1500,
+    remainingDays: 3,
+    category: { main: 'skincare', sub: 'essence' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'history3',
+    name: '추천 상품 - 크림',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/thumbnails/550/10/0000/0021/A00000021315372ko.jpg?l=ko',
+    thumbnails: [],
+    detailImages: [],
+    price: 18000,
+    originalPrice: 28000,
+    discountRate: 36,
+    point: 540,
+    participants: 756,
+    targetParticipants: 1200,
+    remainingDays: 7,
+    category: { main: 'skincare', sub: 'cream' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+  {
+    id: 'history4',
+    name: '인기 상품 - 마스크팩',
+    mainImage:
+      'https://image.oliveyoung.co.kr/cfimages/cf-goods/uploads/images/options/item/2025/6/7642808485052705032.jpg',
+    thumbnails: [],
+    detailImages: [],
+    price: 12000,
+    originalPrice: 20000,
+    discountRate: 40,
+    point: 360,
+    participants: 432,
+    targetParticipants: 800,
+    remainingDays: 4,
+    category: { main: 'skincare', sub: 'mask' },
+    shippingInfo: {
+      type: '우르르 배송',
+      description: '평균 4일 이내 배송',
+      shippingFee: '3,000원',
+    },
+    rewardTiers: [],
+    options: [],
+  },
+];

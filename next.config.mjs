@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: 'image.oliveyoung.co.kr',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
   },
 };
