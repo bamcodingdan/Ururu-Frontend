@@ -67,7 +67,7 @@ export default function Home() {
         </section>
 
         {/* 메인 콘텐츠 영역 */}
-        <main className="space-y-12">
+        <main className="space-y-20">
           {/* 실시간 베스트 (모바일/태블릿만) */}
           <section className="lg:hidden">
             <RealtimeBestSection products={realtimeBestProducts} />

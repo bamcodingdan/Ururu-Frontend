@@ -47,7 +47,7 @@ export function PersonalizedSection({ products, className = '' }: PersonalizedSe
     <section className={`w-full ${className}`}>
       {/* 섹션 헤더 */}
       <div className="mb-6 text-center">
-        <h2 className="text-xl font-bold text-text-100 md:text-2xl">취향 맞춤</h2>
+        <h2 className="text-xl font-semibold text-text-100 md:text-2xl">취향 맞춤</h2>
         <p className="mt-1 text-sm text-text-200 md:text-base">
           회원님만을 위한 맞춤 상품을 추천해드려요
         </p>
