@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/product';
 import type { Product } from '@/types/product';
 import { FORM_STYLES } from '@/constants/form-styles';
+import { SectionHeader } from '@/components/common/SectionHeader';
 
 interface PersonalizedSectionProps {
   products: Product[];
@@ -46,12 +47,11 @@ export function PersonalizedSection({ products, className = '' }: PersonalizedSe
   return (
     <section className={`w-full ${className}`}>
       {/* 섹션 헤더 */}
-      <div className="mb-6 text-center">
-        <h2 className="text-xl font-semibold text-text-100 md:text-2xl">취향 맞춤</h2>
-        <p className="mt-1 text-sm text-text-200 md:text-base">
-          회원님만을 위한 맞춤 상품을 추천해드려요
-        </p>
-      </div>
+      <SectionHeader
+        title="취향 맞춤"
+        description="회원님만을 위한 맞춤 상품을 추천해드려요"
+        className="mb-6"
+      />
 
       {/* 모바일/태블릿: 가로 스크롤 */}
       <div className="relative md:hidden">

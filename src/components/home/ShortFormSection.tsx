@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Button } from '@/components/ui/button';
+import { SectionHeader } from '@/components/common/SectionHeader';
 
 // 하드코딩된 숏폼 이미지+제목 데이터
 const SHORTFORM_ITEMS = [
@@ -32,9 +32,7 @@ export function ShortFormSection({ className = '' }: ShortFormSectionProps) {
   return (
     <section className={`w-full ${className}`}>
       {/* 섹션 헤더 */}
-      <div className="mb-8 flex flex-col items-center justify-center gap-2">
-        <h2 className="text-xl font-semibold text-text-100 md:text-2xl">숏폼에서 보던 그 제품</h2>
-      </div>
+      <SectionHeader title="숏폼에서 보던 그 제품" />
 
       {/* 이미지 4개 가로 배치 */}
       <div className="grid grid-cols-2 gap-6 md:grid-cols-4">

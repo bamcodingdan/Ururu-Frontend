@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { ProductCard } from '@/components/product';
 import type { Product } from '@/types/product';
+import { SectionHeader } from '@/components/common/SectionHeader';
 
 interface RealtimeBestSectionProps {
   products: Product[];
@@ -16,12 +17,11 @@ export function RealtimeBestSection({ products, className = '' }: RealtimeBestSe
   return (
     <section className={`w-full ${className} flex h-full flex-col`}>
       {/* 섹션 헤더 */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-text-100 md:text-2xl">실시간 베스트</h2>
-        <p className="mt-1 text-sm text-text-200 md:text-base">
-          지금 가장 인기 있는 상품들을 확인해보세요
-        </p>
-      </div>
+      <SectionHeader
+        title="실시간 베스트"
+        description="지금 가장 인기 있는 상품들을 확인해보세요"
+        className="mb-6"
+      />
 
       {/* 모바일/태블릿: 세로 리스트 */}
       <div className="block space-y-4 md:hidden">

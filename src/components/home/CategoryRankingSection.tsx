@@ -5,6 +5,7 @@ import Image from 'next/image';
 import type { CategoryRanking } from '@/data/home';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { categoryItems } from '@/data/categories';
+import { SectionHeader } from '@/components/common/SectionHeader';
 
 interface CategoryRankingSectionProps {
   categories: CategoryRanking[];
@@ -43,12 +44,11 @@ export function CategoryRankingSection({
   return (
     <section className={`w-full ${className}`}>
       {/* 섹션 헤더 */}
-      <div className="mb-6 text-center">
-        <h2 className="text-xl font-semibold text-text-100 md:text-2xl">카테고리 랭킹</h2>
-        <p className="mt-1 text-sm text-text-200 md:text-base">
-          카테고리별 인기 상품을 확인해보세요
-        </p>
-      </div>
+      <SectionHeader
+        title="카테고리 랭킹"
+        description="카테고리별 인기 상품을 확인해보세요"
+        className="mb-6"
+      />
 
       {/* 카테고리 탭 */}
       <div className="mb-6">
