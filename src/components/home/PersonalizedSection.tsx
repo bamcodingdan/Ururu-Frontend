@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/product';
 import type { Product } from '@/types/product';
+import { FORM_STYLES } from '@/constants/form-styles';
 
 interface PersonalizedSectionProps {
   products: Product[];
@@ -77,24 +78,16 @@ export function PersonalizedSection({ products, className = '' }: PersonalizedSe
 
         {/* 더보기 버튼 */}
         <div className="mt-8 text-center">
-          <Button
-            variant="outline"
-            className="border-primary-300 text-primary-300 hover:bg-primary-100"
-            onClick={handleNextPage}
-          >
-            AI 추천 더보기 {currentPage + 1}|{totalPages}
+          <Button className={FORM_STYLES.button.pinkOutline} onClick={handleNextPage}>
+            AI 추천 더보기 {currentPage + 1} | {totalPages}
           </Button>
         </div>
       </div>
 
       {/* 모바일: 더보기 버튼 */}
       <div className="mt-8 text-center md:hidden">
-        <Button
-          variant="outline"
-          className="border-primary-300 text-primary-300 hover:bg-primary-100"
-          onClick={handleNextPage}
-        >
-          AI 추천 더보기 {currentPage + 1}|{totalPages}
+        <Button className={FORM_STYLES.button.pinkOutline} onClick={handleNextPage}>
+          AI 추천 더보기 {currentPage + 1} | {totalPages}
         </Button>
       </div>
     </section>
