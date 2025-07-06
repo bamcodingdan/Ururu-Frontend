@@ -5,7 +5,7 @@ import {
   RealtimeBestSection,
   PersonalizedSection,
   CategoryRankingSection,
-  HistoryBasedSection,
+  ShortFormSection,
 } from '@/components/home';
 import {
   heroBanners,
@@ -79,8 +79,8 @@ export default function Home() {
           {/* 카테고리 랭킹 */}
           <CategoryRankingSection categories={categoryRankings} />
 
-          {/* 쇼핑 히스토리 기반 추천 */}
-          <HistoryBasedSection products={historyBasedProducts} />
+          {/* 숏구(숏폼) 섹션 */}
+          <ShortFormSection />
         </main>
       </div>
     </FullLayout>
