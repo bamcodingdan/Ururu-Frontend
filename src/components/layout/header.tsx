@@ -5,11 +5,27 @@ import { Search, Bell, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
-import { useUIStore } from '@/store';
+import { useUIStore, useAuthStore } from '@/store';
 
 // 태블릿/모바일 헤더 컴포넌트
 function MobileHeader() {
   const { searchOpen, toggleSearch } = useUIStore();
+  const { isLoggedIn, setIsLoggedIn, setUserInfo } = useAuthStore();
+
+  // 로그아웃 핸들러
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      setIsLoggedIn(false);
+      setUserInfo(null);
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-bg-100 desktop:hidden" role="banner">
@@ -55,6 +71,25 @@ function MobileHeader() {
                 <ShoppingCart className="h-5 w-5 text-text-200" aria-hidden="true" />
               </Button>
             </Link>
+
+            {/* 로그인/로그아웃 버튼 */}
+            {isLoggedIn ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2"
+                onClick={handleLogout}
+                aria-label="로그아웃"
+              >
+                로그아웃
+              </Button>
+            ) : (
+              <Link href="/login" aria-label="로그인 페이지로 이동">
+                <Button variant="outline" size="sm" className="ml-2">
+                  로그인
+                </Button>
+              </Link>
+            )}
           </nav>
         </div>
 

@@ -27,6 +27,15 @@ interface Agreements {
   marketing: boolean;
 }
 
+interface UserInfo {
+  id: number;
+  nickname: string;
+  email: string;
+  profileImage?: string;
+  role: string;
+  point: number;
+}
+
 interface AuthState {
   // 로그인 상태
   loginType: 'buyer' | 'seller';
@@ -38,6 +47,10 @@ interface AuthState {
   brandGuide: string;
   brandGuideType: 'success' | 'error' | 'guide';
 
+  // 로그인 관련 상태
+  isLoggedIn: boolean;
+  userInfo: UserInfo | null;
+
   setLoginType: (type: 'buyer' | 'seller') => void;
   setLoginFormData: (data: Partial<LoginFormData>) => void;
   setSignupFormData: (data: Partial<SignupFormData>) => void;
@@ -45,6 +58,8 @@ interface AuthState {
   setBrandGuide: (guide: string, type: 'success' | 'error' | 'guide') => void;
   resetLoginForm: () => void;
   resetSignupForm: () => void;
+  setIsLoggedIn: (loggedIn: boolean) => void;
+  setUserInfo: (user: UserInfo | null) => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -76,6 +91,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
   brandGuide: '',
   brandGuideType: 'guide',
+
+  // 로그인 관련 상태
+  isLoggedIn: false,
+  userInfo: null,
 
   // 액션들
   setLoginType: (type) => set({ loginType: type }),
@@ -141,4 +160,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       brandGuide: '',
       brandGuideType: 'guide',
     }),
+
+  setIsLoggedIn: (loggedIn) => set({ isLoggedIn: loggedIn }),
+
+  setUserInfo: (user) => set({ userInfo: user }),
 }));
