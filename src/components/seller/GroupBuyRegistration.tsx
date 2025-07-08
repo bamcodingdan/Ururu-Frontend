@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -298,8 +298,7 @@ export function GroupBuyRegistration() {
             <Button
               type="button"
               onClick={addProduct}
-              variant="outline"
-              className="mt-2 h-12 w-full border-primary-200 font-semibold text-primary-300"
+              className={FORM_STYLES.button.pinkOutline + ' mt-2 h-12 w-full'}
             >
               상품 추가하기
             </Button>
@@ -549,8 +548,7 @@ export function GroupBuyRegistration() {
             <Button
               type="button"
               onClick={addDiscountTier}
-              variant="outline"
-              className="mt-2 h-12 w-full border-primary-200 font-semibold text-primary-300"
+              className={FORM_STYLES.button.pinkOutline + ' mt-2 h-12 w-full'}
             >
               할인 단계 추가하기
             </Button>

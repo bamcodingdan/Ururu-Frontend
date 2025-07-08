@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -354,8 +354,7 @@ export function ProductRegistration() {
             <Button
               type="button"
               onClick={addOption}
-              variant="outline"
-              className="mt-2 h-12 w-full border-primary-200 font-semibold text-primary-300"
+              className={FORM_STYLES.button.pinkOutline + ' mt-2 h-12 w-full'}
             >
               옵션 추가하기
             </Button>

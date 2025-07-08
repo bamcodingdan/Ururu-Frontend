@@ -1,12 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import {
-  ChevronLeft,
-  ChevronRight,
   Package,
   TrendingUp,
   BarChart3,
@@ -18,8 +15,6 @@ import {
   FileText,
   Store,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
 interface SidebarItem {
@@ -82,42 +77,27 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 export function SellerSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
   return (
-    <aside
-      className={cn(
-        'flex flex-col border-r border-bg-300 bg-bg-100 transition-all duration-300',
-        isCollapsed ? 'w-16' : 'w-64',
-      )}
-    >
+    <aside className="flex w-64 flex-col border-r border-bg-300 bg-bg-100">
       {/* 헤더 */}
       <div className="flex items-center justify-between border-b border-bg-300 p-4">
-        {!isCollapsed && (
-          <div className="flex items-center gap-3">
-            <div className="relative h-10 w-10 flex-shrink-0">
-              <Image
-                src="/profile-image.svg"
-                alt="프로필"
-                width={40}
-                height={40}
-                className="h-10 w-10 rounded-full object-cover"
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold text-text-100">우르르</p>
-              <p className="truncate text-xs text-text-200">ururu@ururu.com</p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="relative h-10 w-10 flex-shrink-0">
+            <Image
+              src="/profile-image.svg"
+              alt="프로필"
+              width={40}
+              height={40}
+              className="h-10 w-10 rounded-full object-cover"
+            />
           </div>
-        )}
-        <Button variant="ghost" size="icon" onClick={toggleSidebar} className="h-8 w-8">
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-semibold text-text-100">우르르</p>
+            <p className="truncate text-xs text-text-200">ururu@ururu.com</p>
+          </div>
+        </div>
       </div>
 
       {/* 메인 메뉴 */}
@@ -136,7 +116,7 @@ export function SellerSidebar() {
               )}
             >
               {item.icon}
-              {!isCollapsed && <span>{item.label}</span>}
+              <span>{item.label}</span>
             </Link>
           );
         })}

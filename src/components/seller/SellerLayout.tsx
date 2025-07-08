@@ -1,9 +1,15 @@
-import React from 'react';
+import { ReactNode } from 'react';
+import { SellerSidebar } from './SellerSidebar';
 
 interface SellerLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function SellerLayout({ children }: SellerLayoutProps) {
-  return <div className="min-h-screen bg-bg-100">{children}</div>;
+  return (
+    <div className="bg-bg-50 flex min-h-screen">
+      <SellerSidebar />
+      <main className="flex-1 overflow-auto">{children}</main>
+    </div>
+  );
 }
