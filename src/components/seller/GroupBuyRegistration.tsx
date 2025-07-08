@@ -105,18 +105,72 @@ export function GroupBuyRegistration() {
     }));
   };
 
+  // 파일 검증 함수
+  const validateImageFile = (file: File): string | null => {
+    // 파일 크기 검증 (5MB 제한)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      return `파일 크기는 5MB를 초과할 수 없습니다. (${file.name})`;
+    }
+
+    // 파일 타입 검증
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      return `지원하지 않는 파일 형식입니다. (${file.name})`;
+    }
+
+    return null;
+  };
+
   const handleMainImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      handleInputChange('mainImage', file);
+    if (!file) return;
+
+    const error = validateImageFile(file);
+    if (error) {
+      alert(error);
+      e.target.value = ''; // input 초기화
+      return;
     }
+
+    handleInputChange('mainImage', file);
   };
 
   const handleDetailImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const errors: string[] = [];
+    const validFiles: File[] = [];
+
+    // 각 파일 검증
+    files.forEach((file) => {
+      const error = validateImageFile(file);
+      if (error) {
+        errors.push(error);
+      } else {
+        validFiles.push(file);
+      }
+    });
+
+    // 에러가 있으면 알림
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
+      e.target.value = ''; // input 초기화
+      return;
+    }
+
+    // 최대 10개 파일 제한
+    const maxFiles = 10;
+    if (formData.detailImages.length + validFiles.length > maxFiles) {
+      alert(`최대 ${maxFiles}개의 이미지만 업로드할 수 있습니다.`);
+      e.target.value = ''; // input 초기화
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      detailImages: [...prev.detailImages, ...files],
+      detailImages: [...prev.detailImages, ...validFiles],
     }));
   };
 

@@ -2,9 +2,9 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface EmptyPageProps {
-  title?: string;
-  description?: string;
-  icon?: string;
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  icon?: React.ReactNode;
   className?: string;
 }
 
