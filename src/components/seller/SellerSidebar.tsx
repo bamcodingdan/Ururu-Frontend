@@ -16,6 +16,7 @@ import {
   Store,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SELLER_PROFILE } from '@/data/seller';
 
 interface SidebarItem {
   icon: React.ReactNode;
@@ -50,29 +51,24 @@ const sidebarItems: SidebarItem[] = [
     href: '/seller/group-buys/new',
   },
   {
-    icon: <BarChart3 className="h-4 w-4" />,
-    label: '통계',
-    href: '/seller/analytics',
-  },
-  {
     icon: <FileText className="h-4 w-4" />,
     label: '주문 관리',
     href: '/seller/orders',
   },
   {
-    icon: <Store className="h-4 w-4" />,
-    label: '스토어 설정',
-    href: '/seller/settings',
+    icon: <BarChart3 className="h-4 w-4" />,
+    label: '통계 분석',
+    href: '/seller/analytics',
   },
   {
     icon: <User className="h-4 w-4" />,
-    label: '프로필 수정',
+    label: '프로필',
     href: '/seller/profile',
   },
   {
-    icon: <LogOut className="h-4 w-4" />,
-    label: '로그아웃',
-    href: '/login',
+    icon: <Settings className="h-4 w-4" />,
+    label: '스토어 설정',
+    href: '/seller/settings',
   },
 ];
 
@@ -80,28 +76,40 @@ export function SellerSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-64 flex-col border-r border-bg-300 bg-bg-100">
-      {/* 헤더 */}
-      <div className="flex items-center justify-between border-b border-bg-300 p-4">
+    <div className="flex h-full w-64 flex-col border-r border-bg-300 bg-bg-100">
+      {/* 로고 */}
+      <div className="flex h-16 items-center justify-center border-b border-bg-300">
+        <Link href="/seller" className="flex items-center gap-2">
+          <Image
+            src="/ururu-gradient.svg"
+            alt="우르르"
+            width={32}
+            height={32}
+            className="h-8 w-8"
+          />
+          <span className="text-lg font-semibold text-text-100">판매자 센터</span>
+        </Link>
+      </div>
+
+      {/* 프로필 */}
+      <div className="border-b border-bg-300 p-4">
         <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 flex-shrink-0">
-            <Image
-              src="/profile-image.svg"
-              alt="프로필"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-full object-cover"
-            />
-          </div>
+          <Image
+            src={SELLER_PROFILE.avatar}
+            alt={SELLER_PROFILE.name}
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full"
+          />
           <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold text-text-100">우르르</p>
-            <p className="truncate text-xs text-text-200">ururu@ururu.com</p>
+            <p className="truncate text-sm font-medium text-text-100">{SELLER_PROFILE.name}</p>
+            <p className="truncate text-xs text-text-200">{SELLER_PROFILE.email}</p>
           </div>
         </div>
       </div>
 
-      {/* 메인 메뉴 */}
-      <nav className="flex-1 space-y-2 p-4">
+      {/* 네비게이션 */}
+      <nav className="flex-1 space-y-1 p-4">
         {sidebarItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -116,11 +124,19 @@ export function SellerSidebar() {
               )}
             >
               {item.icon}
-              <span>{item.label}</span>
+              {item.label}
             </Link>
           );
         })}
       </nav>
-    </aside>
+
+      {/* 로그아웃 */}
+      <div className="border-t border-bg-300 p-4">
+        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-text-200 transition-colors hover:bg-bg-200 hover:text-text-100">
+          <LogOut className="h-4 w-4" />
+          로그아웃
+        </button>
+      </div>
+    </div>
   );
 }

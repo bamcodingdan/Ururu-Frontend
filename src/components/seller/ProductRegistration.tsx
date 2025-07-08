@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/select';
 import { FormField } from '@/components/form/FormField';
 import { FORM_STYLES } from '@/constants/form-styles';
+import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 import { ArrowLeft, Upload, Plus, X, Save, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 
@@ -46,27 +47,6 @@ interface ProductFormData {
   qualityStandard: string;
   customerService: string;
 }
-
-const categoryData = {
-  main: ['스킨케어', '클렌징', '마스크팩', '메이크업', '선케어', '향수', '헤어케어', '바디케어'],
-  middle: {
-    스킨케어: ['토너', '에센스', '크림', '로션', '미스트', '오일'],
-    클렌징: ['클렌징 폼', '클렌징 오일', '클렌징 워터', '클렌징 티슈'],
-    마스크팩: ['시트 마스크', '워시오프 마스크', '슬리핑 마스크'],
-    메이크업: ['베이스', '파운데이션', '컨실러', '파우더', '립', '아이'],
-    선케어: ['선크림', '선스프레이', '선스틱'],
-    향수: ['여성향수', '남성향수', '유니섹스'],
-    헤어케어: ['샴푸', '컨디셔너', '트리트먼트', '헤어오일'],
-    바디케어: ['바디워시', '바디로션', '핸드크림', '풋크림'],
-  },
-  sub: {
-    토너: ['수분 토너', '진정 토너', '각질 토너', '미백 토너'],
-    에센스: ['수분 에센스', '미백 에센스', '안티에이징 에센스'],
-    크림: ['수분 크림', '영양 크림', '미백 크림', '안티에이징 크림'],
-  },
-};
-
-const capacityUnits = ['ml', 'g', '개', '매'];
 
 export function ProductRegistration() {
   const [formData, setFormData] = useState<ProductFormData>({
@@ -142,13 +122,17 @@ export function ProductRegistration() {
 
   const getMiddleCategories = () => {
     return formData.categoryMain
-      ? categoryData.middle[formData.categoryMain as keyof typeof categoryData.middle] || []
+      ? PRODUCT_CATEGORY_DATA.middle[
+          formData.categoryMain as keyof typeof PRODUCT_CATEGORY_DATA.middle
+        ] || []
       : [];
   };
 
   const getSubCategories = () => {
     return formData.categoryMiddle
-      ? categoryData.sub[formData.categoryMiddle as keyof typeof categoryData.sub] || []
+      ? PRODUCT_CATEGORY_DATA.sub[
+          formData.categoryMiddle as keyof typeof PRODUCT_CATEGORY_DATA.sub
+        ] || []
       : [];
   };
 
@@ -206,7 +190,7 @@ export function ProductRegistration() {
                     <SelectValue placeholder="대분류" />
                   </SelectTrigger>
                   <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                    {categoryData.main.map((category) => (
+                    {PRODUCT_CATEGORY_DATA.main.map((category) => (
                       <SelectItem
                         key={category}
                         value={category}
@@ -388,7 +372,7 @@ export function ProductRegistration() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                    {capacityUnits.map((unit) => (
+                    {CAPACITY_UNITS.map((unit) => (
                       <SelectItem
                         key={unit}
                         value={unit}

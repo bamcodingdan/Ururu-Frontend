@@ -1,11 +1,4 @@
 export { SellerLayout } from './SellerLayout';
 export { SellerSidebar } from './SellerSidebar';
-export { SellerDashboard } from './SellerDashboard';
-export { ProductManagement } from './ProductManagement';
 export { ProductRegistration } from './ProductRegistration';
-export { AnalyticsDashboard } from './AnalyticsDashboard';
-export { GroupBuyManagement } from './GroupBuyManagement';
 export { GroupBuyRegistration } from './GroupBuyRegistration';
-export { OrderManagement } from './OrderManagement';
-export { StoreSettings } from './StoreSettings';
-export { SellerProfile } from './SellerProfile';

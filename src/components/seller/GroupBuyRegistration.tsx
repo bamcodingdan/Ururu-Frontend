@@ -16,6 +16,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { FormField } from '@/components/form/FormField';
 import { FORM_STYLES } from '@/constants/form-styles';
+import { MOCK_PRODUCTS } from '@/data/seller';
 import { Upload, Plus, X, Image as ImageIcon, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
@@ -43,13 +44,6 @@ interface GroupBuyFormData {
   detailImages: File[];
   discountTiers: DiscountTier[];
 }
-
-// Mock 상품 데이터
-const mockProducts = [
-  { id: '1', name: '수분 진정 토너', options: ['50ml', '100ml', '200ml'] },
-  { id: '2', name: '비타민C 세럼', options: ['30ml', '50ml'] },
-  { id: '3', name: '클렌징 폼', options: ['100ml', '200ml'] },
-];
 
 export function GroupBuyRegistration() {
   const [formData, setFormData] = useState<GroupBuyFormData>({
@@ -172,7 +166,7 @@ export function GroupBuyRegistration() {
   };
 
   const getSelectedProduct = (productId: string) => {
-    return mockProducts.find((p) => p.id === productId);
+    return MOCK_PRODUCTS.find((p) => p.id === productId);
   };
 
   return (
@@ -235,7 +229,7 @@ export function GroupBuyRegistration() {
                           <SelectValue placeholder="상품을 선택해주세요" />
                         </SelectTrigger>
                         <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                          {mockProducts.map((mockProduct) => (
+                          {MOCK_PRODUCTS.map((mockProduct) => (
                             <SelectItem
                               key={mockProduct.id}
                               value={mockProduct.id}
