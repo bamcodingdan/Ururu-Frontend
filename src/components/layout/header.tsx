@@ -6,29 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import { useUIStore, useAuthStore } from '@/store';
-import { useUIStore } from '@/store';
 import { useCartBadge } from '@/hooks/useCartBadge';
+import { useLogout } from '@/hooks/useLogout';
 
 // 태블릿/모바일 헤더 컴포넌트
 function MobileHeader() {
   const { searchOpen, toggleSearch } = useUIStore();
-  const { isLoggedIn, setIsLoggedIn, setUserInfo } = useAuthStore();
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { handleLogout } = useLogout();
   const { cartItemCount } = useCartBadge();
-
-  // 로그아웃 핸들러
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('로그아웃 실패:', error);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-40 bg-bg-100 desktop:hidden" role="banner">
@@ -79,25 +65,6 @@ function MobileHeader() {
                 )}
               </Button>
             </Link>
-
-            {/* 로그인/로그아웃 버튼 */}
-            {isLoggedIn ? (
-              <Button
-                variant="outline"
-                size="sm"
-                className="ml-2"
-                onClick={handleLogout}
-                aria-label="로그아웃"
-              >
-                로그아웃
-              </Button>
-            ) : (
-              <Link href="/login" aria-label="로그인 페이지로 이동">
-                <Button variant="outline" size="sm" className="ml-2">
-                  로그인
-                </Button>
-              </Link>
-            )}
           </nav>
         </div>
 
