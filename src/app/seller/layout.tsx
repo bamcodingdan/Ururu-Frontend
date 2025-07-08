@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { SellerSidebar } from '@/components/seller/SellerSidebar';
 
 export const metadata: Metadata = {
   title: '판매자 센터',
@@ -10,5 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default function SellerLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return (
+    <div className="flex">
+      <SellerSidebar />
+      <main className="ml-72 flex-1">{children}</main>
+    </div>
+  );
 }

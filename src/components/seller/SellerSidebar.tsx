@@ -13,7 +13,6 @@ import {
   Plus,
   Users,
   FileText,
-  Store,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SELLER_PROFILE } from '@/data/seller';
@@ -76,67 +75,62 @@ export function SellerSidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="flex h-full w-64 flex-col border-r border-bg-300 bg-bg-100">
-      {/* 로고 */}
-      <div className="flex h-16 items-center justify-center border-b border-bg-300">
-        <Link href="/seller" className="flex items-center gap-2">
-          <Image
-            src="/ururu-gradient.svg"
-            alt="우르르"
-            width={32}
-            height={32}
-            className="h-8 w-8"
-          />
-          <span className="text-lg font-semibold text-text-100">판매자 센터</span>
-        </Link>
-      </div>
-
-      {/* 프로필 */}
-      <div className="border-b border-bg-300 p-4">
-        <div className="flex items-center gap-3">
-          <Image
-            src={SELLER_PROFILE.avatar}
-            alt={SELLER_PROFILE.name}
-            width={40}
-            height={40}
-            className="h-10 w-10 rounded-full"
-          />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium text-text-100">{SELLER_PROFILE.name}</p>
-            <p className="truncate text-xs text-text-200">{SELLER_PROFILE.email}</p>
-          </div>
+    <aside className="fixed left-0 top-0 z-30 flex h-screen w-72 flex-col bg-bg-100 shadow-sm">
+      {/* 상단 프로필 */}
+      <div className="flex flex-col items-center gap-3 border-b border-bg-200 px-0 py-8">
+        <Image
+          src={SELLER_PROFILE.avatar}
+          alt={SELLER_PROFILE.name}
+          width={56}
+          height={56}
+          className="h-14 w-14 rounded-full border-2 border-primary-100 shadow-sm"
+        />
+        <div className="flex flex-col items-center">
+          <span className="max-w-[160px] truncate text-base font-semibold text-text-100">
+            {SELLER_PROFILE.name}
+          </span>
+          <span className="max-w-[160px] truncate text-xs text-text-200">
+            {SELLER_PROFILE.email}
+          </span>
         </div>
       </div>
 
-      {/* 네비게이션 */}
-      <nav className="flex-1 space-y-1 p-4">
-        {sidebarItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-primary-100 text-primary-300'
-                  : 'text-text-200 hover:bg-bg-200 hover:text-text-100',
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          );
-        })}
+      {/* 네비게이션 메뉴 */}
+      <nav className="flex-1 px-0 py-6">
+        <ul className="flex flex-col gap-1">
+          {sidebarItems.map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-3 px-7 py-3 text-base font-medium transition-colors',
+                    isActive
+                      ? 'bg-primary-100 text-primary-300'
+                      : 'text-text-200 hover:bg-bg-200 hover:text-text-100',
+                  )}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
 
-      {/* 로그아웃 */}
-      <div className="border-t border-bg-300 p-4">
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-text-200 transition-colors hover:bg-bg-200 hover:text-text-100">
-          <LogOut className="h-4 w-4" />
+      {/* 로그아웃 버튼 */}
+      <div className="mt-auto border-t border-bg-200 px-0 py-6">
+        <button
+          className="flex w-full items-center gap-3 rounded-md px-7 py-3 text-base font-medium text-text-200 transition-colors hover:bg-bg-200 hover:text-text-100"
+          type="button"
+        >
+          <LogOut className="h-5 w-5" />
           로그아웃
         </button>
       </div>
-    </div>
+    </aside>
   );
 }
