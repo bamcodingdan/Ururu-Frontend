@@ -17,6 +17,9 @@ import { FORM_STYLES } from '@/constants/form-styles';
 import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 import { ArrowLeft, Upload, Plus, X, Save, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useFormArray } from '@/hooks/seller/useFormArray';
+import { OptionList } from './common/OptionList';
+import { SectionHeader } from './common/SectionHeader';
 
 interface ProductOption {
   id: string;
@@ -77,41 +80,31 @@ export function ProductRegistration() {
     }));
   };
 
-  const addOption = () => {
-    const newOption: ProductOption = {
+  // 옵션 관리 로직을 useFormArray로 대체
+  const optionArray = useFormArray<ProductOption>(formData.options);
+
+  // 기존 addOption, removeOption, updateOption, handleImageUpload 대체
+  const handleOptionChange = (id: string, field: keyof ProductOption, value: any) => {
+    optionArray.update(
+      (opt) => opt.id === id,
+      (opt) => ({ ...opt, [field]: value }),
+    );
+  };
+  const handleOptionRemove = (id: string) => {
+    optionArray.remove((opt) => opt.id === id);
+  };
+  const handleOptionImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleOptionChange(id, 'image', file);
+  };
+  const handleAddOption = () => {
+    optionArray.add({
       id: Date.now().toString(),
       name: '',
       price: 0,
       image: null,
       stock: 0,
-    };
-    setFormData((prev) => ({
-      ...prev,
-      options: [...prev.options, newOption],
-    }));
-  };
-
-  const removeOption = (optionId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      options: prev.options.filter((option) => option.id !== optionId),
-    }));
-  };
-
-  const updateOption = (optionId: string, field: keyof ProductOption, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      options: prev.options.map((option) =>
-        option.id === optionId ? { ...option, [field]: value } : option,
-      ),
-    }));
-  };
-
-  const handleImageUpload = (optionId: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      updateOption(optionId, 'image', file);
-    }
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -144,8 +137,10 @@ export function ProductRegistration() {
       <form onSubmit={handleSubmit} className="space-y-12">
         {/* 상품 기본 정보 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">상품 기본 정보</h2>
-          <p className="mb-6 text-sm text-text-200">판매할 상품의 기본 정보를 입력해주세요</p>
+          <SectionHeader
+            title="상품 기본 정보"
+            description="판매할 상품의 기본 정보를 입력해주세요"
+          />
 
           <div className="space-y-6">
             <FormField label="상품명" required>
@@ -249,108 +244,27 @@ export function ProductRegistration() {
           </div>
         </section>
 
-        {/* 상품 옵션 설정 */}
+        {/* 옵션 관리 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">상품 옵션 설정</h2>
-          <p className="mb-6 text-sm text-text-200">판매할 상품의 다양한 옵션을 설정해주세요</p>
+          <SectionHeader title="옵션 관리" description="상품의 옵션을 추가/수정하세요" />
 
-          <div className="space-y-8">
-            {formData.options.map((option, index) => (
-              <div
-                key={option.id}
-                className="relative rounded-2xl border border-bg-300 bg-bg-100 p-8"
-              >
-                <div className="absolute right-6 top-6">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeOption(option.id)}
-                    className="h-8 w-8 text-text-300 hover:bg-bg-200"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <h3 className="mb-6 text-lg font-semibold text-text-100">옵션 {index + 1}</h3>
-                <div className="space-y-6">
-                  <FormField label="옵션명" required>
-                    <Input
-                      value={option.name}
-                      onChange={(e) => updateOption(option.id, 'name', e.target.value)}
-                      placeholder="EX) 07 치크로즈"
-                      className={FORM_STYLES.input.base}
-                      required
-                      maxLength={20}
-                    />
-                  </FormField>
-                  <FormField label="기본 가격" required>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        value={option.price}
-                        onChange={(e) => updateOption(option.id, 'price', Number(e.target.value))}
-                        placeholder="10,000"
-                        className={FORM_STYLES.input.base + ' pr-12'}
-                        required
-                      />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-300">
-                        원
-                      </span>
-                    </div>
-                  </FormField>
-                  <FormField label="옵션 이미지" required>
-                    <div className="cursor-pointer rounded-lg border-2 border-dashed border-bg-300 p-6 text-center">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageUpload(option.id, e)}
-                        className="hidden"
-                        id={`image-upload-${option.id}`}
-                      />
-                      <label
-                        htmlFor={`image-upload-${option.id}`}
-                        className="flex cursor-pointer flex-col items-center justify-center"
-                      >
-                        <Upload className="mb-2 h-8 w-8 text-text-300" />
-                        <span className="text-sm text-text-300">대표 이미지를 업로드하세요</span>
-                      </label>
-                      {option.image && (
-                        <div className="mt-2 flex items-center justify-center gap-2">
-                          <ImageIcon className="h-4 w-4 text-text-300" />
-                          <span className="text-sm text-text-200">{option.image.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  </FormField>
-                  <FormField label="재고수량" required>
-                    <Input
-                      type="number"
-                      value={option.stock}
-                      onChange={(e) => updateOption(option.id, 'stock', Number(e.target.value))}
-                      placeholder="정산수를 표기해주세요"
-                      className={FORM_STYLES.input.base}
-                      required
-                    />
-                  </FormField>
-                </div>
-              </div>
-            ))}
-            <Button
-              type="button"
-              onClick={addOption}
-              className={FORM_STYLES.button.pinkOutline + ' mt-2 h-12 w-full'}
-            >
-              옵션 추가하기
-            </Button>
-          </div>
+          <OptionList
+            options={optionArray.items}
+            onChange={handleOptionChange}
+            onRemove={handleOptionRemove}
+            onImageUpload={handleOptionImageUpload}
+          />
+          <Button type="button" onClick={handleAddOption} className="mt-4">
+            옵션 추가
+          </Button>
         </section>
 
         {/* 화장품 정보제공고시 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">화장품 정보제공고시</h2>
-          <p className="mb-6 text-sm text-text-200">
-            화장품 판매에 따른 필수 정보입니다. 정확하게 입력해주세요.
-          </p>
+          <SectionHeader
+            title="화장품 정보제공고시"
+            description="화장품 판매에 따른 필수 정보입니다. 정확하게 입력해주세요."
+          />
 
           <div className="space-y-6">
             <div className="flex gap-2">

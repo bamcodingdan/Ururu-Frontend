@@ -20,6 +20,9 @@ import { MOCK_PRODUCTS } from '@/data/seller';
 import { Upload, Plus, X, Image as ImageIcon, CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import { useFormArray } from '@/hooks/seller/useFormArray';
+import { OptionList } from './common/OptionList';
+import { SectionHeader } from './common/SectionHeader';
 
 interface DiscountTier {
   id: string;
@@ -64,33 +67,26 @@ export function GroupBuyRegistration() {
     }));
   };
 
-  const addProduct = () => {
-    const newProduct: GroupBuyProduct = {
+  // 상품(옵션) 관리 로직을 useFormArray로 대체
+  const productArray = useFormArray<GroupBuyProduct>(formData.products);
+
+  // 기존 addProduct, removeProduct, updateProduct 대체
+  const handleProductChange = (id: string, field: keyof GroupBuyProduct, value: any) => {
+    productArray.update(
+      (p) => p.id === id,
+      (p) => ({ ...p, [field]: value }),
+    );
+  };
+  const handleProductRemove = (id: string) => {
+    productArray.remove((p) => p.id === id);
+  };
+  const handleAddProduct = () => {
+    productArray.add({
       id: Date.now().toString(),
       productId: '',
       selectedOptions: [],
       maxQuantityPerPerson: 1,
-    };
-    setFormData((prev) => ({
-      ...prev,
-      products: [...prev.products, newProduct],
-    }));
-  };
-
-  const removeProduct = (productId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      products: prev.products.filter((p) => p.id !== productId),
-    }));
-  };
-
-  const updateProduct = (productId: string, field: keyof GroupBuyProduct, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      products: prev.products.map((product) =>
-        product.id === productId ? { ...product, [field]: value } : product,
-      ),
-    }));
+    });
   };
 
   const handleOptionToggle = (productId: string, option: string) => {
@@ -193,11 +189,9 @@ export function GroupBuyRegistration() {
       <form onSubmit={handleSubmit} className="space-y-12">
         {/* 상품 선택 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">상품 선택</h2>
-          <p className="mb-6 text-sm text-text-200">공구할 상품들을 선택해주세요</p>
-
+          <SectionHeader title="상품 선택" description="공구할 상품들을 선택해주세요" />
           <div className="space-y-8">
-            {formData.products.map((product, index) => {
+            {productArray.items.map((product, index) => {
               const selectedProduct = getSelectedProduct(product.productId);
               return (
                 <div
@@ -209,7 +203,7 @@ export function GroupBuyRegistration() {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      onClick={() => removeProduct(product.id)}
+                      onClick={() => handleProductRemove(product.id)}
                       className="h-8 w-8 text-text-300 hover:bg-bg-200"
                     >
                       <X className="h-4 w-4" />
@@ -221,8 +215,8 @@ export function GroupBuyRegistration() {
                       <Select
                         value={product.productId}
                         onValueChange={(value) => {
-                          updateProduct(product.id, 'productId', value);
-                          updateProduct(product.id, 'selectedOptions', []);
+                          handleProductChange(product.id, 'productId', value);
+                          handleProductChange(product.id, 'selectedOptions', []);
                         }}
                       >
                         <SelectTrigger className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300">
@@ -245,25 +239,11 @@ export function GroupBuyRegistration() {
                     {selectedProduct && (
                       <>
                         <FormField label="상품 옵션 선택" required>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedProduct.options.map((option) => (
-                              <button
-                                key={option}
-                                type="button"
-                                onClick={() => handleOptionToggle(product.id, option)}
-                                className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
-                                  product.selectedOptions.includes(option)
-                                    ? 'border-primary-300 bg-primary-100 text-primary-300'
-                                    : 'border-bg-300 bg-bg-100 text-text-200 hover:border-primary-300 hover:text-primary-300'
-                                }`}
-                              >
-                                {option}
-                                {product.selectedOptions.includes(option) && (
-                                  <X className="h-3 w-3" />
-                                )}
-                              </button>
-                            ))}
-                          </div>
+                          <OptionList
+                            options={selectedProduct.options}
+                            selectedOptions={product.selectedOptions}
+                            onOptionToggle={(option) => handleOptionToggle(product.id, option)}
+                          />
                         </FormField>
 
                         <FormField label="1인당 최대 구매 수량" required>
@@ -271,7 +251,7 @@ export function GroupBuyRegistration() {
                             type="number"
                             value={product.maxQuantityPerPerson}
                             onChange={(e) =>
-                              updateProduct(
+                              handleProductChange(
                                 product.id,
                                 'maxQuantityPerPerson',
                                 Number(e.target.value),
@@ -291,7 +271,7 @@ export function GroupBuyRegistration() {
             })}
             <Button
               type="button"
-              onClick={addProduct}
+              onClick={handleAddProduct}
               className={FORM_STYLES.button.pinkOutline + ' mt-2 h-12 w-full'}
             >
               상품 추가하기
@@ -301,9 +281,7 @@ export function GroupBuyRegistration() {
 
         {/* 공구 기본 정보 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">공구 기본 정보</h2>
-          <p className="mb-6 text-sm text-text-200">공구의 기본 정보를 입력해주세요</p>
-
+          <SectionHeader title="공구 기본 정보" description="공구의 기본 정보를 입력해주세요" />
           <div className="space-y-6">
             <FormField
               label="공구 제목"
@@ -430,9 +408,7 @@ export function GroupBuyRegistration() {
 
         {/* 상세 페이지 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">상세 페이지</h2>
-          <p className="mb-6 text-sm text-text-200">상세 이미지를 등록해주세요</p>
-
+          <SectionHeader title="상세 페이지" description="상세 이미지를 등록해주세요" />
           <FormField label="상세 이미지 업로드">
             <div className="cursor-pointer rounded-lg border-2 border-dashed border-bg-300 p-6 text-center">
               <input
@@ -477,9 +453,10 @@ export function GroupBuyRegistration() {
 
         {/* 할인 단계 설정 */}
         <section>
-          <h2 className="mb-2 text-xl font-semibold text-text-100">할인 단계 설정</h2>
-          <p className="mb-6 text-sm text-text-200">참여 인원에 따른 할인 단계를 설정해주세요</p>
-
+          <SectionHeader
+            title="할인 단계 설정"
+            description="참여 인원에 따른 할인 단계를 설정해주세요"
+          />
           <div className="space-y-6">
             {formData.discountTiers.map((tier, index) => (
               <div
