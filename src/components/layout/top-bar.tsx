@@ -1,66 +1,40 @@
 'use client';
 
 import Link from 'next/link';
-import { useAuthStore } from '@/store';
 
 export function TopBar() {
-  const { isLoggedIn, setIsLoggedIn, setUserInfo } = useAuthStore();
-
-  const handleLogout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      setIsLoggedIn(false);
-      setUserInfo(null);
-      window.location.href = '/login';
-    } catch (error) {
-      console.error('로그아웃 실패:', error);
-    }
-  };
-
   return (
-    <div className="hidden bg-bg-100 desktop:block">
+    <div className="desktop:block bg-bg-100 hidden">
       <div className="container">
         <div className="flex h-12 items-center justify-end">
           <nav className="flex items-center space-x-6">
-            {isLoggedIn ? (
-              <button
-                onClick={handleLogout}
-                className="text-sm text-text-200 transition-colors hover:text-text-100"
-              >
-                로그아웃
-              </button>
-            ) : (
-              <Link
-                href="/login"
-                className="text-sm text-text-200 transition-colors hover:text-text-100"
-              >
-                로그인
-              </Link>
-            )}
+            <Link
+              href="/login"
+              className="text-text-200 hover:text-text-100 text-sm transition-colors"
+            >
+              로그인
+            </Link>
             <Link
               href="/cart"
-              className="text-sm text-text-200 transition-colors hover:text-text-100"
+              className="text-text-200 hover:text-text-100 text-sm transition-colors"
             >
               장바구니
             </Link>
             <Link
               href="/history"
-              className="text-sm text-text-200 transition-colors hover:text-text-100"
+              className="text-text-200 hover:text-text-100 text-sm transition-colors"
             >
               히스토리
             </Link>
             <Link
               href="/orders"
-              className="text-sm text-text-200 transition-colors hover:text-text-100"
+              className="text-text-200 hover:text-text-100 text-sm transition-colors"
             >
               주문배송
             </Link>
             <Link
               href="/mypage"
-              className="text-sm text-text-200 transition-colors hover:text-text-100"
+              className="text-text-200 hover:text-text-100 text-sm transition-colors"
             >
               마이페이지
             </Link>
