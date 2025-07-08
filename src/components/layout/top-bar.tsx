@@ -41,7 +41,7 @@ export function TopBar() {
               히스토리
             </Link>
             <Link
-              href="/orders"
+              href="/mypage/orders"
               className="text-sm text-text-200 transition-colors hover:text-text-100"
             >
               주문배송

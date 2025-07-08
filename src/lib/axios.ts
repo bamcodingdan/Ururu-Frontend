@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { ApiError } from '@/types/api';
 
 // 환경변수에서 API URL 가져오기 (개발/운영 환경 분리)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.ururu.shop/api';
 
 // axios 인스턴스 생성
 const axiosInstance: AxiosInstance = axios.create({
@@ -16,7 +16,7 @@ const axiosInstance: AxiosInstance = axios.create({
 // 요청 인터셉터 (요청 전에 실행)
 axiosInstance.interceptors.request.use(
   (config) => {
-    // 기본적인 요청 로깅 (개발 환경에서만)
+    // 개발 환경에서만 로깅 (필요시 주석 해제)
     // if (process.env.NODE_ENV === 'development') {
     //   console.log('🚀 API Request:', config.method?.toUpperCase(), config.url);
     // }
@@ -30,14 +30,14 @@ axiosInstance.interceptors.request.use(
 // 응답 인터셉터 (응답 후에 실행)
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 기본적인 응답 로깅 (개발 환경에서만)
+    // 개발 환경에서만 로깅 (필요시 주석 해제)
     // if (process.env.NODE_ENV === 'development') {
     //   console.log('API Response:', response.status, response.config.url);
     // }
     return response;
   },
   (error) => {
-    // 에러 로깅 (개발 환경에서만)
+    // 개발 환경에서만 로깅 (필요시 주석 해제)
     // if (process.env.NODE_ENV === 'development') {
     //   console.error('API Error:', error.response?.status, error.config?.url, error.message);
     // }

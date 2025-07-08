@@ -5,15 +5,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { myPageData } from '@/data/mypage';
+import { myPageData, beautyProfileData } from '@/data/mypage';
+import { FORM_STYLES } from '@/constants/form-styles';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
 import { useAuthStore } from '@/store';
 
 export function ProfileCard() {
-  const { profileActions } = myPageData;
   const userInfo = useAuthStore((state) => state.userInfo);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-  // 실제 사용자 정보 또는 기본값 사용
+  // main 브랜치 구조에 맞춰 실제 사용자 정보로 profile 객체 생성
   const profile = {
     nickname: userInfo?.name || userInfo?.nickname || '우르르',
     avatar: userInfo?.profileImage || '/profile-image.svg',
@@ -21,8 +23,13 @@ export function ProfileCard() {
     points: 12345, // TODO: 실제 사용자 포인트 정보로 교체
   };
 
+  const { profileActions } = myPageData;
+  const profileData = beautyProfileData.withProfile;
+  const hasBeautyProfile = profileData.skinType && profileData.skinTone;
+
   // 프로필 이미지가 없거나 기본값인 경우 fallback 사용
   const hasCustomAvatar = userInfo?.profileImage && userInfo.profileImage !== '/profile-image.svg';
+
 
   return (
     <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-sm md:px-8">
@@ -66,16 +73,22 @@ export function ProfileCard() {
           </div>
         </div>
         {/* 하단 버튼 */}
-        <div className="flex w-full gap-1 md:gap-4">
+        <div className="flex w-full flex-col gap-2 md:flex-row md:gap-4">
           {profileActions.map((action) => (
-            <Button
+            <Link
               key={action.label}
-              variant="outline"
-              className="h-8 flex-1 rounded-lg border-bg-300 bg-bg-100 px-1 text-[10px] font-medium text-text-300 hover:border-primary-300 hover:text-primary-300 md:h-12 md:rounded-xl md:px-2 md:text-base"
+              href={action.href || '#'}
+              className="flex-1"
               aria-label={`${action.label} 페이지로 이동`}
             >
-              {action.label}
-            </Button>
+              <Button variant="outline" className={cn(FORM_STYLES.button.profileCard)}>
+                {action.label === '뷰티 프로필 수정' && hasBeautyProfile
+                  ? '뷰티 프로필 수정'
+                  : action.label === '뷰티 프로필 수정'
+                    ? '뷰티 프로필 작성'
+                    : action.label}
+              </Button>
+            </Link>
           ))}
         </div>
       </CardContent>

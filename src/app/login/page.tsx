@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/store';
 import { useSocialLogin } from '@/hooks/useSocialLogin';
+import { FORM_STYLES } from '@/constants/form-styles';
 
 export default function LoginPage() {
   const { loginType, loginFormData, setLoginType, setLoginFormData } = useAuthStore();
@@ -19,7 +20,6 @@ export default function LoginPage() {
 
   const handleSellerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('판매자 로그인 시도:', loginFormData);
     // TODO: 실제 로그인 API 연동 예정
   };
 
@@ -30,14 +30,16 @@ export default function LoginPage() {
         <div className="container mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-4 tablet:max-w-lg desktop:max-w-xl">
           {/* 로고 */}
           <div className="mb-6 flex justify-center">
-            <Image
-              src="/ururu-full-logo.png"
-              alt="우르르"
-              width={120}
-              height={32}
-              className="h-12 w-auto"
-              priority
-            />
+            <Link href="/" aria-label="우르르 홈으로 이동">
+              <Image
+                src="/ururu-full-logo.png"
+                alt="우르르"
+                width={120}
+                height={32}
+                className="h-12 w-auto"
+                priority
+              />
+            </Link>
           </div>
 
           {/* 안내 문구 */}
@@ -61,7 +63,7 @@ export default function LoginPage() {
                 onClick={() => setLoginType('buyer')}
                 className={`flex flex-1 items-center justify-center gap-2 rounded-md py-3 text-sm font-medium transition-all ${
                   loginType === 'buyer'
-                    ? 'bg-bg-100 text-primary-300 shadow-sm'
+                    ? 'bg-bg-100 text-text-100 shadow-sm'
                     : 'text-text-200 hover:text-text-100'
                 }`}
                 role="tab"
@@ -76,7 +78,7 @@ export default function LoginPage() {
                 onClick={() => setLoginType('seller')}
                 className={`flex flex-1 items-center justify-center gap-2 rounded-md py-3 text-sm font-medium transition-all ${
                   loginType === 'seller'
-                    ? 'bg-bg-100 text-primary-300 shadow-sm'
+                    ? 'bg-bg-100 text-text-100 shadow-sm'
                     : 'text-text-200 hover:text-text-100'
                 }`}
                 role="tab"
@@ -193,13 +195,13 @@ export default function LoginPage() {
 
               {/* 로그인 유지 & 비밀번호 찾기 */}
               <div className="flex items-center justify-between">
-                <label className="flex items-center">
+                <label className={FORM_STYLES.checkbox.container}>
                   <input
                     type="checkbox"
-                    className="custom-checkbox mr-2"
+                    className={FORM_STYLES.checkbox.base}
                     aria-label="로그인 유지"
                   />
-                  <span className="text-sm text-text-200">로그인 유지</span>
+                  <span className={FORM_STYLES.checkbox.label}>로그인 유지</span>
                 </label>
                 <button
                   type="button"

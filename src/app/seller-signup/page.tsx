@@ -4,7 +4,7 @@ import { CustomLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField, PasswordStrengthIndicator } from '@/components/form';
-import { Store, ArrowLeft } from 'lucide-react';
+import { Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -38,14 +38,16 @@ export default function SellerSignUpPage() {
         <div className="container mx-auto flex min-h-screen max-w-md flex-col justify-center px-6 py-4 tablet:max-w-lg desktop:max-w-xl">
           {/* 로고 */}
           <div className="mb-6 flex justify-center pt-8">
-            <Image
-              src="/ururu-full-logo.png"
-              alt="우르르"
-              width={120}
-              height={32}
-              className="h-12 w-auto"
-              priority
-            />
+            <Link href="/" aria-label="우르르 홈으로 이동">
+              <Image
+                src="/ururu-full-logo.png"
+                alt="우르르"
+                width={120}
+                height={32}
+                className="h-12 w-auto"
+                priority
+              />
+            </Link>
           </div>
 
           {/* 안내 문구 */}
@@ -57,7 +59,7 @@ export default function SellerSignUpPage() {
           </div>
 
           {/* 회원가입 폼 */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* 이메일 */}
             <FormField label="이메일" required>
               <Input
@@ -278,18 +280,20 @@ export default function SellerSignUpPage() {
 
             {/* 약관 동의 */}
             <div className="mt-6 space-y-3">
-              <label className="flex items-start">
+              <label className={FORM_STYLES.checkbox.container}>
                 <input
                   type="checkbox"
                   checked={agreements.all}
                   onChange={(e) => handleAgreementChange('all' as AgreementType, e.target.checked)}
                   className={FORM_STYLES.checkbox.base}
                 />
-                <span className="text-sm font-medium text-text-100">전체 약관에 동의합니다</span>
+                <span className="text-sm font-medium leading-relaxed text-text-100">
+                  전체 약관에 동의합니다
+                </span>
               </label>
 
               <div className="ml-7 space-y-2">
-                <label className="flex items-start">
+                <label className={FORM_STYLES.checkbox.container}>
                   <input
                     type="checkbox"
                     checked={agreements.terms}
@@ -298,12 +302,12 @@ export default function SellerSignUpPage() {
                     }
                     className={FORM_STYLES.checkbox.base}
                   />
-                  <span className="text-sm text-text-200">
+                  <span className={FORM_STYLES.checkbox.label}>
                     <span className="text-primary-300 underline">이용약관</span>에 동의합니다 (필수)
                   </span>
                 </label>
 
-                <label className="flex items-start">
+                <label className={FORM_STYLES.checkbox.container}>
                   <input
                     type="checkbox"
                     checked={agreements.privacy}
@@ -312,13 +316,13 @@ export default function SellerSignUpPage() {
                     }
                     className={FORM_STYLES.checkbox.base}
                   />
-                  <span className="text-sm text-text-200">
+                  <span className={FORM_STYLES.checkbox.label}>
                     <span className="text-primary-300 underline">개인정보처리방침</span>에
                     동의합니다 (필수)
                   </span>
                 </label>
 
-                <label className="flex items-start">
+                <label className={FORM_STYLES.checkbox.container}>
                   <input
                     type="checkbox"
                     checked={agreements.marketing}
@@ -327,7 +331,7 @@ export default function SellerSignUpPage() {
                     }
                     className={FORM_STYLES.checkbox.base}
                   />
-                  <span className="text-sm text-text-200">
+                  <span className={FORM_STYLES.checkbox.label}>
                     마케팅 정보 수신에 동의합니다 (선택)
                   </span>
                 </label>
