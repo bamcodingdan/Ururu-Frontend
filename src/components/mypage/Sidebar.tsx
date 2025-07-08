@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   LogOutIcon,
@@ -10,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { myPageData } from '@/data/mypage';
+import { useLogout } from '@/hooks/useLogout';
 
 // 아이콘 매핑 함수
 const getIcon = (iconName: string) => {
@@ -32,6 +35,14 @@ const getIcon = (iconName: string) => {
 
 export function Sidebar() {
   const { navigationSections } = myPageData;
+  const { handleLogout } = useLogout();
+
+  const handleItemClick = (item: any) => {
+    if (item.label === '로그아웃') {
+      handleLogout();
+    }
+    // 다른 메뉴 아이템들은 href가 있으면 Link로 처리되거나 별도 핸들러 필요
+  };
 
   return (
     <aside className="hidden w-[256px] flex-col gap-6 bg-bg-100 lg:flex">
@@ -46,6 +57,7 @@ export function Sidebar() {
                 role="button"
                 tabIndex={0}
                 aria-label={`${item.label} 메뉴로 이동`}
+                onClick={() => handleItemClick(item)}
               >
                 {getIcon(item.icon)}
                 <span>{item.label}</span>
