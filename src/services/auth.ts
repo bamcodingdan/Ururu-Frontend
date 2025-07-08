@@ -44,24 +44,26 @@ export const socialLogin = async (provider: string, code: string): Promise<Socia
 
 // 특정 제공자의 인증 URL 가져오기 (직접 OAuth URL 사용)
 export const getAuthUrl = async (provider: 'kakao' | 'google'): Promise<string> => {
+  // 환경 변수 검증
+  if (!process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID || !process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+    throw new Error('OAuth 클라이언트 ID가 설정되지 않았습니다.');
+  }
   const state = Math.random().toString(36).substring(2, 15);
   const isProd = process.env.NODE_ENV === 'production';
 
   // 환경별 redirect-uri
   const kakaoRedirectUri = isProd
-    ? 'https://api.ururu.shop/api/auth/oauth/kakao'
-    : 'http://localhost:8080/api/auth/oauth/kakao';
+    ? process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_PROD
+    : process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_DEV;
   const googleRedirectUri = isProd
-    ? 'https://api.ururu.shop/api/auth/oauth/google'
-    : 'http://localhost:8080/api/auth/oauth/google';
+    ? process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_PROD
+    : process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV;
 
   switch (provider) {
     case 'kakao':
-      return `https://kauth.kakao.com/oauth/authorize?client_id=488328d3fc3e70249e0d7d98e1afffb7&redirect_uri=${encodeURIComponent(kakaoRedirectUri)}&response_type=code&scope=profile_nickname,profile_image,account_email&state=${state}`;
-
+      return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${encodeURIComponent(kakaoRedirectUri!)}&response_type=code&scope=profile_nickname,profile_image,account_email&state=${state}`;
     case 'google':
-      return `https://accounts.google.com/o/oauth2/v2/auth?client_id=195286873238-tks2hdhr2he1gshoj3sd89d1o5dm35m7.apps.googleusercontent.com&redirect_uri=${encodeURIComponent(googleRedirectUri)}&response_type=code&scope=openid email profile&state=${state}&access_type=offline&prompt=consent`;
-
+      return `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(googleRedirectUri!)}&response_type=code&scope=openid email profile&state=${state}&access_type=offline&prompt=consent`;
     default:
       throw new Error(`${provider} 제공자를 찾을 수 없습니다.`);
   }
