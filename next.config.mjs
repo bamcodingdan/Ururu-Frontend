@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -29,6 +31,19 @@ const nextConfig = {
           : 'http://localhost:8080/api/:path*',
       },
     ];
+  },
+  env: {
+    NEXT_PUBLIC_KAKAO_CLIENT_ID: process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID || 'your_kakao_client_id',
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID:
+      process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'your_google_client_id',
+    NEXT_PUBLIC_KAKAO_REDIRECT_URI_DEV:
+      process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_DEV || 'http://localhost:3000/auth/success',
+    NEXT_PUBLIC_KAKAO_REDIRECT_URI_PROD:
+      process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_PROD || 'https://www.ururu.shop/auth/success',
+    NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV:
+      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV || 'http://localhost:3000/auth/success',
+    NEXT_PUBLIC_GOOGLE_REDIRECT_URI_PROD:
+      process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_PROD || 'https://www.ururu.shop/auth/success',
   },
 };
 
