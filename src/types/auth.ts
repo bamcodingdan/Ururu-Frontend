@@ -12,8 +12,8 @@ export interface LoginFormData {
 // 판매자 회원가입 폼 데이터
 export interface SellerSignupFormData {
   name: string; // 브랜드명
-  businessName: string; // 사업자명
-  ownerName: string; // 대표자명
+  businessName: string; // 사업자명 (백엔드와 일치)
+  ownerName: string; // 대표자명 (백엔드와 일치)
   businessNumber: string; // 사업자등록번호
   email: string; // 이메일
   password: string; // 비밀번호

@@ -17,8 +17,8 @@ export function ProfileCard() {
 
   // main 브랜치 구조에 맞춰 실제 사용자 정보로 profile 객체 생성
   const profile = {
-    nickname: userInfo?.name || userInfo?.nickname || '우르르',
-    avatar: userInfo?.profileImage || '/profile-image.svg',
+    nickname: userInfo?.nickname || '우르르',
+    avatar: userInfo?.profile_image || '/profile-image.svg',
     badges: ['민감성', '여름쿨톤'], // TODO: 실제 사용자 뱃지 정보로 교체
     points: 12345, // TODO: 실제 사용자 포인트 정보로 교체
   };
@@ -28,8 +28,8 @@ export function ProfileCard() {
   const hasBeautyProfile = profileData.skinType && profileData.skinTone;
 
   // 프로필 이미지가 없거나 기본값인 경우 fallback 사용
-  const hasCustomAvatar = userInfo?.profileImage && userInfo.profileImage !== '/profile-image.svg';
-
+  const hasCustomAvatar =
+    userInfo?.profile_image && userInfo.profile_image !== '/profile-image.svg';
 
   return (
     <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-sm md:px-8">
@@ -62,8 +62,8 @@ export function ProfileCard() {
             </div>
           </div>
           {/* 포인트 */}
-          <div className="flex items-center gap-2 md:gap-3">
-            <span className="mb-1 flex h-6 w-6 items-center justify-center rounded-full border border-primary-200 text-base font-bold text-primary-200 md:h-8 md:w-8 md:text-lg">
+          <div className="flex flex-col items-center gap-1">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full border border-primary-200 text-base font-bold text-primary-200 md:h-8 md:w-8 md:text-lg">
               P
             </span>
             <span className="text-xs text-text-300">우르르 포인트</span>

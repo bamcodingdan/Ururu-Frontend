@@ -35,18 +35,18 @@ export const useSignupForm = () => {
 
   // 브랜드명 중복 확인 핸들러
   const handleBrandDuplicateCheck = useCallback(async () => {
-    if (!signupFormData.brand.trim()) {
+    if (!signupFormData.name.trim()) {
       setBrandGuide('브랜드명을 입력해주세요.', 'error');
       return;
     }
 
     try {
       // TODO: 실제 브랜드명 중복 확인 API 호출
-      // const response = await checkBrandDuplicate(signupFormData.brand);
-      // if (response.isDuplicate) {
-      //   setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
-      // } else {
+      // const response = await checkBrandNameAvailability(signupFormData.name);
+      // if (response.isAvailable) {
       //   setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
+      // } else {
+      //   setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
       // }
 
       // 임시 로직 (API 구현 전)
@@ -55,21 +55,22 @@ export const useSignupForm = () => {
       // TODO: 에러 로깅 서비스 연동
       setBrandGuide('중복 확인 중 오류가 발생했습니다.', 'error');
     }
-  }, [signupFormData.brand, setBrandGuide]);
+  }, [signupFormData.name, setBrandGuide]);
 
   // 폼 유효성 검사
   const isFormValid = useCallback(() => {
     return (
       signupFormData.email &&
       signupFormData.password &&
-      signupFormData.passwordConfirm &&
-      signupFormData.password === signupFormData.passwordConfirm &&
       isPasswordValid(signupFormData.password) &&
-      signupFormData.brand &&
-      signupFormData.company &&
-      signupFormData.ceo &&
+      signupFormData.name &&
+      signupFormData.businessName &&
+      signupFormData.ownerName &&
       signupFormData.businessNumber &&
       signupFormData.phone &&
+      signupFormData.address1 &&
+      signupFormData.address2 &&
+      signupFormData.mailOrderNumber &&
       agreements.terms &&
       agreements.privacy
     );
@@ -83,7 +84,7 @@ export const useSignupForm = () => {
         // TODO: 실제 회원가입 API 연동 예정
       }
     },
-    [isFormValid, signupFormData],
+    [isFormValid],
   );
 
   return {

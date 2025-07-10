@@ -32,78 +32,69 @@ export const useSellerSignup = (): UseSellerSignupReturn => {
   const checkEmail = useCallback(async (email: string): Promise<boolean> => {
     if (!email) return true;
 
-    // 임시로 중복 체크 비활성화 (백엔드 문제 해결 시 제거)
-    return true;
-
-    // try {
-    //   const response = await checkEmailAvailability(email);
-    //   if (!response.isAvailable) {
-    //     setErrors((prev) => ({ ...prev, email: '이미 사용 중인 이메일입니다.' }));
-    //     return false;
-    //   } else {
-    //     setErrors((prev) => {
-    //       const next = { ...prev };
-    //       delete next.email;
-    //       return next;
-    //     });
-    //     return true;
-    //   }
-    // } catch (error: any) {
-    //   console.error('이메일 중복 체크 오류:', error);
-    //   return false;
-    // }
+    try {
+      const response = await checkEmailAvailability(email);
+      if (!response.isAvailable) {
+        setErrors((prev) => ({ ...prev, email: '이미 사용 중인 이메일입니다.' }));
+        return false;
+      } else {
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.email;
+          return next;
+        });
+        return true;
+      }
+    } catch (error: any) {
+      console.error('이메일 중복 체크 오류:', error);
+      return false;
+    }
   }, []);
 
   // 사업자등록번호 중복 체크
   const checkBusinessNumber = useCallback(async (businessNumber: string): Promise<boolean> => {
     if (!businessNumber) return true;
 
-    // 임시로 중복 체크 비활성화 (백엔드 문제 해결 시 제거)
-    return true;
-
-    // try {
-    //   const response = await checkBusinessNumberAvailability(businessNumber);
-    //   if (!response.isAvailable) {
-    //     setErrors((prev) => ({ ...prev, businessNumber: '이미 사용 중인 사업자등록번호입니다.' }));
-    //     return false;
-    //   } else {
-    //     setErrors((prev) => {
-    //       const next = { ...prev };
-    //       delete next.businessNumber;
-    //       return next;
-    //     });
-    //     return true;
-    //   }
-    // } catch (error: any) {
-    //   console.error('사업자등록번호 중복 체크 오류:', error);
-    //   return false;
-    // }
+    try {
+      const response = await checkBusinessNumberAvailability(businessNumber);
+      if (!response.isAvailable) {
+        setErrors((prev) => ({ ...prev, businessNumber: '이미 사용 중인 사업자등록번호입니다.' }));
+        return false;
+      } else {
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.businessNumber;
+          return next;
+        });
+        return true;
+      }
+    } catch (error: any) {
+      console.error('사업자등록번호 중복 체크 오류:', error);
+      return false;
+    }
   }, []);
 
   // 브랜드명 중복 체크
   const checkBrandName = useCallback(async (name: string): Promise<boolean> => {
     if (!name) return true;
 
-    // 임시로 중복 체크 비활성화 (백엔드 문제 해결 시 제거)
-    return true;
-
-    // try {
-    //   const response = await checkBrandNameAvailability(name);
-    //   if (!response.isAvailable) {
-    //     setErrors((prev) => ({ ...prev, name: '이미 사용 중인 브랜드명입니다.' }));
-    //     return false;
-    //   } else {
-    //     setErrors((prev) => {
-    //       const next = { ...prev };
-    //       delete next.name;
-    //       return next;
-    //     });
-    //     return true;
-    //   }
-    // } catch (error: any) {
-    //   console.error('브랜드명 중복 체크 오류:', error);
-    //   return false;
-    // }
+    try {
+      const response = await checkBrandNameAvailability(name);
+      if (!response.isAvailable) {
+        setErrors((prev) => ({ ...prev, name: '이미 사용 중인 브랜드명입니다.' }));
+        return false;
+      } else {
+        setErrors((prev) => {
+          const next = { ...prev };
+          delete next.name;
+          return next;
+        });
+        return true;
+      }
+    } catch (error: any) {
+      console.error('브랜드명 중복 체크 오류:', error);
+      return false;
+    }
   }, []);
 
   // 회원가입 처리

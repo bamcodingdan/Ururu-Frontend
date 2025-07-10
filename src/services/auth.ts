@@ -28,10 +28,7 @@ export const sellerLogin = async (credentials: LoginFormData): Promise<AuthSucce
 // 판매자 회원가입
 export const sellerSignup = async (signupData: SellerSignupFormData): Promise<UserInfo> => {
   try {
-    const response = await axiosInstance.post<{ data: UserInfo }>(
-      '/auth/seller/signup',
-      signupData,
-    );
+    const response = await axiosInstance.post<{ data: UserInfo }>('/sellers/signup', signupData);
     return response.data.data;
   } catch (error) {
     throw handleApiError(error);
@@ -42,7 +39,7 @@ export const sellerSignup = async (signupData: SellerSignupFormData): Promise<Us
 export const checkEmailAvailability = async (email: string): Promise<DuplicateCheckResponse> => {
   try {
     const response = await axiosInstance.get<{ data: DuplicateCheckResponse }>(
-      `/auth/check-email?email=${encodeURIComponent(email)}`,
+      `/sellers/check/email?email=${encodeURIComponent(email)}`,
     );
     return response.data.data;
   } catch (error) {
@@ -56,7 +53,7 @@ export const checkBusinessNumberAvailability = async (
 ): Promise<DuplicateCheckResponse> => {
   try {
     const response = await axiosInstance.get<{ data: DuplicateCheckResponse }>(
-      `/auth/check-business-number?businessNumber=${encodeURIComponent(businessNumber)}`,
+      `/sellers/check/business-number?businessNumber=${encodeURIComponent(businessNumber)}`,
     );
     return response.data.data;
   } catch (error) {
@@ -68,7 +65,7 @@ export const checkBusinessNumberAvailability = async (
 export const checkBrandNameAvailability = async (name: string): Promise<DuplicateCheckResponse> => {
   try {
     const response = await axiosInstance.get<{ data: DuplicateCheckResponse }>(
-      `/auth/check-brand-name?name=${encodeURIComponent(name)}`,
+      `/sellers/check/name?name=${encodeURIComponent(name)}`,
     );
     return response.data.data;
   } catch (error) {
@@ -100,15 +97,44 @@ export const redirectToSocialLogin = async (provider: SocialProvider): Promise<v
   }
 };
 
-// 로그아웃
+// ✅ RTR 방식 로그아웃 (Redis 토큰 삭제 포함)
 export const logout = async (): Promise<void> => {
   try {
-    await axiosInstance.post('/auth/logout');
-    // HttpOnly 쿠키는 서버에서 삭제되므로 클라이언트에서 별도 처리 불필요
+    // Authorization 헤더가 있으면 Redis 토큰도 삭제
+    const accessToken = getAccessTokenFromCookie();
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+
+    await axiosInstance.post('/auth/logout', {}, { headers });
+
+    // ✅ 개선사항: Redis의 모든 리프레시 토큰이 삭제됨
+    console.log('RTR 방식 로그아웃 완료: Redis 토큰 삭제됨');
   } catch (error) {
     // 로그아웃 실패해도 클라이언트 상태는 초기화
     console.error('로그아웃 API 호출 실패:', error);
   }
+};
+
+// ✅ 판매자 전용 로그아웃 (RTR 방식)
+export const sellerLogout = async (): Promise<void> => {
+  try {
+    const accessToken = getAccessTokenFromCookie();
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+
+    await axiosInstance.post('/auth/seller/logout', {}, { headers });
+
+    console.log('판매자 RTR 방식 로그아웃 완료: Redis 토큰 삭제됨');
+  } catch (error) {
+    console.error('판매자 로그아웃 API 호출 실패:', error);
+  }
+};
+
+// 쿠키에서 액세스 토큰 추출 (로그아웃용)
+const getAccessTokenFromCookie = (): string => {
+  if (typeof document === 'undefined') return '';
+
+  const cookies = document.cookie.split(';');
+  const accessTokenCookie = cookies.find((cookie) => cookie.trim().startsWith('access_token='));
+  return accessTokenCookie ? accessTokenCookie.split('=')[1] : '';
 };
 
 // 현재 사용자 정보 조회
@@ -121,11 +147,13 @@ export const getCurrentUser = async (): Promise<UserInfo> => {
   }
 };
 
-// 토큰 갱신
+// ✅ RTR 방식 토큰 갱신 (개선된 보안)
 export const refreshToken = async (): Promise<AuthSuccessResponse> => {
   try {
     const response = await axiosInstance.post<{ data: AuthSuccessResponse }>('/auth/refresh');
-    // HttpOnly 쿠키는 자동으로 설정되므로 별도 저장 불필요
+
+    // ✅ RTR 방식: 기존 토큰이 즉시 무효화되고 새 토큰이 발급됨
+    console.log('RTR 방식 토큰 갱신 완료');
     return response.data.data;
   } catch (error) {
     throw handleApiError(error);

@@ -7,7 +7,7 @@ import { FormField, PasswordStrengthIndicator } from '@/components/form';
 import { Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSellerSignup } from '@/hooks/useSellerSignup';
 import {
   checkPasswordLength,
@@ -17,7 +17,7 @@ import {
 } from '@/lib/password-utils';
 import { formatPhoneNumber, formatBusinessNumber } from '@/lib/format-utils';
 import { FORM_STYLES } from '@/constants/form-styles';
-import type { SellerSignupRequest } from '@/types/api';
+import type { SellerSignupFormData } from '@/types/auth';
 
 export default function SellerSignUpPage() {
   const {
@@ -30,7 +30,7 @@ export default function SellerSignUpPage() {
     clearErrors,
   } = useSellerSignup();
 
-  const [formData, setFormData] = useState<SellerSignupRequest>({
+  const [formData, setFormData] = useState<SellerSignupFormData>({
     name: '',
     businessName: '',
     ownerName: '',
@@ -52,21 +52,40 @@ export default function SellerSignUpPage() {
   });
 
   // 입력 필드 변경 핸들러
-  const handleInputChange = useCallback(
-    (field: keyof SellerSignupRequest, value: string) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleInputChange = useCallback((field: keyof SellerSignupFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  }, []);
 
-      // 실시간 중복 체크
-      if (field === 'email' && value) {
-        checkEmail(value);
-      } else if (field === 'businessNumber' && value) {
-        checkBusinessNumber(value);
-      } else if (field === 'name' && value) {
-        checkBrandName(value);
+  // 디바운스된 중복 체크
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (formData.email) {
+        await checkEmail(formData.email);
       }
-    },
-    [checkEmail, checkBusinessNumber, checkBrandName],
-  );
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.email, checkEmail]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (formData.businessNumber) {
+        await checkBusinessNumber(formData.businessNumber);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.businessNumber, checkBusinessNumber]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (formData.name) {
+        await checkBrandName(formData.name);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.name, checkBrandName]);
 
   // 약관 동의 변경 핸들러
   const handleAgreementChange = useCallback((field: keyof typeof agreements, checked: boolean) => {
