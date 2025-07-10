@@ -28,9 +28,35 @@ export const useSignupForm = () => {
   // 약관 동의 변경 핸들러
   const handleAgreementChange = useCallback(
     (field: AgreementType, checked: boolean) => {
-      setAgreements({ [field]: checked } as Partial<AgreementData>);
+      if (field === 'all') {
+        // 전체 체크박스 클릭 시 모든 약관 체크/해제
+        setAgreements({
+          all: checked,
+          terms: checked,
+          privacy: checked,
+          marketing: checked,
+        });
+      } else {
+        // 개별 약관 체크/해제
+        const newAgreements = { [field]: checked } as Partial<AgreementData>;
+
+        // 필수 약관(terms, privacy)이 모두 체크되었는지 확인
+        const updatedAgreements = {
+          ...agreements,
+          ...newAgreements,
+        };
+
+        // 필수 약관이 모두 체크되면 전체도 체크
+        const allRequiredChecked = updatedAgreements.terms && updatedAgreements.privacy;
+        const allChecked = allRequiredChecked && updatedAgreements.marketing;
+
+        setAgreements({
+          ...newAgreements,
+          all: allChecked,
+        });
+      }
     },
-    [setAgreements],
+    [setAgreements, agreements],
   );
 
   // 브랜드명 중복 확인 핸들러
