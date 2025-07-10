@@ -2,12 +2,13 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { ApiError } from '@/types/api';
 
 // 환경변수에서 API URL 가져오기 (개발/운영 환경 분리)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.ururu.shop/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
 // axios 인스턴스 생성
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+  withCredentials: true, // 쿠키 자동 전송
   headers: {
     'Content-Type': 'application/json',
   },
@@ -23,12 +24,31 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-// 응답 인터셉터 (응답 후에 실행)
+// 응답 인터셉터 (응답 후에 실행) - 토큰 갱신 처리
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
+    // 401 에러이고 아직 재시도하지 않은 경우 토큰 갱신 시도
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // 토큰 갱신 요청
+        await axiosInstance.post('/auth/refresh');
+        // 원래 요청 재시도
+        return axiosInstance.request(originalRequest);
+      } catch (refreshError) {
+        // 토큰 갱신 실패 시 로그인 페이지로 리다이렉트
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+      }
+    }
+
     return Promise.reject(error);
   },
 );
@@ -40,7 +60,7 @@ export const handleApiError = (error: any): ApiError => {
     return {
       message: error.response.data?.message || '서버 오류가 발생했습니다.',
       status: error.response.status,
-      code: error.response.data?.code,
+      code: error.response.data?.errorCode,
     };
   } else if (error.request) {
     // 요청은 보냈지만 응답을 받지 못한 경우

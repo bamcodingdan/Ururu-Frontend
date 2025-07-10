@@ -2,22 +2,25 @@
 
 import { useEffect } from 'react';
 import { useAuthStore } from '@/store';
+import { getCurrentUser } from '@/services/auth';
 
 export default function AuthHydrator({ children }: { children: React.ReactNode }) {
   const setIsLoggedIn = useAuthStore((s) => s.setIsLoggedIn);
   const setUserInfo = useAuthStore((s) => s.setUserInfo);
 
   useEffect(() => {
-    fetch('/api/members/me', { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data) => {
+    const checkAuthStatus = async () => {
+      try {
+        const userInfo = await getCurrentUser();
         setIsLoggedIn(true);
-        setUserInfo(data.data);
-      })
-      .catch(() => {
+        setUserInfo(userInfo);
+      } catch (error) {
         setIsLoggedIn(false);
         setUserInfo(null);
-      });
+      }
+    };
+
+    checkAuthStatus();
   }, [setIsLoggedIn, setUserInfo]);
 
   return <>{children}</>;

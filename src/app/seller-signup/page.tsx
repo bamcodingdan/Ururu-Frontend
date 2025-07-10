@@ -7,6 +7,8 @@ import { FormField, PasswordStrengthIndicator } from '@/components/form';
 import { Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useCallback } from 'react';
+import { useSellerSignup } from '@/hooks/useSellerSignup';
 import {
   checkPasswordLength,
   checkPasswordHasLetter,
@@ -15,21 +17,107 @@ import {
 } from '@/lib/password-utils';
 import { formatPhoneNumber, formatBusinessNumber } from '@/lib/format-utils';
 import { FORM_STYLES } from '@/constants/form-styles';
-import { useSignupForm } from '@/hooks/useSignupForm';
-import { FormFieldType, AgreementType } from '@/types/form';
+import type { SellerSignupRequest } from '@/types/api';
 
 export default function SellerSignUpPage() {
   const {
-    signupFormData,
-    agreements,
-    brandGuide,
-    brandGuideType,
-    handleInputChange,
-    handleAgreementChange,
-    handleBrandDuplicateCheck,
-    handleSubmit,
-    isFormValid,
-  } = useSignupForm();
+    isLoading,
+    errors,
+    checkEmail,
+    checkBusinessNumber,
+    checkBrandName,
+    handleSignup,
+    clearErrors,
+  } = useSellerSignup();
+
+  const [formData, setFormData] = useState<SellerSignupRequest>({
+    name: '',
+    businessName: '',
+    ownerName: '',
+    businessNumber: '',
+    email: '',
+    password: '',
+    phone: '',
+    image: '',
+    address1: '',
+    address2: '',
+    mailOrderNumber: '',
+  });
+
+  const [agreements, setAgreements] = useState({
+    all: false,
+    terms: false,
+    privacy: false,
+    marketing: false,
+  });
+
+  // 입력 필드 변경 핸들러
+  const handleInputChange = useCallback(
+    (field: keyof SellerSignupRequest, value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+
+      // 실시간 중복 체크
+      if (field === 'email' && value) {
+        checkEmail(value);
+      } else if (field === 'businessNumber' && value) {
+        checkBusinessNumber(value);
+      } else if (field === 'name' && value) {
+        checkBrandName(value);
+      }
+    },
+    [checkEmail, checkBusinessNumber, checkBrandName],
+  );
+
+  // 약관 동의 변경 핸들러
+  const handleAgreementChange = useCallback((field: keyof typeof agreements, checked: boolean) => {
+    setAgreements((prev) => {
+      const newAgreements = { ...prev, [field]: checked };
+
+      // 전체 동의 처리
+      if (field === 'all') {
+        return {
+          all: checked,
+          terms: checked,
+          privacy: checked,
+          marketing: checked,
+        };
+      }
+
+      // 개별 동의 시 전체 동의 상태 업데이트
+      const allChecked = newAgreements.terms && newAgreements.privacy && newAgreements.marketing;
+      return { ...newAgreements, all: allChecked };
+    });
+  }, []);
+
+  // 폼 유효성 검사
+  const isFormValid = useCallback(() => {
+    return (
+      formData.name &&
+      formData.businessName &&
+      formData.ownerName &&
+      formData.businessNumber &&
+      formData.email &&
+      formData.password &&
+      formData.phone &&
+      formData.address1 &&
+      formData.address2 &&
+      formData.mailOrderNumber &&
+      agreements.terms &&
+      agreements.privacy &&
+      Object.keys(errors).length === 0
+    );
+  }, [formData, agreements, errors]);
+
+  // 폼 제출 핸들러
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (isFormValid()) {
+        await handleSignup(formData);
+      }
+    },
+    [isFormValid, handleSignup, formData],
+  );
 
   return (
     <CustomLayout showTopBar={false} showSearchBar={false} showMainNav={false} showFooter={false}>
@@ -52,7 +140,7 @@ export default function SellerSignUpPage() {
 
           {/* 안내 문구 */}
           <div className="mb-6 text-center">
-            <h1 className="mb-2 text-xl font-semibold text-text-100">회원가입</h1>
+            <h1 className="mb-2 text-xl font-semibold text-text-100">판매자 회원가입</h1>
             <p className="text-sm font-normal text-text-200">
               우르르와 함께 성장하는 비즈니스를 경험하세요
             </p>
@@ -60,180 +148,118 @@ export default function SellerSignUpPage() {
 
           {/* 회원가입 폼 */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* 브랜드명 */}
+            <FormField label="브랜드명" required>
+              <Input
+                id="name"
+                type="text"
+                placeholder="브랜드명을 입력하세요"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
+                required
+              />
+              {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
+            </FormField>
+
+            {/* 사업자명 */}
+            <FormField label="사업자명" required>
+              <Input
+                id="businessName"
+                type="text"
+                placeholder="사업자명을 입력하세요"
+                value={formData.businessName}
+                onChange={(e) => handleInputChange('businessName', e.target.value)}
+                className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
+                required
+              />
+            </FormField>
+
+            {/* 대표자명 */}
+            <FormField label="대표자명" required>
+              <Input
+                id="ownerName"
+                type="text"
+                placeholder="대표자명을 입력하세요"
+                value={formData.ownerName}
+                onChange={(e) => handleInputChange('ownerName', e.target.value)}
+                className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
+                required
+              />
+            </FormField>
+
+            {/* 사업자등록번호 */}
+            <FormField label="사업자등록번호" required>
+              <Input
+                id="businessNumber"
+                type="text"
+                placeholder="1234567890"
+                value={formatBusinessNumber(formData.businessNumber)}
+                onChange={(e) =>
+                  handleInputChange('businessNumber', e.target.value.replace(/[^0-9]/g, ''))
+                }
+                className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
+                maxLength={12}
+                required
+              />
+              {errors.businessNumber && (
+                <p className="mt-1 text-sm text-red-500">{errors.businessNumber}</p>
+              )}
+            </FormField>
+
             {/* 이메일 */}
             <FormField label="이메일" required>
               <Input
                 id="email"
                 type="email"
                 placeholder="이메일을 입력하세요"
-                value={signupFormData.email}
-                onChange={(e) => handleInputChange('email' as FormFieldType, e.target.value)}
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
                 className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
                 required
               />
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
             </FormField>
 
             {/* 비밀번호 */}
             <FormField
               label="비밀번호"
               required
-              helperText="영문, 숫자, 특수문자 포함 8자 이상"
-              characterCount={{ current: signupFormData.password?.length || 0, max: 50 }}
+              helperText="영문, 숫자, 특수문자(@$!%*#?&) 포함 8자 이상"
+              characterCount={{ current: formData.password?.length || 0, max: 50 }}
             >
               <Input
                 id="password"
                 type="password"
                 placeholder="******"
-                value={signupFormData.password}
-                onChange={(e) => handleInputChange('password' as FormFieldType, e.target.value)}
+                value={formData.password}
+                onChange={(e) => handleInputChange('password', e.target.value)}
                 className={FORM_STYLES.input.base}
                 maxLength={50}
                 required
               />
             </FormField>
             <PasswordStrengthIndicator
-              password={signupFormData.password}
+              password={formData.password}
               checkPasswordLength={checkPasswordLength}
               checkPasswordHasLetter={checkPasswordHasLetter}
               checkPasswordHasNumber={checkPasswordHasNumber}
               checkPasswordHasSpecial={checkPasswordHasSpecial}
             />
 
-            {/* 비밀번호 확인 */}
+            {/* 전화번호 */}
             <FormField
-              label="비밀번호 확인"
-              required
-              helperText={
-                signupFormData.passwordConfirm
-                  ? signupFormData.password === signupFormData.passwordConfirm
-                    ? '비밀번호가 일치합니다.'
-                    : '비밀번호가 일치하지 않습니다.'
-                  : undefined
-              }
-              helperTextType={
-                signupFormData.passwordConfirm
-                  ? signupFormData.password === signupFormData.passwordConfirm
-                    ? 'success'
-                    : 'error'
-                  : 'base'
-              }
-              characterCount={{ current: signupFormData.passwordConfirm?.length || 0, max: 50 }}
-            >
-              <Input
-                id="passwordConfirm"
-                type="password"
-                placeholder="비밀번호를 다시 입력하세요"
-                value={signupFormData.passwordConfirm}
-                onChange={(e) =>
-                  handleInputChange('passwordConfirm' as FormFieldType, e.target.value)
-                }
-                className={FORM_STYLES.input.base}
-                maxLength={50}
-                required
-              />
-            </FormField>
-
-            {/* 브랜드명 */}
-            <FormField
-              label="브랜드명"
-              required
-              helperText={brandGuide || undefined}
-              helperTextType={brandGuideType === 'guide' ? 'base' : brandGuideType}
-              characterCount={{ current: signupFormData.brand?.length || 0, max: 20 }}
-            >
-              <div className="flex gap-2">
-                <Input
-                  id="brand"
-                  type="text"
-                  placeholder="브랜드명을 입력해주세요"
-                  value={signupFormData.brand}
-                  onChange={(e) => handleInputChange('brand' as FormFieldType, e.target.value)}
-                  className={FORM_STYLES.input.base + ' flex-1'}
-                  maxLength={20}
-                  required
-                />
-                <button
-                  type="button"
-                  className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
-                  onClick={handleBrandDuplicateCheck}
-                >
-                  중복 확인
-                </button>
-              </div>
-            </FormField>
-
-            <FormField
-              label="상호명"
-              required
-              characterCount={{ current: signupFormData.company?.length || 0, max: 20 }}
-            >
-              <Input
-                id="company"
-                type="text"
-                placeholder="상호명을 입력해주세요"
-                value={signupFormData.company}
-                onChange={(e) => handleInputChange('company' as FormFieldType, e.target.value)}
-                className={FORM_STYLES.input.base}
-                maxLength={20}
-                required
-              />
-            </FormField>
-
-            <FormField
-              label="대표이름"
-              required
-              characterCount={{ current: signupFormData.ceo?.length || 0, max: 20 }}
-            >
-              <Input
-                id="ceo"
-                type="text"
-                placeholder="대표 이름을 입력해주세요"
-                value={signupFormData.ceo}
-                onChange={(e) => handleInputChange('ceo' as FormFieldType, e.target.value)}
-                className={FORM_STYLES.input.base}
-                maxLength={20}
-                required
-              />
-            </FormField>
-
-            <FormField
-              label="사업자 등록번호"
+              label="전화번호"
               required
               helperText="하이픈(-)을 제외하고 숫자만 입력해주세요"
-              characterCount={{ current: signupFormData.businessNumber?.length || 0, max: 10 }}
-            >
-              <Input
-                id="businessNumber"
-                type="text"
-                placeholder="123-45-67890"
-                value={formatBusinessNumber(signupFormData.businessNumber)}
-                onChange={(e) =>
-                  handleInputChange(
-                    'businessNumber' as FormFieldType,
-                    e.target.value.replace(/[^0-9]/g, ''),
-                  )
-                }
-                className={FORM_STYLES.input.base}
-                maxLength={12}
-                required
-              />
-            </FormField>
-
-            {/* 전화 번호 */}
-            <FormField
-              label="휴대폰 번호"
-              required
-              helperText="하이픈(-)을 제외하고 숫자만 입력해주세요"
-              characterCount={{ current: signupFormData.phone?.length || 0, max: 11 }}
+              characterCount={{ current: formData.phone?.length || 0, max: 11 }}
             >
               <Input
                 id="phone"
                 type="tel"
                 placeholder="010-1234-5678"
-                value={formatPhoneNumber(signupFormData.phone)}
-                onChange={(e) =>
-                  handleInputChange('phone' as FormFieldType, e.target.value.replace(/[^0-9]/g, ''))
-                }
+                value={formatPhoneNumber(formData.phone)}
+                onChange={(e) => handleInputChange('phone', e.target.value.replace(/[^0-9]/g, ''))}
                 className={FORM_STYLES.input.base}
                 maxLength={13}
                 required
@@ -243,9 +269,7 @@ export default function SellerSignUpPage() {
             {/* 주소 */}
             <FormField label="주소" required>
               <div className="mb-2 flex gap-2">
-                <div className={FORM_STYLES.zipcode.display}>
-                  {signupFormData.zipcode || '우편번호'}
-                </div>
+                <div className={FORM_STYLES.zipcode.display}>우편번호</div>
                 <button
                   type="button"
                   className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
@@ -256,25 +280,31 @@ export default function SellerSignUpPage() {
               <Input
                 type="text"
                 placeholder="도로명"
-                value={signupFormData.addressRoad}
-                onChange={(e) => handleInputChange('addressRoad' as FormFieldType, e.target.value)}
+                value={formData.address1}
+                onChange={(e) => handleInputChange('address1', e.target.value)}
                 className={FORM_STYLES.input.base + ' mb-2'}
+                required
               />
               <Input
                 type="text"
                 placeholder="지번"
-                value={signupFormData.addressJibun}
-                onChange={(e) => handleInputChange('addressJibun' as FormFieldType, e.target.value)}
-                className={FORM_STYLES.input.base + ' mb-2'}
-              />
-              <Input
-                type="text"
-                placeholder="상세주소를 입력해주세요"
-                value={signupFormData.addressDetail}
-                onChange={(e) =>
-                  handleInputChange('addressDetail' as FormFieldType, e.target.value)
-                }
+                value={formData.address2}
+                onChange={(e) => handleInputChange('address2', e.target.value)}
                 className={FORM_STYLES.input.base}
+                required
+              />
+            </FormField>
+
+            {/* 통신판매업 신고번호 */}
+            <FormField label="통신판매업 신고번호" required>
+              <Input
+                id="mailOrderNumber"
+                type="text"
+                placeholder="2023-서울강남-1234"
+                value={formData.mailOrderNumber}
+                onChange={(e) => handleInputChange('mailOrderNumber', e.target.value)}
+                className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
+                required
               />
             </FormField>
 
@@ -284,7 +314,7 @@ export default function SellerSignUpPage() {
                 <input
                   type="checkbox"
                   checked={agreements.all}
-                  onChange={(e) => handleAgreementChange('all' as AgreementType, e.target.checked)}
+                  onChange={(e) => handleAgreementChange('all', e.target.checked)}
                   className={FORM_STYLES.checkbox.base}
                 />
                 <span className="text-sm font-medium leading-relaxed text-text-100">
@@ -297,9 +327,7 @@ export default function SellerSignUpPage() {
                   <input
                     type="checkbox"
                     checked={agreements.terms}
-                    onChange={(e) =>
-                      handleAgreementChange('terms' as AgreementType, e.target.checked)
-                    }
+                    onChange={(e) => handleAgreementChange('terms', e.target.checked)}
                     className={FORM_STYLES.checkbox.base}
                   />
                   <span className={FORM_STYLES.checkbox.label}>
@@ -311,9 +339,7 @@ export default function SellerSignUpPage() {
                   <input
                     type="checkbox"
                     checked={agreements.privacy}
-                    onChange={(e) =>
-                      handleAgreementChange('privacy' as AgreementType, e.target.checked)
-                    }
+                    onChange={(e) => handleAgreementChange('privacy', e.target.checked)}
                     className={FORM_STYLES.checkbox.base}
                   />
                   <span className={FORM_STYLES.checkbox.label}>
@@ -326,9 +352,7 @@ export default function SellerSignUpPage() {
                   <input
                     type="checkbox"
                     checked={agreements.marketing}
-                    onChange={(e) =>
-                      handleAgreementChange('marketing' as AgreementType, e.target.checked)
-                    }
+                    onChange={(e) => handleAgreementChange('marketing', e.target.checked)}
                     className={FORM_STYLES.checkbox.base}
                   />
                   <span className={FORM_STYLES.checkbox.label}>
@@ -339,9 +363,13 @@ export default function SellerSignUpPage() {
             </div>
 
             {/* 회원가입 버튼 */}
-            <Button type="submit" disabled={!isFormValid} className={FORM_STYLES.button.submit}>
+            <Button
+              type="submit"
+              disabled={!isFormValid() || isLoading}
+              className={FORM_STYLES.button.submit}
+            >
               <Store className="h-4 w-4" />
-              판매자 회원가입
+              {isLoading ? '회원가입 중...' : '판매자 회원가입'}
             </Button>
           </form>
 

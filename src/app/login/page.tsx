@@ -8,19 +8,37 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/store';
 import { useSocialLogin } from '@/hooks/useSocialLogin';
+import { useAuth } from '@/hooks/useAuth';
 import { FORM_STYLES } from '@/constants/form-styles';
+import { useState } from 'react';
 
 export default function LoginPage() {
   const { loginType, loginFormData, setLoginType, setLoginFormData } = useAuthStore();
   const { isLoading, error, handleKakaoLogin, handleGoogleLogin, clearError } = useSocialLogin();
+  const { handleSellerLogin } = useAuth();
+  const [sellerLoginError, setSellerLoginError] = useState<string | null>(null);
+  const [isSellerLoading, setIsSellerLoading] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setLoginFormData({ [field]: value });
   };
 
-  const handleSellerLogin = async (e: React.FormEvent) => {
+  const handleSellerLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 실제 로그인 API 연동 예정
+    setSellerLoginError(null);
+    setIsSellerLoading(true);
+
+    try {
+      await handleSellerLogin({
+        email: loginFormData.email,
+        password: loginFormData.password,
+      });
+      // 성공 시 리다이렉트는 AuthHydrator에서 처리됨
+    } catch (error: any) {
+      setSellerLoginError(error.message || '로그인에 실패했습니다.');
+    } finally {
+      setIsSellerLoading(false);
+    }
   };
 
   return (
@@ -158,11 +176,18 @@ export default function LoginPage() {
           {/* 판매자 로그인 폼 */}
           {loginType === 'seller' && (
             <form
-              onSubmit={handleSellerLogin}
+              onSubmit={handleSellerLoginSubmit}
               className="min-h-[320px] space-y-5"
               role="form"
               aria-label="판매자 로그인 폼"
             >
+              {/* 판매자 로그인 에러 메시지 */}
+              {sellerLoginError && (
+                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                  {sellerLoginError}
+                </div>
+              )}
+
               <div>
                 <label htmlFor="email" className="mb-2 block text-sm font-medium text-text-100">
                   이메일
@@ -216,10 +241,11 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 size="lg"
-                className="h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100"
+                disabled={isSellerLoading}
+                className="h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100 disabled:opacity-50"
                 aria-label="판매자 센터로 이동"
               >
-                판매자 센터로 이동
+                {isSellerLoading ? '로그인 중...' : '판매자 센터로 이동'}
               </Button>
 
               {/* 약관 동의 문구 */}
@@ -238,7 +264,7 @@ export default function LoginPage() {
                   className="text-sm font-medium text-primary-300 transition-colors hover:text-primary-200"
                   aria-label="판매자 회원가입 페이지로 이동"
                 >
-                  회원가입
+                  판매자 회원가입
                 </Link>
               </div>
             </form>

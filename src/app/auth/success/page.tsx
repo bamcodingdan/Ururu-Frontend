@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store';
+import { getCurrentUser } from '@/services/auth';
 
 export default function AuthSuccessPage() {
   const router = useRouter();
@@ -12,18 +13,24 @@ export default function AuthSuccessPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/members/me', { credentials: 'include' });
-        if (!res.ok) throw new Error('인증 정보 없음');
-        const data = await res.json();
+        const userInfo = await getCurrentUser();
         setIsLoggedIn(true);
-        setUserInfo(data.data);
-        router.replace('/mypage');
-      } catch {
+        setUserInfo(userInfo);
+
+        // 사용자 타입에 따라 리다이렉트
+        if (userInfo.user_type === 'SELLER') {
+          router.replace('/seller');
+        } else {
+          router.replace('/mypage');
+        }
+      } catch (error) {
+        console.error('사용자 정보 조회 실패:', error);
         setIsLoggedIn(false);
         setUserInfo(null);
         router.replace('/login');
       }
     };
+
     fetchUser();
   }, [router, setIsLoggedIn, setUserInfo]);
 

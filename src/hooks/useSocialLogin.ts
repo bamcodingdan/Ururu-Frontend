@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { getAuthUrl } from '@/services/auth';
+import { redirectToSocialLogin } from '@/services/auth';
 
 interface UseSocialLoginReturn {
   isLoading: boolean;
@@ -25,8 +25,7 @@ export const useSocialLogin = (): UseSocialLoginReturn => {
       try {
         // 리다이렉션 전에 약간의 지연을 줘서 사용자에게 로딩 상태를 인식시킬 수 있도록 함
         await new Promise((resolve) => setTimeout(resolve, 100));
-        const authUrl = await getAuthUrl(provider);
-        window.location.href = authUrl;
+        await redirectToSocialLogin(provider);
       } catch (err: any) {
         setError(err.message || errorMessage);
         setIsLoading(false);

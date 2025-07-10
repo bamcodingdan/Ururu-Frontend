@@ -14,19 +14,6 @@ import type { CartItem as CartItemType } from '@/types/cart';
 export default function OrderPage() {
   const { isLoggedIn, isLoading } = useAuthGuard();
 
-  // 로딩 중이거나 로그인하지 않은 경우 로딩 화면 표시
-  if (isLoading || !isLoggedIn) {
-    return (
-      <NoFooterLayout>
-        <div className="container mx-auto max-w-6xl px-6 py-8 md:px-8 md:py-12">
-          <div className="flex items-center justify-center py-16">
-            <div className="text-text-200">로딩 중...</div>
-          </div>
-        </div>
-      </NoFooterLayout>
-    );
-  }
-
   // 배송지 관련 상태
   const [deliveryType, setDeliveryType] = useState<'existing' | 'new'>('new');
   const [selectedAddressId, setSelectedAddressId] = useState<string>('1');
@@ -43,6 +30,19 @@ export default function OrderPage() {
   // 포인트 사용 관련 상태
   const [pointAmount, setPointAmount] = useState(0);
   const availablePoint = 5000;
+
+  // 로딩 중이거나 로그인하지 않은 경우 로딩 화면 표시
+  if (isLoading || !isLoggedIn) {
+    return (
+      <NoFooterLayout>
+        <div className="container mx-auto max-w-6xl px-6 py-8 md:px-8 md:py-12">
+          <div className="flex items-center justify-center py-16">
+            <div className="text-text-200">로딩 중...</div>
+          </div>
+        </div>
+      </NoFooterLayout>
+    );
+  }
 
   // 주문 상품 데이터 (실제로는 장바구니에서 선택된 상품들)
   const orderItems: CartItemType[] = mockCartData.slice(0, 2); // 예시로 2개만

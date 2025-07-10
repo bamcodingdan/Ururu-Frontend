@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SELLER_PROFILE } from '@/data/seller';
+import { useAuth } from '@/hooks/useAuth';
 
 interface SidebarItem {
   icon: React.ReactNode;
@@ -73,6 +74,15 @@ const sidebarItems: SidebarItem[] = [
 
 export function SellerSidebar() {
   const pathname = usePathname();
+  const { handleSellerLogout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await handleSellerLogout();
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-30 flex h-screen w-72 flex-col bg-bg-100 shadow-sm">
@@ -124,8 +134,10 @@ export function SellerSidebar() {
       {/* 로그아웃 버튼 */}
       <div className="mt-auto border-t border-bg-200 px-0 py-6">
         <button
+          onClick={handleLogout}
           className="flex w-full items-center gap-3 rounded-md px-7 py-3 text-base font-medium text-text-200 transition-colors hover:bg-bg-200 hover:text-text-100"
           type="button"
+          aria-label="로그아웃"
         >
           <LogOut className="h-5 w-5" />
           로그아웃
