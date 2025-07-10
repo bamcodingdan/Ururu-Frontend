@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { NoFooterLayout } from '@/components/layout/layouts';
 import { CartItem as CartItemComponent, CartSelectAll, CartSummary } from '@/components/cart';
 import { useCart } from '@/hooks/useCart';
+import { useAuthStore } from '@/store';
 import { mockCartData, calculateCartSummary } from '@/data/cart';
 import type { CartItem } from '@/types/cart';
 
@@ -46,6 +48,11 @@ function CartList({
 }
 
 export default function CartPage() {
+  const { isAuthenticated, isLoading } = useAuthStore();
+  const router = useRouter();
+  const hasRedirected = useRef(false);
+
+  // 장바구니 훅을 먼저 호출 (React Hook 규칙)
   const {
     cartItems,
     toggleSelectAll,
@@ -57,6 +64,24 @@ export default function CartPage() {
   } = useCart(mockCartData);
 
   const summary = calculateCartSummary(cartItems);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && !hasRedirected.current) {
+      hasRedirected.current = true;
+      router.push('/login');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (isLoading || !isAuthenticated) {
+    return (
+      <NoFooterLayout>
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-sm text-text-200">로딩 중...</div>
+        </div>
+      </NoFooterLayout>
+    );
+  }
 
   const handlePurchase = () => {
     // TODO: 결제 페이지로 이동

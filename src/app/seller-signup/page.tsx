@@ -16,7 +16,11 @@ import {
 import { formatPhoneNumber, formatBusinessNumber } from '@/lib/format-utils';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useSignupForm } from '@/hooks/useSignupForm';
+import { useSellerSignup, useAvailabilityCheck } from '@/hooks/useAuth';
 import { FormFieldType, AgreementType } from '@/types/form';
+import { useAuthStore } from '@/store';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function SellerSignUpPage() {
   const {
@@ -30,6 +34,87 @@ export default function SellerSignUpPage() {
     handleSubmit,
     isFormValid,
   } = useSignupForm();
+
+  const { sellerSignup } = useSellerSignup();
+  const { checkEmail, checkBusinessNumber, checkBrandName } = useAvailabilityCheck();
+  const { error, setError } = useAuthStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+
+  const handleBrandDuplicateCheckWithAPI = async () => {
+    if (!signupFormData.brand) {
+      handleBrandDuplicateCheck();
+      return;
+    }
+
+    try {
+      const isAvailable = await checkBrandName(signupFormData.brand);
+      if (isAvailable) {
+        // 성공 메시지는 handleBrandDuplicateCheck 내부에서 처리됨
+        handleBrandDuplicateCheck();
+      } else {
+        // 에러 메시지는 handleBrandDuplicateCheck 내부에서 처리됨
+        handleBrandDuplicateCheck();
+      }
+    } catch (error: any) {
+      // 에러 메시지는 handleBrandDuplicateCheck 내부에서 처리됨
+      handleBrandDuplicateCheck();
+    }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (isSubmitting || !isFormValid) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // 중복 체크
+      const [emailAvailable, businessNumberAvailable, brandNameAvailable] = await Promise.all([
+        checkEmail(signupFormData.email),
+        checkBusinessNumber(signupFormData.businessNumber),
+        checkBrandName(signupFormData.brand),
+      ]);
+
+      if (!emailAvailable) {
+        setError('이미 사용 중인 이메일입니다.');
+        return;
+      }
+
+      if (!businessNumberAvailable) {
+        setError('이미 사용 중인 사업자등록번호입니다.');
+        return;
+      }
+
+      if (!brandNameAvailable) {
+        setError('이미 사용 중인 브랜드명입니다.');
+        return;
+      }
+
+      // 회원가입 데이터 변환
+      const signupData = {
+        name: signupFormData.brand,
+        businessName: signupFormData.company,
+        ownerName: signupFormData.ceo,
+        businessNumber: signupFormData.businessNumber.replace(/[^0-9]/g, ''),
+        email: signupFormData.email,
+        password: signupFormData.password,
+        phone: signupFormData.phone.replace(/[^0-9]/g, ''),
+        address1: signupFormData.addressRoad,
+        address2: signupFormData.addressDetail,
+      };
+
+      await sellerSignup(signupData);
+
+      // 회원가입 성공 시 로그인 페이지로 이동
+      router.push('/login?type=seller');
+    } catch (error: any) {
+      setError(error.response?.data?.message || '회원가입에 실패했습니다.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <CustomLayout showTopBar={false} showSearchBar={false} showMainNav={false} showFooter={false}>
@@ -58,8 +143,13 @@ export default function SellerSignUpPage() {
             </p>
           </div>
 
+          {/* 에러 메시지 */}
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+          )}
+
           {/* 회원가입 폼 */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleFormSubmit} className="space-y-6">
             {/* 이메일 */}
             <FormField label="이메일" required>
               <Input
@@ -70,6 +160,7 @@ export default function SellerSignUpPage() {
                 onChange={(e) => handleInputChange('email' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base + ' ' + FORM_STYLES.input.focus}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -89,6 +180,7 @@ export default function SellerSignUpPage() {
                 className={FORM_STYLES.input.base}
                 maxLength={50}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
             <PasswordStrengthIndicator
@@ -130,6 +222,7 @@ export default function SellerSignUpPage() {
                 className={FORM_STYLES.input.base}
                 maxLength={50}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -151,11 +244,13 @@ export default function SellerSignUpPage() {
                   className={FORM_STYLES.input.base + ' flex-1'}
                   maxLength={20}
                   required
+                  disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
-                  onClick={handleBrandDuplicateCheck}
+                  onClick={handleBrandDuplicateCheckWithAPI}
+                  disabled={isSubmitting}
                 >
                   중복 확인
                 </button>
@@ -176,6 +271,7 @@ export default function SellerSignUpPage() {
                 className={FORM_STYLES.input.base}
                 maxLength={20}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -193,6 +289,7 @@ export default function SellerSignUpPage() {
                 className={FORM_STYLES.input.base}
                 maxLength={20}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -216,6 +313,7 @@ export default function SellerSignUpPage() {
                 className={FORM_STYLES.input.base}
                 maxLength={12}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -237,6 +335,7 @@ export default function SellerSignUpPage() {
                 className={FORM_STYLES.input.base}
                 maxLength={13}
                 required
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -249,6 +348,7 @@ export default function SellerSignUpPage() {
                 <button
                   type="button"
                   className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
+                  disabled={isSubmitting}
                 >
                   우편 번호
                 </button>
@@ -259,6 +359,7 @@ export default function SellerSignUpPage() {
                 value={signupFormData.addressRoad}
                 onChange={(e) => handleInputChange('addressRoad' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base + ' mb-2'}
+                disabled={isSubmitting}
               />
               <Input
                 type="text"
@@ -266,6 +367,7 @@ export default function SellerSignUpPage() {
                 value={signupFormData.addressJibun}
                 onChange={(e) => handleInputChange('addressJibun' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base + ' mb-2'}
+                disabled={isSubmitting}
               />
               <Input
                 type="text"
@@ -275,6 +377,7 @@ export default function SellerSignUpPage() {
                   handleInputChange('addressDetail' as FormFieldType, e.target.value)
                 }
                 className={FORM_STYLES.input.base}
+                disabled={isSubmitting}
               />
             </FormField>
 
@@ -286,6 +389,7 @@ export default function SellerSignUpPage() {
                   checked={agreements.all}
                   onChange={(e) => handleAgreementChange('all' as AgreementType, e.target.checked)}
                   className={FORM_STYLES.checkbox.base}
+                  disabled={isSubmitting}
                 />
                 <span className="text-sm font-medium leading-relaxed text-text-100">
                   전체 약관에 동의합니다
@@ -301,6 +405,7 @@ export default function SellerSignUpPage() {
                       handleAgreementChange('terms' as AgreementType, e.target.checked)
                     }
                     className={FORM_STYLES.checkbox.base}
+                    disabled={isSubmitting}
                   />
                   <span className={FORM_STYLES.checkbox.label}>
                     <span className="text-primary-300 underline">이용약관</span>에 동의합니다 (필수)
@@ -315,6 +420,7 @@ export default function SellerSignUpPage() {
                       handleAgreementChange('privacy' as AgreementType, e.target.checked)
                     }
                     className={FORM_STYLES.checkbox.base}
+                    disabled={isSubmitting}
                   />
                   <span className={FORM_STYLES.checkbox.label}>
                     <span className="text-primary-300 underline">개인정보처리방침</span>에
@@ -330,6 +436,7 @@ export default function SellerSignUpPage() {
                       handleAgreementChange('marketing' as AgreementType, e.target.checked)
                     }
                     className={FORM_STYLES.checkbox.base}
+                    disabled={isSubmitting}
                   />
                   <span className={FORM_STYLES.checkbox.label}>
                     마케팅 정보 수신에 동의합니다 (선택)
@@ -339,9 +446,13 @@ export default function SellerSignUpPage() {
             </div>
 
             {/* 회원가입 버튼 */}
-            <Button type="submit" disabled={!isFormValid} className={FORM_STYLES.button.submit}>
+            <Button
+              type="submit"
+              disabled={!isFormValid || isSubmitting}
+              className={FORM_STYLES.button.submit}
+            >
               <Store className="h-4 w-4" />
-              판매자 회원가입
+              {isSubmitting ? '회원가입 중...' : '판매자 회원가입'}
             </Button>
           </form>
 

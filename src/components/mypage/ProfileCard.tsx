@@ -7,11 +7,31 @@ import { myPageData, beautyProfileData } from '@/data/mypage';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import type { UserInfo } from '@/types/auth';
 
-export function ProfileCard() {
+interface ProfileCardProps {
+  user: UserInfo | null;
+}
+
+export function ProfileCard({ user }: ProfileCardProps) {
   const { profile, profileActions } = myPageData;
   const profileData = beautyProfileData.withProfile;
   const hasBeautyProfile = profileData.skinType && profileData.skinTone;
+
+  // 사용자 정보 디버깅
+  console.log('ProfileCard - 사용자 정보:', user);
+
+  // 사용자 정보가 없으면 기본값 사용
+  const displayName = user?.nickname || profile.nickname;
+  const displayAvatar = user?.profile_image || profile.avatar;
+  const userType = user?.user_type || 'MEMBER';
+
+  console.log('ProfileCard - 표시 정보:', {
+    displayName,
+    displayAvatar,
+    userType,
+    originalUser: user,
+  });
 
   return (
     <Card className="w-full rounded-2xl border-0 bg-bg-100 px-4 py-6 shadow-sm md:px-8">
@@ -20,14 +40,19 @@ export function ProfileCard() {
           {/* 아바타/닉네임/뱃지 */}
           <div className="flex items-center gap-4 md:gap-6">
             <Avatar className="h-12 w-12 bg-bg-300 md:h-16 md:w-16">
-              <AvatarImage src={profile.avatar} />
-              <AvatarFallback>{profile.nickname[0]}</AvatarFallback>
+              <AvatarImage src={displayAvatar || undefined} />
+              <AvatarFallback>{displayName[0]}</AvatarFallback>
             </Avatar>
             <div>
               <div className="mb-1 text-lg font-semibold text-text-100 md:text-2xl">
-                {profile.nickname}
+                {displayName}
               </div>
               <div className="flex gap-1 md:gap-2">
+                {/* 사용자 타입에 따른 뱃지 */}
+                <Badge className="rounded-full border border-primary-300 bg-primary-100 px-1.5 py-0.5 text-[10px] font-semibold text-primary-300 md:px-3 md:py-1 md:text-xs">
+                  {userType === 'SELLER' ? '판매자' : '구매자'}
+                </Badge>
+                {/* 기존 뱃지들 */}
                 {profile.badges.map((badge) => (
                   <Badge
                     key={badge}

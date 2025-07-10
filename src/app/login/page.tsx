@@ -8,9 +8,45 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/store';
 import { FORM_STYLES } from '@/constants/form-styles';
+import { useSocialLogin, useSellerLogin } from '@/hooks/useAuth';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
-  const { loginType, loginFormData, setLoginType, setLoginFormData } = useAuthStore();
+  const {
+    loginType,
+    loginFormData,
+    setLoginType,
+    setLoginFormData,
+    isLoading,
+    error,
+    isAuthenticated,
+    user,
+  } = useAuthStore();
+  const { initiateSocialLogin } = useSocialLogin();
+  const { sellerLogin } = useSellerLogin();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL 파라미터에서 로그인 타입 확인
+  useEffect(() => {
+    const type = searchParams.get('type');
+    if (type === 'seller') {
+      setLoginType('seller');
+    }
+  }, [searchParams, setLoginType]);
+
+  // 로그인 성공 시 리다이렉트
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.user_type === 'SELLER') {
+        router.push('/seller');
+      } else {
+        router.push('/mypage');
+      }
+    }
+  }, [isAuthenticated, user, router]);
 
   const handleInputChange = (field: string, value: string) => {
     setLoginFormData({ [field]: value });
@@ -18,7 +54,22 @@ export default function LoginPage() {
 
   const handleSellerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 실제 로그인 API 연동 예정
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    try {
+      await sellerLogin(loginFormData.email, loginFormData.password);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleKakaoLogin = () => {
+    initiateSocialLogin('kakao');
+  };
+
+  const handleGoogleLogin = () => {
+    initiateSocialLogin('google');
   };
 
   return (
@@ -89,6 +140,11 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* 에러 메시지 */}
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>
+          )}
+
           {/* 소셜 로그인 (구매자 로그인일 때만 표시) */}
           {loginType === 'buyer' && (
             <div className="min-h-[320px] space-y-4" role="region" aria-label="소셜 로그인">
@@ -96,7 +152,9 @@ export default function LoginPage() {
                 {/* 카카오 로그인 */}
                 <button
                   type="button"
-                  className="flex h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#FEE500] text-sm font-medium text-[#3C1E1E] shadow transition hover:brightness-95"
+                  onClick={handleKakaoLogin}
+                  disabled={isLoading}
+                  className="flex h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#FEE500] text-sm font-medium text-[#3C1E1E] shadow transition hover:brightness-95 disabled:opacity-50"
                   aria-label="카카오 계정으로 로그인"
                 >
                   <Image
@@ -107,12 +165,14 @@ export default function LoginPage() {
                     className="h-5 w-5"
                     aria-hidden="true"
                   />
-                  카카오 계정으로 로그인하기
+                  {isLoading ? '로그인 중...' : '카카오 계정으로 로그인하기'}
                 </button>
                 {/* 구글 로그인 */}
                 <button
                   type="button"
-                  className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-bg-300 bg-bg-100 text-sm font-medium text-text-200 shadow transition hover:bg-bg-200"
+                  onClick={handleGoogleLogin}
+                  disabled={isLoading}
+                  className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-bg-300 bg-bg-100 text-sm font-medium text-text-200 shadow transition hover:bg-bg-200 disabled:opacity-50"
                   aria-label="구글 계정으로 로그인"
                 >
                   <Image
@@ -123,7 +183,7 @@ export default function LoginPage() {
                     className="h-5 w-5"
                     aria-hidden="true"
                   />
-                  구글 계정으로 로그인하기
+                  {isLoading ? '로그인 중...' : '구글 계정으로 로그인하기'}
                 </button>
               </div>
               {/* 약관 동의 문구 */}
@@ -156,6 +216,7 @@ export default function LoginPage() {
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -171,6 +232,7 @@ export default function LoginPage() {
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -181,13 +243,15 @@ export default function LoginPage() {
                     type="checkbox"
                     className={FORM_STYLES.checkbox.base}
                     aria-label="로그인 유지"
+                    disabled={isSubmitting}
                   />
                   <span className={FORM_STYLES.checkbox.label}>로그인 유지</span>
                 </label>
                 <button
                   type="button"
-                  className="text-sm text-text-200 transition-colors hover:text-primary-300"
+                  className="text-sm text-text-200 transition-colors hover:text-primary-300 disabled:opacity-50"
                   aria-label="비밀번호 찾기"
+                  disabled={isSubmitting}
                 >
                   비밀번호 찾기
                 </button>
@@ -197,10 +261,11 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 size="lg"
-                className="h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100"
+                className="h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100 disabled:opacity-50"
                 aria-label="판매자 센터로 이동"
+                disabled={isSubmitting}
               >
-                판매자 센터로 이동
+                {isSubmitting ? '로그인 중...' : '판매자 센터로 이동'}
               </Button>
 
               {/* 약관 동의 문구 */}

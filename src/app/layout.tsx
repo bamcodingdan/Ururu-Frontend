@@ -1,5 +1,6 @@
 import './globals.css';
 import { metadata, viewport } from '@/lib/metadata';
+import { AuthProvider } from '@/components/auth/AuthProvider';
 
 export { metadata, viewport };
 
@@ -30,7 +31,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

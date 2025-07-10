@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   Package,
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SELLER_PROFILE } from '@/data/seller';
+import { useLogout } from '@/hooks/useAuth';
 
 interface SidebarItem {
   icon: React.ReactNode;
@@ -73,6 +74,13 @@ const sidebarItems: SidebarItem[] = [
 
 export function SellerSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { handleLogout } = useLogout();
+
+  const handleLogoutClick = async () => {
+    await handleLogout();
+    router.push('/');
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-30 flex h-screen w-72 flex-col bg-bg-100 shadow-sm">
@@ -124,6 +132,7 @@ export function SellerSidebar() {
       {/* 로그아웃 버튼 */}
       <div className="mt-auto border-t border-bg-200 px-0 py-6">
         <button
+          onClick={handleLogoutClick}
           className="flex w-full items-center gap-3 rounded-md px-7 py-3 text-base font-medium text-text-200 transition-colors hover:bg-bg-200 hover:text-text-100"
           type="button"
         >

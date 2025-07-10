@@ -1,13 +1,36 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { OrderStatusTabs, OrderCard } from '@/components/orders';
 import { EmptyState, PageHeader } from '@/components/common';
 import { orderStatusSummary, mockOrders } from '@/data/orders';
 import { OrderStatusFilter } from '@/types/order';
+import { useAuthStore } from '@/store';
 
 export default function OrdersPage() {
+  const { isAuthenticated, isLoading, isCheckingAuth } = useAuthStore();
+  const router = useRouter();
   const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>('all');
+  const hasRedirected = useRef(false);
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated && !hasRedirected.current) {
+      hasRedirected.current = true;
+      router.push('/login');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // 로딩 중이거나 인증되지 않은 경우
+  if (isLoading || !isAuthenticated) {
+    return (
+      <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
+        <div className="flex items-center justify-center py-20">
+          <div className="text-sm text-text-200">로딩 중...</div>
+        </div>
+      </div>
+    );
+  }
 
   // failed 상태 주문 제외하고 필터링
   const filteredOrders = useMemo(() => {
