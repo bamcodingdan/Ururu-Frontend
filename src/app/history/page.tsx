@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { CustomLayout } from '@/components/layout/layouts';
-import { HistoryPageHeader, HistoryProductGrid, EmptyHistoryState } from '@/components/history';
+import { HistoryProductGrid, EmptyHistoryState } from '@/components/history';
+import { PageTitleHeader } from '@/components/common';
 import { useHistory } from '@/hooks';
 import { useAuthGuard } from '@/hooks';
 
@@ -57,7 +58,10 @@ export default function HistoryPage() {
       showBottomNav={true}
     >
       <div className="mx-auto w-full max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12">
-        <HistoryPageHeader />
+        <PageTitleHeader
+          title="최근 본 상품"
+          description="최근에 조회한 상품들을 확인해보세요"
+        />
 
         {hasProducts ? <HistoryProductGrid products={historyProducts} /> : <EmptyHistoryState />}
       </div>

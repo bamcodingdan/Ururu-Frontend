@@ -10,6 +10,7 @@ export { PointHistoryCard } from './PointHistoryCard';
 export { PointEarnMethodAccordion } from './PointEarnMethodAccordion';
 export { PointHistorySection } from './PointHistorySection';
 export { PageHeader } from './PageHeader';
+export { PageTitleHeader } from './PageTitleHeader';
 export { EmptyState } from './EmptyState';
 export {
   LoadingSkeleton,

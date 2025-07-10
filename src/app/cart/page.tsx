@@ -3,6 +3,7 @@
 import React from 'react';
 import { NoFooterLayout } from '@/components/layout/layouts';
 import { CartItem as CartItemComponent, CartSelectAll, CartSummary } from '@/components/cart';
+import { PageTitleHeader } from '@/components/common';
 import { useCart } from '@/hooks/useCart';
 import { useAuthGuard } from '@/hooks';
 import { mockCartData, calculateCartSummary } from '@/data/cart';
@@ -80,15 +81,15 @@ export default function CartPage() {
 
   return (
     <NoFooterLayout>
-      <div className="container mx-auto max-w-6xl px-6 py-8 md:px-8 md:py-12">
-        <h1 className="mb-8 text-2xl font-bold text-text-100">장바구니</h1>
+      <div className="container mx-auto max-w-6xl px-6 py-8 md:px-0 md:py-12">
+        <PageTitleHeader title="장바구니" description="담아둔 상품들을 확인하고 주문해보세요" />
 
         {cartItems.length === 0 ? (
           <EmptyCart />
         ) : (
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="space-y-8">
             {/* 장바구니 목록 */}
-            <div className="lg:col-span-2">
+            <div>
               <CartSelectAll
                 isAllSelected={isAllSelected}
                 isPartiallySelected={isPartiallySelected}
@@ -105,7 +106,7 @@ export default function CartPage() {
             </div>
 
             {/* 결제 요약 */}
-            <div className="lg:col-span-1">
+            <div>
               <CartSummary
                 totalProductPrice={summary.totalProductPrice}
                 shippingFee={summary.shippingFee}

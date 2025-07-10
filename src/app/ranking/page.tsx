@@ -4,6 +4,7 @@ import React from 'react';
 import { FullLayout } from '@/components/layout';
 import { CategorySelector } from '@/components/ranking';
 import { ProductGrid } from '@/components/product';
+import { PageTitleHeader } from '@/components/common';
 import { useRanking } from '@/hooks/useRanking';
 
 export default function RankingPage() {
@@ -12,13 +13,10 @@ export default function RankingPage() {
   return (
     <FullLayout>
       <div className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12">
-        {/* 페이지 헤더 */}
-        <div className="mb-8">
-          <h1 className="mb-6 text-2xl font-semibold text-text-100 md:text-3xl">랭킹 TOP 100</h1>
-          <p className="text-sm text-text-200 md:text-base">
-            인기 상품들을 카테고리별로 확인해보세요!
-          </p>
-        </div>
+        <PageTitleHeader
+          title="랭킹 TOP 100"
+          description="인기 상품들을 카테고리별로 확인해보세요!"
+        />
 
         {/* 카테고리 선택 */}
         <div className="mb-8">
