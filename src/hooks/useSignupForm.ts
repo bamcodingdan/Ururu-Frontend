@@ -70,6 +70,7 @@ export const useSignupForm = () => {
       signupFormData.ceo &&
       signupFormData.businessNumber &&
       signupFormData.phone &&
+      signupFormData.mailOrderNumber &&
       agreements.terms &&
       agreements.privacy
     );

@@ -13,7 +13,7 @@ import {
   checkPasswordHasNumber,
   checkPasswordHasSpecial,
 } from '@/lib/password-utils';
-import { formatPhoneNumber, formatBusinessNumber } from '@/lib/format-utils';
+import { formatPhoneNumber, formatBusinessNumber, formatMailOrderNumber } from '@/lib/format-utils';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useSignupForm } from '@/hooks/useSignupForm';
 import { useSellerSignup, useAvailabilityCheck } from '@/hooks/useAuth';
@@ -92,6 +92,17 @@ export default function SellerSignUpPage() {
         return;
       }
 
+      // 통신판매업 신고번호 검증
+      if (!signupFormData.mailOrderNumber.trim()) {
+        setError('통신판매업 신고번호를 입력해주세요.');
+        return;
+      }
+
+      if (signupFormData.mailOrderNumber.length > 50) {
+        setError('통신판매업 신고번호는 50자 이하여야 합니다.');
+        return;
+      }
+
       // 회원가입 데이터 변환
       const signupData = {
         name: signupFormData.brand,
@@ -103,6 +114,7 @@ export default function SellerSignUpPage() {
         phone: signupFormData.phone.replace(/[^0-9]/g, ''),
         address1: signupFormData.addressRoad,
         address2: signupFormData.addressDetail,
+        mailOrderNumber: signupFormData.mailOrderNumber,
       };
 
       await sellerSignup(signupData);
@@ -293,6 +305,7 @@ export default function SellerSignUpPage() {
               />
             </FormField>
 
+            {/* 사업자 등록번호 */}
             <FormField
               label="사업자 등록번호"
               required
@@ -315,6 +328,50 @@ export default function SellerSignUpPage() {
                 required
                 disabled={isSubmitting}
               />
+            </FormField>
+
+            {/* 통신판매업 신고번호 */}
+            <FormField
+              label="통신판매업 신고번호"
+              required
+              characterCount={{ current: signupFormData.mailOrderNumber?.length || 0, max: 50 }}
+            >
+              <Input
+                id="mailOrderNumber"
+                type="text"
+                placeholder="2024-서울강남-12"
+                value={formatMailOrderNumber(signupFormData.mailOrderNumber)}
+                onChange={(e) =>
+                  handleInputChange(
+                    'mailOrderNumber' as FormFieldType,
+                    formatMailOrderNumber(e.target.value),
+                  )
+                }
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    // 다음 필드로 포커스 이동
+                    const nextField =
+                      e.currentTarget.parentElement?.nextElementSibling?.querySelector('input');
+                    if (nextField) {
+                      (nextField as HTMLInputElement).focus();
+                    }
+                  }
+                }}
+                className={FORM_STYLES.input.base}
+                maxLength={50}
+                required
+                disabled={isSubmitting}
+                aria-label="통신판매업 신고번호"
+                aria-describedby="mailOrderNumber-help"
+                autoComplete="off"
+                spellCheck="false"
+                data-testid="mail-order-number-input"
+              />
+              <div id="mailOrderNumber-help" className="sr-only">
+                통신판매업 신고번호는 온라인에서 상품을 판매하는 사업자가 전자상거래 등에서의
+                소비자보호에 관한 법률에 따라 관할 시/도에 신고하고 받는 번호입니다.
+              </div>
             </FormField>
 
             {/* 전화 번호 */}

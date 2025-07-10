@@ -23,6 +23,7 @@ interface SignupFormData {
   addressRoad: string;
   addressJibun: string;
   addressDetail: string;
+  mailOrderNumber: string;
 }
 
 // 약관 동의 타입
@@ -94,6 +95,7 @@ export const useAuthStore = create<AuthState>()(
         addressRoad: '',
         addressJibun: '',
         addressDetail: '',
+        mailOrderNumber: '',
       },
       agreements: {
         all: false,
@@ -139,6 +141,7 @@ export const useAuthStore = create<AuthState>()(
             addressRoad: '',
             addressJibun: '',
             addressDetail: '',
+            mailOrderNumber: '',
           },
           agreements: {
             all: false,
