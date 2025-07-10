@@ -17,6 +17,7 @@ const axiosInstance: AxiosInstance = axios.create({
 // 요청 인터셉터 (요청 전에 실행)
 axiosInstance.interceptors.request.use(
   (config) => {
+    // HttpOnly 쿠키는 자동으로 전송되므로 별도 헤더 설정 불필요
     return config;
   },
   (error) => {
@@ -37,15 +38,19 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        // 토큰 갱신 요청
-        await axiosInstance.post('/auth/refresh');
-        // 원래 요청 재시도
-        return axiosInstance.request(originalRequest);
+        // 토큰 갱신 요청 (쿠키 자동 전송)
+        const response = await axiosInstance.post('/auth/refresh');
+
+        if (response.status === 200) {
+          // 토큰 갱신 성공 시 원래 요청 재시도
+          return axiosInstance.request(originalRequest);
+        }
       } catch (refreshError) {
         // 토큰 갱신 실패 시 로그인 페이지로 리다이렉트
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }
+        return Promise.reject(refreshError);
       }
     }
 

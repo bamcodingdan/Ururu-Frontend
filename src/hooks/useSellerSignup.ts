@@ -7,7 +7,7 @@ import {
   checkBusinessNumberAvailability,
   checkBrandNameAvailability,
 } from '@/services/auth';
-import type { SellerSignupRequest } from '@/types/api';
+import type { SellerSignupFormData } from '@/types/auth';
 
 interface UseSellerSignupReturn {
   isLoading: boolean;
@@ -15,7 +15,7 @@ interface UseSellerSignupReturn {
   checkEmail: (email: string) => Promise<boolean>;
   checkBusinessNumber: (businessNumber: string) => Promise<boolean>;
   checkBrandName: (name: string) => Promise<boolean>;
-  handleSignup: (data: SellerSignupRequest) => Promise<void>;
+  handleSignup: (data: SellerSignupFormData) => Promise<void>;
   clearErrors: () => void;
 }
 
@@ -108,7 +108,7 @@ export const useSellerSignup = (): UseSellerSignupReturn => {
 
   // 회원가입 처리
   const handleSignup = useCallback(
-    async (data: SellerSignupRequest): Promise<void> => {
+    async (data: SellerSignupFormData): Promise<void> => {
       setIsLoading(true);
       clearErrors();
 

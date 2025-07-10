@@ -1,8 +1,8 @@
-import { sellerLogin, logout, getCurrentUser } from '@/services/auth';
-import { useAuthStore } from '@/store';
-import type { SellerLoginRequest } from '@/services/auth';
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { sellerLogin, logout, getCurrentUser } from '@/services/auth';
+import { useAuthStore } from '@/store';
+import type { LoginFormData, UserInfo } from '@/types/auth';
 
 export const useAuth = () => {
   const { setIsLoggedIn, setUserInfo } = useAuthStore();
@@ -10,7 +10,7 @@ export const useAuth = () => {
 
   // 판매자 로그인
   const handleSellerLogin = useCallback(
-    async (credentials: SellerLoginRequest) => {
+    async (credentials: LoginFormData) => {
       try {
         const response = await sellerLogin(credentials);
 
@@ -36,15 +36,13 @@ export const useAuth = () => {
   const handleSellerLogout = useCallback(async () => {
     try {
       await logout();
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    } finally {
+      // 로그아웃 후 상태 초기화 (HttpOnly 쿠키는 서버에서 삭제됨)
       setIsLoggedIn(false);
       setUserInfo(null);
       // 로그아웃 후 홈페이지로 이동
-      router.push('/');
-    } catch (error) {
-      console.error('로그아웃 실패:', error);
-      // 에러가 발생해도 로컬 상태는 초기화
-      setIsLoggedIn(false);
-      setUserInfo(null);
       router.push('/');
     }
   }, [setIsLoggedIn, setUserInfo, router]);
