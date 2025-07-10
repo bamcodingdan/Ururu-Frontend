@@ -37,9 +37,33 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
+      // 인증이 필요하지 않은 API는 토큰 갱신을 시도하지 않음
+      const authRequiredApis = [
+        '/auth/me',
+        '/members/me',
+        '/seller/',
+        '/sellers/',
+        '/orders/',
+        '/mypage/',
+        '/cart/',
+      ];
+
+      const isAuthRequired = authRequiredApis.some((api) => originalRequest.url?.includes(api));
+
+      if (!isAuthRequired) {
+        // 인증이 필요하지 않은 API의 경우 토큰 갱신을 시도하지 않음
+        return Promise.reject(error);
+      }
+
       try {
-        // 토큰 갱신 요청 (쿠키 자동 전송)
-        const response = await axiosInstance.post('/auth/refresh');
+        // 판매자 API인지 확인
+        const isSellerApi =
+          originalRequest.url?.includes('/seller/') || originalRequest.url?.includes('/sellers/');
+
+        // 판매자 API인 경우 판매자 전용 토큰 갱신, 그 외에는 일반 토큰 갱신
+        const refreshEndpoint = isSellerApi ? '/auth/seller/refresh' : '/auth/refresh';
+
+        const response = await axiosInstance.post(refreshEndpoint);
 
         if (response.status === 200) {
           // 토큰 갱신 성공 시 원래 요청 재시도
@@ -48,7 +72,11 @@ axiosInstance.interceptors.response.use(
       } catch (refreshError) {
         // 토큰 갱신 실패 시 로그인 페이지로 리다이렉트
         if (typeof window !== 'undefined') {
-          window.location.href = '/login';
+          // 판매자 API인 경우 판매자 로그인 페이지로, 그 외에는 일반 로그인 페이지로
+          const isSellerApi =
+            originalRequest.url?.includes('/seller/') || originalRequest.url?.includes('/sellers/');
+          const loginPath = isSellerApi ? '/seller-signup' : '/login';
+          window.location.href = loginPath;
         }
         return Promise.reject(refreshError);
       }

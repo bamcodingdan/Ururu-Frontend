@@ -21,7 +21,7 @@ export default function AuthSuccessPage() {
         if (userInfo.user_type === 'SELLER') {
           router.replace('/seller');
         } else {
-          router.replace('/mypage');
+          router.replace('/');
         }
       } catch (error) {
         console.error('사용자 정보 조회 실패:', error);
@@ -34,6 +34,6 @@ export default function AuthSuccessPage() {
     fetchUser();
   }, [router, setIsLoggedIn, setUserInfo]);
 
-  // 아무것도 렌더링하지 않음
+  // 로딩 중에는 아무것도 렌더링하지 않음
   return null;
 }

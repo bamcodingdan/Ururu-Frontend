@@ -5,7 +5,8 @@ import { NoFooterLayout } from '@/components/layout/layouts';
 import { CartItem as CartItemComponent, CartSelectAll, CartSummary } from '@/components/cart';
 import { PageTitleHeader } from '@/components/common';
 import { useCart } from '@/hooks/useCart';
-import { useAuthGuard } from '@/hooks';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { LoadingSkeleton } from '@/components/common';
 import { mockCartData, calculateCartSummary } from '@/data/cart';
 import type { CartItem } from '@/types/cart';
 
@@ -62,15 +63,12 @@ export default function CartPage() {
   const summary = calculateCartSummary(cartItems);
 
   // 로딩 중이거나 로그인하지 않은 경우 로딩 화면 표시
-  if (isLoading || !isLoggedIn) {
+  if (isLoading) {
     return (
-      <NoFooterLayout>
-        <div className="container mx-auto max-w-6xl px-6 py-8 md:px-8 md:py-12">
-          <div className="flex items-center justify-center py-16">
-            <div className="text-text-200">로딩 중...</div>
-          </div>
-        </div>
-      </NoFooterLayout>
+      <div className="flex min-h-screen items-center justify-center">
+        <LoadingSkeleton className="h-8 w-8" />
+        <span className="ml-2 text-gray-600">로딩 중...</span>
+      </div>
     );
   }
 

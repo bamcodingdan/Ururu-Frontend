@@ -6,7 +6,8 @@ import { ProfileCard } from '@/components/mypage/ProfileCard';
 import { BeautyProfileSummary } from '@/components/mypage/beauty-profile';
 import { MobileSidebarList } from '@/components/mypage/MobileSidebarList';
 import { useMyPage } from '@/hooks/useMyPage';
-import { useAuthGuard } from '@/hooks';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { LoadingSkeleton } from '@/components/common';
 
 export default function MyPage() {
   // 모든 훅은 최상단에서 호출
@@ -14,15 +15,12 @@ export default function MyPage() {
   const { hasBeautyProfile, summaryInfo } = useMyPage();
 
   // 로딩 중이거나 로그인하지 않은 경우 로딩 화면 표시
-  if (isLoading || !isLoggedIn) {
+  if (isLoading) {
     return (
-      <MyPageLayout>
-        <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
-          <div className="flex items-center justify-center py-16">
-            <div className="text-text-200">로딩 중...</div>
-          </div>
-        </div>
-      </MyPageLayout>
+      <div className="flex min-h-screen items-center justify-center">
+        <LoadingSkeleton className="h-8 w-8" />
+        <span className="ml-2 text-gray-600">로딩 중...</span>
+      </div>
     );
   }
 

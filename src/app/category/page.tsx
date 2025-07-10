@@ -1,7 +1,10 @@
+'use client';
+
 import { MinimalLayout } from '@/components/layout';
 import { categoryItems } from '@/data/categories';
 
 export default function CategoryPage() {
+
   return (
     <MinimalLayout>
       <div className="container py-6">

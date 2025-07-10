@@ -4,6 +4,7 @@ import { FullLayout } from '@/components/layout';
 import { EmptyPage } from '@/components/common';
 
 export default function EventPage() {
+
   return (
     <FullLayout>
       <div className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12">

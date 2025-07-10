@@ -38,11 +38,14 @@ export const sellerSignup = async (signupData: SellerSignupFormData): Promise<Us
 // 이메일 중복 체크
 export const checkEmailAvailability = async (email: string): Promise<DuplicateCheckResponse> => {
   try {
+    console.log('🔍 이메일 중복 체크 요청:', email);
     const response = await axiosInstance.get<{ data: DuplicateCheckResponse }>(
       `/sellers/check/email?email=${encodeURIComponent(email)}`,
     );
+    console.log('📧 이메일 중복 체크 응답:', response.data);
     return response.data.data;
   } catch (error) {
+    console.error('❌ 이메일 중복 체크 오류:', error);
     throw handleApiError(error);
   }
 };
@@ -52,11 +55,14 @@ export const checkBusinessNumberAvailability = async (
   businessNumber: string,
 ): Promise<DuplicateCheckResponse> => {
   try {
+    console.log('🔍 사업자등록번호 중복 체크 요청:', businessNumber);
     const response = await axiosInstance.get<{ data: DuplicateCheckResponse }>(
       `/sellers/check/business-number?businessNumber=${encodeURIComponent(businessNumber)}`,
     );
+    console.log('🏢 사업자등록번호 중복 체크 응답:', response.data);
     return response.data.data;
   } catch (error) {
+    console.error('❌ 사업자등록번호 중복 체크 오류:', error);
     throw handleApiError(error);
   }
 };
@@ -64,11 +70,14 @@ export const checkBusinessNumberAvailability = async (
 // 브랜드명 중복 체크
 export const checkBrandNameAvailability = async (name: string): Promise<DuplicateCheckResponse> => {
   try {
+    console.log('🔍 브랜드명 중복 체크 요청:', name);
     const response = await axiosInstance.get<{ data: DuplicateCheckResponse }>(
       `/sellers/check/name?name=${encodeURIComponent(name)}`,
     );
+    console.log('🏷️ 브랜드명 중복 체크 응답:', response.data);
     return response.data.data;
   } catch (error) {
+    console.error('❌ 브랜드명 중복 체크 오류:', error);
     throw handleApiError(error);
   }
 };
@@ -76,7 +85,7 @@ export const checkBrandNameAvailability = async (name: string): Promise<Duplicat
 // 소셜 로그인 URL 가져오기
 export const getSocialLoginUrl = async (provider: SocialProvider): Promise<string> => {
   try {
-    const response = await axiosInstance.get<{ data: SocialLoginResponse }>(
+    const response = await axiosInstance.get<{ data: { authUrl: string; state: string } }>(
       `/auth/social/auth-url/${provider}`,
     );
     return response.data.data.authUrl;
@@ -111,6 +120,15 @@ export const logout = async (): Promise<void> => {
   } catch (error) {
     // 로그아웃 실패해도 클라이언트 상태는 초기화
     console.error('로그아웃 API 호출 실패:', error);
+  } finally {
+    // ✅ 로그아웃 후 클라이언트 상태 강제 초기화
+    if (typeof window !== 'undefined') {
+      // 모든 쿠키 삭제 (HttpOnly 쿠키는 서버에서 삭제됨)
+      document.cookie.split(';').forEach((cookie) => {
+        const [name] = cookie.split('=');
+        document.cookie = `${name.trim()}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      });
+    }
   }
 };
 
@@ -140,8 +158,8 @@ const getAccessTokenFromCookie = (): string => {
 // 현재 사용자 정보 조회
 export const getCurrentUser = async (): Promise<UserInfo> => {
   try {
-    const response = await axiosInstance.get<{ data: UserInfo }>('/members/me');
-    return response.data.data;
+    const response = await axiosInstance.get<{ data: AuthSuccessResponse }>('/auth/me');
+    return response.data.data.member_info;
   } catch (error) {
     throw handleApiError(error);
   }
@@ -154,6 +172,21 @@ export const refreshToken = async (): Promise<AuthSuccessResponse> => {
 
     // ✅ RTR 방식: 기존 토큰이 즉시 무효화되고 새 토큰이 발급됨
     console.log('RTR 방식 토큰 갱신 완료');
+    return response.data.data;
+  } catch (error) {
+    throw handleApiError(error);
+  }
+};
+
+// ✅ 판매자 전용 토큰 갱신 (RTR 방식)
+export const refreshSellerToken = async (): Promise<AuthSuccessResponse> => {
+  try {
+    const response = await axiosInstance.post<{ data: AuthSuccessResponse }>(
+      '/auth/seller/refresh',
+    );
+
+    // ✅ RTR 방식: 기존 토큰이 즉시 무효화되고 새 토큰이 발급됨
+    console.log('판매자 RTR 방식 토큰 갱신 완료');
     return response.data.data;
   } catch (error) {
     throw handleApiError(error);

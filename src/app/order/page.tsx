@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 import { OrderItem, PointUsage, PaymentSummary, DeliveryAddress } from '@/components/order';
-import { useAuthGuard } from '@/hooks';
+import { useAuthGuard } from '@/hooks/useAuthGuard';
+import { LoadingSkeleton } from '@/components/common';
 import { mockCartData } from '@/data/cart';
 import { mockAddressData } from '@/data/address';
 import type { CartItem as CartItemType } from '@/types/cart';
@@ -32,15 +33,12 @@ export default function OrderPage() {
   const availablePoint = 5000;
 
   // 로딩 중이거나 로그인하지 않은 경우 로딩 화면 표시
-  if (isLoading || !isLoggedIn) {
+  if (isLoading) {
     return (
-      <NoFooterLayout>
-        <div className="container mx-auto max-w-6xl px-6 py-8 md:px-8 md:py-12">
-          <div className="flex items-center justify-center py-16">
-            <div className="text-text-200">로딩 중...</div>
-          </div>
-        </div>
-      </NoFooterLayout>
+      <div className="flex min-h-screen items-center justify-center">
+        <LoadingSkeleton className="h-8 w-8" />
+        <span className="ml-2 text-gray-600">로딩 중...</span>
+      </div>
     );
   }
 

@@ -48,10 +48,10 @@ const getEnvironmentConfig = (): EnvironmentConfig => {
           redirectUri: {
             dev:
               process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_DEV ||
-              'http://localhost:3000/auth/success',
+              'http://localhost:8080/auth/oauth/kakao',
             prod:
               process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI_PROD ||
-              'https://www.ururu.shop/auth/success',
+              'https://www.ururu.shop/auth/oauth/kakao',
           },
         },
         google: {
@@ -59,10 +59,10 @@ const getEnvironmentConfig = (): EnvironmentConfig => {
           redirectUri: {
             dev:
               process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_DEV ||
-              'http://localhost:3000/auth/success',
+              'http://localhost:8080/auth/oauth/google',
             prod:
               process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI_PROD ||
-              'https://www.ururu.shop/auth/success',
+              'https://www.ururu.shop/auth/oauth/google',
           },
         },
       },

@@ -1,29 +1,35 @@
-import React from 'react';
+'use client';
+
+import { CustomLayout } from '@/components/layout';
 import { DetailMain, OrderBox, OrderFloatingBar } from '@/components/product';
-import { mockProductData } from '@/data/mock-product';
-import { CustomLayout } from '@/components/layout/layouts';
+import { mockProduct } from '@/data/mock-product';
 
 export default function ProductDetailPage() {
+
   return (
     <CustomLayout
       showTopBar={true}
       showSearchBar={true}
       showMainNav={true}
       showFooter={true}
-      showBottomNav={false}
+      showBottomNav={true}
     >
-      <div className="mx-auto flex w-full max-w-[1280px] flex-col gap-10 px-6 py-10 pb-24 md:px-9 md:py-12 md:pb-28 xl:flex-row xl:items-start xl:gap-12 xl:px-12 xl:pb-10">
-        {/* 왼쪽: 상세/리뷰/컨텐츠 */}
-        <section className="w-full xl:w-[60%]">
-          <DetailMain product={mockProductData} />
-        </section>
-        {/* 오른쪽: 주문/상품 정보 (데스크탑만) */}
-        <aside className="hidden w-full xl:block xl:w-[40%]">
-          <OrderBox product={mockProductData} />
-        </aside>
+      <div className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12">
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* 왼쪽: 상품 이미지 및 상세 정보 */}
+          <div className="lg:col-span-2">
+            <DetailMain product={mockProduct} />
+          </div>
+
+          {/* 오른쪽: 주문 정보 (데스크탑) */}
+          <div className="hidden lg:block">
+            <OrderBox product={mockProduct} />
+          </div>
+        </div>
+
+        {/* 모바일/태블릿: 하단 플로팅 주문 바 */}
+        <OrderFloatingBar product={mockProduct} />
       </div>
-      {/* 모바일/태블릿 하단 플로팅 바 */}
-      <OrderFloatingBar product={mockProductData} />
     </CustomLayout>
   );
 }

@@ -28,69 +28,39 @@ export const useSellerSignup = (): UseSellerSignupReturn => {
     setErrors({});
   }, []);
 
-  // 이메일 중복 체크
+  // 이메일 중복 체크 (회원가입 시에만 사용)
   const checkEmail = useCallback(async (email: string): Promise<boolean> => {
     if (!email) return true;
 
     try {
       const response = await checkEmailAvailability(email);
-      if (!response.isAvailable) {
-        setErrors((prev) => ({ ...prev, email: '이미 사용 중인 이메일입니다.' }));
-        return false;
-      } else {
-        setErrors((prev) => {
-          const next = { ...prev };
-          delete next.email;
-          return next;
-        });
-        return true;
-      }
+      return response.is_available;
     } catch (error: any) {
       console.error('이메일 중복 체크 오류:', error);
       return false;
     }
   }, []);
 
-  // 사업자등록번호 중복 체크
+  // 사업자등록번호 중복 체크 (회원가입 시에만 사용)
   const checkBusinessNumber = useCallback(async (businessNumber: string): Promise<boolean> => {
     if (!businessNumber) return true;
 
     try {
       const response = await checkBusinessNumberAvailability(businessNumber);
-      if (!response.isAvailable) {
-        setErrors((prev) => ({ ...prev, businessNumber: '이미 사용 중인 사업자등록번호입니다.' }));
-        return false;
-      } else {
-        setErrors((prev) => {
-          const next = { ...prev };
-          delete next.businessNumber;
-          return next;
-        });
-        return true;
-      }
+      return response.is_available;
     } catch (error: any) {
       console.error('사업자등록번호 중복 체크 오류:', error);
       return false;
     }
   }, []);
 
-  // 브랜드명 중복 체크
+  // 브랜드명 중복 체크 (회원가입 시에만 사용)
   const checkBrandName = useCallback(async (name: string): Promise<boolean> => {
     if (!name) return true;
 
     try {
       const response = await checkBrandNameAvailability(name);
-      if (!response.isAvailable) {
-        setErrors((prev) => ({ ...prev, name: '이미 사용 중인 브랜드명입니다.' }));
-        return false;
-      } else {
-        setErrors((prev) => {
-          const next = { ...prev };
-          delete next.name;
-          return next;
-        });
-        return true;
-      }
+      return response.is_available;
     } catch (error: any) {
       console.error('브랜드명 중복 체크 오류:', error);
       return false;
@@ -104,16 +74,42 @@ export const useSellerSignup = (): UseSellerSignupReturn => {
       clearErrors();
 
       try {
-        // 중복 체크
-        const emailAvailable = await checkEmail(data.email);
-        const businessNumberAvailable = await checkBusinessNumber(data.businessNumber);
-        const brandNameAvailable = await checkBrandName(data.name);
+        console.log('🚀 회원가입 시작:', data);
 
+        // ✅ 회원가입 시점에 중복 체크 수행
+        const [emailAvailable, businessNumberAvailable, brandNameAvailable] = await Promise.all([
+          checkEmail(data.email),
+          checkBusinessNumber(data.businessNumber),
+          checkBrandName(data.name),
+        ]);
+
+        console.log('📊 중복 체크 결과:', {
+          email: emailAvailable,
+          businessNumber: businessNumberAvailable,
+          brandName: brandNameAvailable,
+        });
+
+        // 중복 체크 실패 시 에러 메시지 설정
+        if (!emailAvailable) {
+          setErrors((prev) => ({ ...prev, email: '이미 사용 중인 이메일입니다.' }));
+        }
+        if (!businessNumberAvailable) {
+          setErrors((prev) => ({
+            ...prev,
+            businessNumber: '이미 사용 중인 사업자등록번호입니다.',
+          }));
+        }
+        if (!brandNameAvailable) {
+          setErrors((prev) => ({ ...prev, name: '이미 사용 중인 브랜드명입니다.' }));
+        }
+
+        // 중복 체크 실패 시 회원가입 중단
         if (!emailAvailable || !businessNumberAvailable || !brandNameAvailable) {
+          console.log('❌ 중복 체크 실패로 회원가입 중단');
           return;
         }
 
-        // 회원가입 API 호출
+        // ✅ 백엔드 회원가입 API 호출
         await sellerSignup(data);
 
         toast.success('회원가입이 완료되었습니다. 로그인해주세요.');
@@ -121,8 +117,8 @@ export const useSellerSignup = (): UseSellerSignupReturn => {
       } catch (error: any) {
         console.error('회원가입 오류:', error);
 
+        // 백엔드에서 받은 에러 코드에 따른 처리
         if (error.code) {
-          // 백엔드에서 받은 에러 코드에 따른 처리
           switch (error.code) {
             case 'DUPLICATE_EMAIL':
               setErrors((prev) => ({ ...prev, email: '이미 사용 중인 이메일입니다.' }));

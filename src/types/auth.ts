@@ -73,9 +73,20 @@ export interface AuthSuccessResponse {
 
 // 중복 체크 응답
 export interface DuplicateCheckResponse {
-  isAvailable: boolean;
+  is_available: boolean;
   field: string;
 }
+
+// 주요 에러 코드 타입
+export type AuthErrorCode =
+  | 'MISSING_REFRESH_TOKEN'
+  | 'INVALID_REFRESH_TOKEN'
+  | 'INVALID_JWT_TOKEN'
+  | 'SOCIAL_TOKEN_EXCHANGE_FAILED'
+  | 'INVALID_LOGIN_CREDENTIALS'
+  | 'DUPLICATE_EMAIL'
+  | 'DUPLICATE_BUSINESS_NUMBER'
+  | 'DUPLICATE_BRAND_NAME';
 
 // 인증 관련 유틸리티 타입
 export type AuthAction =
