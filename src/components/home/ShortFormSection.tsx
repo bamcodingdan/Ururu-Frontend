@@ -13,7 +13,12 @@ export function ShortFormSection({ className = '' }: ShortFormSectionProps) {
   return (
     <section className={`w-full ${className}`}>
       {/* 섹션 헤더 */}
-      <SectionHeader title="숏폼에서 보던 그 제품" />
+      <div className="mb-8">
+        <SectionHeader
+          title="숏폼에서 보던 그 제품"
+          description="지금 숏츠에서 핫한 제품들을 만나보세요!"
+        />
+      </div>
 
       {/* 이미지 4개 가로 배치 */}
       <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
