@@ -11,7 +11,7 @@ import {
 } from '@/constants/beauty-profile';
 
 const INITIAL_BEAUTY_PROFILE_DATA: BeautyProfileFormData = {
-  skinType: 'normal',
+  skinType: 'neutral',
   skinTone: 'neutral',
   skinConcerns: ['none'],
   skinReaction: 'no',

@@ -10,9 +10,9 @@ export const SKIN_TYPE_OPTIONS = [
   { label: '건성', value: 'dry' },
   { label: '복합성', value: 'combination' },
   { label: '민감성', value: 'sensitive' },
-  { label: '약건성', value: 'slightly_dry' },
+  { label: '악건성', value: 'very_dry' },
   { label: '트러블성', value: 'trouble' },
-  { label: '중성', value: 'normal' },
+  { label: '중성', value: 'neutral' },
 ] as const;
 
 // 피부 톤 옵션
