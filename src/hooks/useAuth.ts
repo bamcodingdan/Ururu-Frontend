@@ -87,8 +87,7 @@ export const useAvailabilityCheck = () => {
 
   const checkEmail = async (email: string): Promise<boolean> => {
     try {
-      const response = await api.get(`/sellers/check/email?email=${encodeURIComponent(email)}`);
-      return response.data.success && response.data.data?.is_available;
+      return await AuthService.checkEmailAvailability(email);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '이메일 중복 확인에 실패했습니다.';
       setError(errorMessage);
@@ -99,10 +98,7 @@ export const useAvailabilityCheck = () => {
 
   const checkBusinessNumber = async (businessNumber: string): Promise<boolean> => {
     try {
-      const response = await api.get(
-        `/sellers/check/business-number?businessNumber=${encodeURIComponent(businessNumber)}`,
-      );
-      return response.data.success && response.data.data?.is_available;
+      return await AuthService.checkBusinessNumberAvailability(businessNumber);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.message || '사업자등록번호 중복 확인에 실패했습니다.';
@@ -114,8 +110,7 @@ export const useAvailabilityCheck = () => {
 
   const checkBrandName = async (name: string): Promise<boolean> => {
     try {
-      const response = await api.get(`/sellers/check/name?name=${encodeURIComponent(name)}`);
-      return response.data.success && response.data.data?.is_available;
+      return await AuthService.checkBrandNameAvailability(name);
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '브랜드명 중복 확인에 실패했습니다.';
       setError(errorMessage);

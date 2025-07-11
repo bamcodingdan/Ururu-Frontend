@@ -60,26 +60,22 @@ export const useSignupForm = () => {
   );
 
   // 브랜드명 중복 확인 핸들러
-  const handleBrandDuplicateCheck = useCallback(async () => {
+  const handleBrandDuplicateCheck = useCallback(async (isAvailable?: boolean) => {
     if (!signupFormData.brand.trim()) {
       setBrandGuide('브랜드명을 입력해주세요.', 'error');
       return;
     }
 
-    try {
-      // TODO: 실제 브랜드명 중복 확인 API 호출
-      // const response = await checkBrandDuplicate(signupFormData.brand);
-      // if (response.isDuplicate) {
-      //   setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
-      // } else {
-      //   setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
-      // }
+    if (isAvailable === undefined) {
+      // API 호출 없이 기본 검증만 수행
+      setBrandGuide('브랜드명을 입력해주세요.', 'error');
+      return;
+    }
 
-      // 임시 로직 (API 구현 전)
+    if (isAvailable) {
       setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
-    } catch (error) {
-      // TODO: 에러 로깅 서비스 연동
-      setBrandGuide('중복 확인 중 오류가 발생했습니다.', 'error');
+    } else {
+      setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
     }
   }, [signupFormData.brand, setBrandGuide]);
 

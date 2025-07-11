@@ -50,15 +50,15 @@ export default function SellerSignUpPage() {
     try {
       const isAvailable = await checkBrandName(signupFormData.brand);
       if (isAvailable) {
-        // 성공 메시지는 handleBrandDuplicateCheck 내부에서 처리됨
-        handleBrandDuplicateCheck();
+        // 사용 가능한 브랜드명임을 UI에 표시
+        handleBrandDuplicateCheck(true);
       } else {
-        // 에러 메시지는 handleBrandDuplicateCheck 내부에서 처리됨
-        handleBrandDuplicateCheck();
+        // 이미 사용중인 브랜드명임을 UI에 표시
+        handleBrandDuplicateCheck(false);
       }
     } catch (error: any) {
-      // 에러 메시지는 handleBrandDuplicateCheck 내부에서 처리됨
-      handleBrandDuplicateCheck();
+      // API 에러 발생시 에러 메시지 표시
+      setError('브랜드명 중복 확인에 실패했습니다.');
     }
   };
 
