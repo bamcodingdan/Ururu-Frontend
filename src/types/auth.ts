@@ -1,3 +1,5 @@
+import type { ApiResponse } from './api';
+
 export interface UserInfo {
   member_id: number;
   email: string;
@@ -8,12 +10,6 @@ export interface UserInfo {
 
 export interface AuthResponse {
   member_info: UserInfo;
-}
-
-export interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
 }
 
 export interface SellerSignupData {

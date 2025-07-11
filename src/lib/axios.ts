@@ -1,18 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-
-// API 응답 타입
-export interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
-}
-
-// API 에러 타입
-export interface ApiError {
-  message: string;
-  status: number;
-  code?: string;
-}
+import type { ApiResponse, ApiError } from '@/types/api';
 
 // Axios 인스턴스 생성
 const api = axios.create({

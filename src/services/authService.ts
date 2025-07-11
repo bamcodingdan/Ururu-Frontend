@@ -1,5 +1,6 @@
 import api from '@/lib/axios';
-import type { UserInfo, SellerSignupData, SocialProvider, ApiResponse } from '@/types/auth';
+import type { UserInfo, SellerSignupData, SocialProvider, SellerProfile } from '@/types/auth';
+import type { ApiResponse } from '@/types/api';
 
 export interface SocialLoginResponse {
   member_info: UserInfo;
@@ -106,14 +107,14 @@ export class AuthService {
   }
 
   // 판매자 회원가입
-  static async sellerSignup(signupData: SellerSignupData): Promise<any> {
-    const response = await api.post<ApiResponse<any>>('/sellers/signup', signupData);
+  static async sellerSignup(signupData: SellerSignupData): Promise<UserInfo> {
+    const response = await api.post<ApiResponse<UserInfo>>('/sellers/signup', signupData);
 
     if (!response.data.success) {
       throw new Error(response.data.message || '회원가입에 실패했습니다.');
     }
 
-    return response.data.data;
+    return response.data.data!;
   }
 
   // 이메일 중복 확인
@@ -156,13 +157,13 @@ export class AuthService {
   }
 
   // 판매자 프로필 조회
-  static async getSellerProfile(sellerId: number): Promise<any> {
-    const response = await api.get<ApiResponse<any>>(`/sellers/${sellerId}`);
+  static async getSellerProfile(sellerId: number): Promise<SellerProfile> {
+    const response = await api.get<ApiResponse<SellerProfile>>(`/sellers/${sellerId}`);
 
     if (!response.data.success) {
       throw new Error(response.data.message || '판매자 프로필 조회에 실패했습니다.');
     }
 
-    return response.data.data;
+    return response.data.data!;
   }
 }
