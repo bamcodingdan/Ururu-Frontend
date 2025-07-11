@@ -100,12 +100,8 @@ export const useAuthStore = create<AuthState>()(
           return;
         }
 
-        // 이미 인증된 상태이면 스킵
-        if (state.isAuthenticated && state.user) {
-          console.log('인증 확인 스킵: 이미 인증됨');
-          return;
-        }
-
+        // 로컬 스토리지에 인증 정보가 없어도 서버에 토큰이 있을 수 있으므로
+        // 항상 서버에 인증 상태를 확인
         set({ isCheckingAuth: true });
         try {
           console.log('인증 상태 확인 시작...');
