@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { AuthService } from '@/services/authService';
-import { useAuthStore } from '@/store';
 import { SocialProvider } from '@/types/auth';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
@@ -21,7 +20,6 @@ export const SocialLogin: React.FC<SocialLoginProps> = ({
   className = '',
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser } = useAuthStore();
 
   const handleSocialLogin = async () => {
     try {

@@ -1,18 +1,14 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useMemo } from 'react';
 import { OrderStatusTabs, OrderCard } from '@/components/orders';
 import { EmptyState, PageHeader } from '@/components/common';
 import { orderStatusSummary, mockOrders } from '@/data/orders';
 import { OrderStatusFilter } from '@/types/order';
-import { useAuthStore } from '@/store';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
-export default function OrdersPage() {
-  const { isAuthenticated, isLoading, isCheckingAuth } = useAuthStore();
-  const router = useRouter();
+function OrdersPageContent() {
   const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>('all');
-  const hasRedirected = useRef(false);
 
   // failed 상태 주문 제외하고 필터링
   const filteredOrders = useMemo(() => {
@@ -24,24 +20,6 @@ export default function OrdersPage() {
 
     return validOrders.filter((order) => order.status === activeFilter);
   }, [activeFilter]);
-
-  useEffect(() => {
-    if (!isLoading && !isCheckingAuth && !isAuthenticated && !hasRedirected.current) {
-      hasRedirected.current = true;
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, isCheckingAuth, router]);
-
-  // 로딩 중이거나 인증되지 않은 경우
-  if (isLoading || !isAuthenticated) {
-    return (
-      <div className="flex flex-1 flex-col gap-6 py-4 md:py-6">
-        <div className="flex items-center justify-center py-20">
-          <div className="text-sm text-text-200">로딩 중...</div>
-        </div>
-      </div>
-    );
-  }
 
   const handleFilterChange = (filter: OrderStatusFilter) => {
     setActiveFilter(filter);
@@ -98,5 +76,13 @@ export default function OrdersPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function OrdersPage() {
+  return (
+    <AuthGuard requireAuth={true}>
+      <OrdersPageContent />
+    </AuthGuard>
   );
 }

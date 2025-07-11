@@ -44,6 +44,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   isCheckingAuth: boolean; // 인증 확인 중인지 체크
+  hasInitialized: boolean; // 초기 인증 확인 완료 여부
 
   // 회원가입 상태
   signupFormData: SignupFormData;
@@ -66,6 +67,7 @@ interface AuthState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   checkAuth: () => Promise<void>;
+  initializeAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -82,6 +84,7 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       error: null,
       isCheckingAuth: false,
+      hasInitialized: false, // 초기화 완료 여부
 
       // 회원가입 초기 상태
       signupFormData: {
@@ -156,11 +159,55 @@ export const useAuthStore = create<AuthState>()(
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
 
+      // 초기 인증 확인 (앱 시작 시 한 번만 호출)
+      initializeAuth: async () => {
+        const state = get();
+
+        // 이미 초기화되었거나 진행 중이면 스킵
+        if (state.hasInitialized || state.isCheckingAuth) {
+          return;
+        }
+
+        set({ isCheckingAuth: true, isLoading: true });
+        try {
+          console.log('초기 인증 상태 확인 시작...');
+          const response = await api.get('/auth/me');
+          console.log('초기 인증 상태 확인 응답:', response.data);
+
+          if (response.data.success && response.data.data?.member_info) {
+            set({
+              isAuthenticated: true,
+              user: response.data.data.member_info,
+              error: null,
+              hasInitialized: true,
+            });
+            console.log('초기 인증 성공:', response.data.data.member_info);
+          } else {
+            set({
+              isAuthenticated: false,
+              user: null,
+              hasInitialized: true,
+            });
+            console.log('초기 인증: 인증되지 않은 사용자');
+          }
+        } catch (error) {
+          console.error('초기 인증 상태 확인 에러:', error);
+          set({
+            isAuthenticated: false,
+            user: null,
+            hasInitialized: true,
+          });
+        } finally {
+          set({ isLoading: false, isCheckingAuth: false });
+        }
+      },
+
+      // 일반 인증 확인 (idempotent)
       checkAuth: async () => {
         const state = get();
 
-        // 이미 인증 확인 중이거나 로딩 중이면 스킵
-        if (state.isCheckingAuth || state.isLoading) {
+        // 이미 인증 확인 중이면 스킵
+        if (state.isCheckingAuth) {
           console.log('인증 확인 스킵: 이미 진행 중');
           return;
         }
@@ -171,17 +218,7 @@ export const useAuthStore = create<AuthState>()(
           return;
         }
 
-        // 이전에 인증 확인을 시도했고 실패한 경우 스킵 (무한 루프 방지)
-        if (
-          state.isCheckingAuth === false &&
-          state.isAuthenticated === false &&
-          state.user === null
-        ) {
-          console.log('인증 확인 스킵: 이전에 실패한 상태');
-          return;
-        }
-
-        set({ isCheckingAuth: true, isLoading: true });
+        set({ isCheckingAuth: true });
         try {
           console.log('인증 상태 확인 시작...');
           const response = await api.get('/auth/me');
@@ -200,12 +237,9 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           console.error('인증 상태 확인 에러:', error);
-          if (error instanceof Error) {
-            console.error('에러 메시지:', error.message);
-          }
           set({ isAuthenticated: false, user: null });
         } finally {
-          set({ isLoading: false, isCheckingAuth: false });
+          set({ isCheckingAuth: false });
         }
       },
     }),
@@ -214,6 +248,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
         user: state.user,
+        hasInitialized: state.hasInitialized,
       }),
     },
   ),
