@@ -9,6 +9,7 @@ import {
   INTEREST_CATEGORY_OPTIONS,
   BEAUTY_PROFILE_CONSTANTS,
 } from '@/constants/beauty-profile';
+import { updateBeautyProfile } from '@/services/beautyProfileService';
 
 const INITIAL_BEAUTY_PROFILE_DATA: BeautyProfileFormData = {
   skinType: 'neutral',
@@ -104,12 +105,27 @@ export const useBeautyProfileEdit = () => {
   }, []);
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
-      // TODO: 실제 뷰티프로필 저장 API 연동 필요
-      // TODO: 실제 뷰티프로필 저장 API 호출
-      // 저장 후 마이페이지로 이동
-      router.push('/mypage');
+      try {
+        // 폼 데이터를 API 요청 형식에 맞게 변환
+        const payload = {
+          skinType: beautyProfileData.skinType,
+          skinTone: beautyProfileData.skinTone,
+          concerns: beautyProfileData.skinConcerns.filter((c) => c !== 'none'),
+          hasAllergy: beautyProfileData.skinReaction !== 'no',
+          allergies:
+            beautyProfileData.skinReaction !== 'no' ? [beautyProfileData.skinReaction] : [],
+          interestCategories: beautyProfileData.interestCategories.filter((c) => c !== 'none'),
+          minPrice: Number(beautyProfileData.minPrice) || 0,
+          maxPrice: Number(beautyProfileData.maxPrice) || 0,
+          additionalInfo: beautyProfileData.productRequest || '',
+        };
+        await updateBeautyProfile(payload);
+        router.push('/mypage');
+      } catch (error) {
+        alert('뷰티프로필 수정에 실패했습니다.');
+      }
     },
     [beautyProfileData, router],
   );
