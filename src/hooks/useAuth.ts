@@ -1,4 +1,5 @@
 import { useAuthStore } from '@/store/auth';
+import { AuthService } from '@/services/authService';
 import api from '@/lib/axios';
 import type { UserInfo, SellerSignupData } from '@/types/auth';
 
@@ -11,14 +12,8 @@ export const useSocialLogin = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get(`/auth/social/auth-url/${provider}`);
-
-      if (response.data.success && response.data.data?.authUrl) {
-        // 소셜 로그인 URL로 리다이렉트
-        window.location.href = response.data.data.authUrl;
-      } else {
-        throw new Error(response.data.message || '소셜 로그인 URL을 가져올 수 없습니다.');
-      }
+      const providerInfo = await AuthService.getSocialAuthUrl(provider);
+      window.location.href = providerInfo.authUrl;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '소셜 로그인을 시작할 수 없습니다.';
       setError(errorMessage);
@@ -40,21 +35,15 @@ export const useSellerLogin = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post('/auth/seller/login', { email, password });
+      const response = await AuthService.sellerLogin({ email, password });
 
-      if (response.data.success && response.data.data) {
-        const { member_info } = response.data.data;
+      // 사용자 정보 저장 (토큰은 쿠키로 자동 관리)
+      login(response.member_info);
 
-        // 사용자 정보 저장 (토큰은 쿠키로 자동 관리)
-        login(member_info);
+      // 로그인 성공 후 인증 상태 다시 확인
+      await checkAuth();
 
-        // 로그인 성공 후 인증 상태 다시 확인
-        await checkAuth();
-
-        return response.data.data;
-      } else {
-        throw new Error(response.data.message || '로그인에 실패했습니다.');
-      }
+      return response;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '로그인에 실패했습니다.';
       setError(errorMessage);
@@ -77,13 +66,8 @@ export const useSellerSignup = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.post('/sellers/signup', signupData);
-
-      if (response.data.success) {
-        return response.data.data;
-      } else {
-        throw new Error(response.data.message || '회원가입에 실패했습니다.');
-      }
+      const response = await AuthService.sellerSignup(signupData);
+      return response;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || '회원가입에 실패했습니다.';
       setError(errorMessage);
@@ -154,7 +138,7 @@ export const useLogout = () => {
 
       // 서버에 로그아웃 요청 (쿠키 자동 삭제)
       try {
-        await api.post('/auth/logout');
+        await AuthService.logout();
       } catch (error) {
         // 서버 로그아웃 실패해도 클라이언트에서는 로그아웃 처리
         console.warn('Server logout failed, but continuing with client logout:', error);
