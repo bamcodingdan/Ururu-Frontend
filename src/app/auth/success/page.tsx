@@ -15,16 +15,21 @@ export default function AuthSuccessPage() {
       try {
         // 백엔드에서 이미 쿠키를 설정했으므로 인증 상태 확인
         const response = await AuthService.getCurrentAuthStatus();
-        login(response.member_info);
 
-        // 인증 상태 다시 확인
-        await checkAuth();
+        if (response?.member_info) {
+          login(response.member_info);
 
-        // 성공 시 적절한 페이지로 리다이렉트
-        if (response.member_info.user_type === 'SELLER') {
-          router.push('/seller');
+          // 인증 상태 다시 확인
+          await checkAuth();
+
+          // 성공 시 적절한 페이지로 리다이렉트
+          if (response.member_info.user_type === 'SELLER') {
+            router.push('/seller');
+          } else {
+            router.push('/mypage');
+          }
         } else {
-          router.push('/mypage');
+          throw new Error('Invalid auth response structure');
         }
       } catch (error) {
         console.error('Auth status check failed:', error);
