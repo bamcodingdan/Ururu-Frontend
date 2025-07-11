@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!isCheckingAuth && !hasInitialized.current) {
       initializeAuth();
     }
-  }, []); // 의존성 배열을 비워서 한 번만 실행
+  }, [checkAuth, isCheckingAuth]);
 
   return <>{children}</>;
 };
