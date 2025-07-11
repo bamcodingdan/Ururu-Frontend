@@ -2,10 +2,6 @@ import api from '@/lib/axios';
 import type { UserInfo, SellerSignupData, SocialProvider, ApiResponse } from '@/types/auth';
 
 export interface SocialLoginResponse {
-  access_token: string;
-  refresh_token?: string;
-  token_type: string;
-  expires_in: number;
   member_info: UserInfo;
 }
 
@@ -63,17 +59,6 @@ export class AuthService {
 
     if (!response.data.success) {
       throw new Error(response.data.message || '로그인에 실패했습니다.');
-    }
-
-    return response.data.data!;
-  }
-
-  // 토큰 갱신 (백엔드에서 자동 처리되므로 필요시에만 사용)
-  static async refreshToken(): Promise<SocialLoginResponse> {
-    const response = await api.post<ApiResponse<SocialLoginResponse>>('/auth/refresh');
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || '토큰 갱신에 실패했습니다.');
     }
 
     return response.data.data!;
