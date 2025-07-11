@@ -94,6 +94,19 @@ export function BeautyProfileFormFields({
         </div>
       </FormField>
 
+      {/* 알러지 입력: 알러지가 있다고 선택한 경우에만 노출 */}
+      {beautyProfileData.skinReaction !== 'no' && (
+        <FormField label="알러지(여러 개 입력 시 공백으로 구분)">
+          <Input
+            type="text"
+            placeholder="예: 알코올 파라벤 시트랄"
+            value={beautyProfileData.productRequest}
+            onChange={(e) => onInputChange('productRequest', e.target.value)}
+            className={FORM_STYLES.input.base}
+          />
+        </FormField>
+      )}
+
       {/* 3-5. 관심 카테고리 */}
       <FormField label="관심 카테고리 (중복 선택 가능)" required>
         <div className="space-y-3">

@@ -31,33 +31,10 @@ export const useBeautyProfileEdit = () => {
 
   const handleInputChange = useCallback(
     (field: keyof BeautyProfileFormData, value: string | string[]) => {
-      setBeautyProfileData((prev) => {
-        const newData = {
-          ...prev,
-          [field]: value,
-        };
-
-        // 가격 입력 시 최소값과 최대값 자동 정렬
-        if ((field === 'minPrice' || field === 'maxPrice') && typeof value === 'string') {
-          const minPrice = field === 'minPrice' ? value : prev.minPrice;
-          const maxPrice = field === 'maxPrice' ? value : prev.maxPrice;
-
-          if (minPrice && maxPrice) {
-            const minNum = Number(minPrice);
-            const maxNum = Number(maxPrice);
-
-            if (!isNaN(minNum) && !isNaN(maxNum)) {
-              if (minNum > maxNum) {
-                // 최소값이 최대값보다 크면 자동으로 교체
-                newData.minPrice = maxPrice;
-                newData.maxPrice = minPrice;
-              }
-            }
-          }
-        }
-
-        return newData;
-      });
+      setBeautyProfileData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
     },
     [],
   );
@@ -108,18 +85,22 @@ export const useBeautyProfileEdit = () => {
     async (e: React.FormEvent) => {
       e.preventDefault();
       try {
+        // 알러지 입력값: skinReaction이 'no'가 아니면 productRequest 필드(알러지 입력란)에서 공백으로 split
+        const allergies =
+          beautyProfileData.skinReaction !== 'no' && beautyProfileData.productRequest
+            ? beautyProfileData.productRequest.split(' ').filter(Boolean)
+            : [];
         // 폼 데이터를 API 요청 형식에 맞게 변환
         const payload = {
           skinType: beautyProfileData.skinType,
           skinTone: beautyProfileData.skinTone,
           concerns: beautyProfileData.skinConcerns.filter((c) => c !== 'none'),
           hasAllergy: beautyProfileData.skinReaction !== 'no',
-          allergies:
-            beautyProfileData.skinReaction !== 'no' ? [beautyProfileData.skinReaction] : [],
+          allergies,
           interestCategories: beautyProfileData.interestCategories.filter((c) => c !== 'none'),
           minPrice: Number(beautyProfileData.minPrice) || 0,
           maxPrice: Number(beautyProfileData.maxPrice) || 0,
-          additionalInfo: beautyProfileData.productRequest || '',
+          additionalInfo: '',
         };
         await updateBeautyProfile(payload);
         router.push('/mypage');
