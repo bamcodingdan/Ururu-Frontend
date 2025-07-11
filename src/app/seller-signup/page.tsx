@@ -56,7 +56,7 @@ export default function SellerSignUpPage() {
         // 이미 사용중인 브랜드명임을 UI에 표시
         handleBrandDuplicateCheck(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       // API 에러 발생시 에러 메시지 표시
       setError('브랜드명 중복 확인에 실패했습니다.');
     }
@@ -122,7 +122,8 @@ export default function SellerSignUpPage() {
       // 회원가입 성공 시 로그인 페이지로 이동
       router.push('/login?type=seller');
     } catch (error: any) {
-      setError(error.response?.data?.message || '회원가입에 실패했습니다.');
+      const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

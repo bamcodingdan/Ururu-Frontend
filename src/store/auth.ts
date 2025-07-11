@@ -198,8 +198,11 @@ export const useAuthStore = create<AuthState>()(
             set({ isAuthenticated: false, user: null });
             console.log('인증되지 않은 사용자');
           }
-        } catch (error: any) {
+        } catch (error) {
           console.error('인증 상태 확인 에러:', error);
+          if (error instanceof Error) {
+            console.error('에러 메시지:', error.message);
+          }
           set({ isAuthenticated: false, user: null });
         } finally {
           set({ isLoading: false, isCheckingAuth: false });

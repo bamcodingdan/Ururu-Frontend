@@ -13,8 +13,9 @@ export const useSocialLogin = () => {
 
       const providerInfo = await AuthService.getSocialAuthUrl(provider);
       window.location.href = providerInfo.authUrl;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '소셜 로그인을 시작할 수 없습니다.';
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '소셜 로그인을 시작할 수 없습니다.';
       setError(errorMessage);
       console.error('Social login error:', error);
     } finally {
@@ -43,8 +44,8 @@ export const useSellerLogin = () => {
       await checkAuth();
 
       return response;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '로그인에 실패했습니다.';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '로그인에 실패했습니다.';
       setError(errorMessage);
       console.error('Seller login error:', error);
       throw error;
@@ -67,8 +68,8 @@ export const useSellerSignup = () => {
 
       const response = await AuthService.sellerSignup(signupData);
       return response;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '회원가입에 실패했습니다.';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '회원가입에 실패했습니다.';
       setError(errorMessage);
       console.error('Seller signup error:', error);
       throw error;
@@ -87,8 +88,9 @@ export const useAvailabilityCheck = () => {
   const checkEmail = async (email: string): Promise<boolean> => {
     try {
       return await AuthService.checkEmailAvailability(email);
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '이메일 중복 확인에 실패했습니다.';
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '이메일 중복 확인에 실패했습니다.';
       setError(errorMessage);
       console.error('Email availability check error:', error);
       return false;
@@ -98,9 +100,9 @@ export const useAvailabilityCheck = () => {
   const checkBusinessNumber = async (businessNumber: string): Promise<boolean> => {
     try {
       return await AuthService.checkBusinessNumberAvailability(businessNumber);
-    } catch (error: any) {
+    } catch (error) {
       const errorMessage =
-        error.response?.data?.message || '사업자등록번호 중복 확인에 실패했습니다.';
+        error instanceof Error ? error.message : '사업자등록번호 중복 확인에 실패했습니다.';
       setError(errorMessage);
       console.error('Business number availability check error:', error);
       return false;
@@ -110,8 +112,9 @@ export const useAvailabilityCheck = () => {
   const checkBrandName = async (name: string): Promise<boolean> => {
     try {
       return await AuthService.checkBrandNameAvailability(name);
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '브랜드명 중복 확인에 실패했습니다.';
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : '브랜드명 중복 확인에 실패했습니다.';
       setError(errorMessage);
       console.error('Brand name availability check error:', error);
       return false;
@@ -145,8 +148,8 @@ export const useLogout = () => {
       if (typeof window !== 'undefined') {
         window.location.href = '/';
       }
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || '로그아웃에 실패했습니다.';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '로그아웃에 실패했습니다.';
       setError(errorMessage);
       console.error('Logout error:', error);
     } finally {
@@ -168,8 +171,9 @@ export const useSellerProfile = () => {
 
       const response = await AuthService.getSellerProfile(sellerId);
       return response;
-    } catch (error: any) {
-      setError(error.response?.data?.message || '프로필 조회에 실패했습니다.');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '프로필 조회에 실패했습니다.';
+      setError(errorMessage);
       throw error;
     } finally {
       setLoading(false);
