@@ -83,17 +83,6 @@ export class AuthService {
     }
   }
 
-  // 현재 인증 상태 조회
-  static async getCurrentAuthStatus(): Promise<SocialLoginResponse> {
-    const response = await api.get<ApiResponse<SocialLoginResponse>>('/auth/me');
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || '인증 상태 확인에 실패했습니다.');
-    }
-
-    return response.data.data!;
-  }
-
   // 소셜 제공자 목록 조회
   static async getSocialProviders(): Promise<GetSocialProvidersResponse> {
     const response =

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useAuthStore } from '@/store';
+import { useSignupStore } from '@/store';
 import { isPasswordValid } from '@/lib/password-utils';
 import { FormFieldType, AgreementType, SignupFormData, AgreementData } from '@/types/form';
 
@@ -12,7 +12,7 @@ export const useSignupForm = () => {
     setSignupFormData,
     setAgreements,
     setBrandGuide,
-  } = useAuthStore();
+  } = useSignupStore();
 
   // 입력 필드 변경 핸들러
   const handleInputChange = useCallback(
@@ -60,24 +60,27 @@ export const useSignupForm = () => {
   );
 
   // 브랜드명 중복 확인 핸들러
-  const handleBrandDuplicateCheck = useCallback(async (isAvailable?: boolean) => {
-    if (!signupFormData.brand.trim()) {
-      setBrandGuide('브랜드명을 입력해주세요.', 'error');
-      return;
-    }
+  const handleBrandDuplicateCheck = useCallback(
+    async (isAvailable?: boolean) => {
+      if (!signupFormData.brand.trim()) {
+        setBrandGuide('브랜드명을 입력해주세요.', 'error');
+        return;
+      }
 
-    if (isAvailable === undefined) {
-      // API 호출 없이 기본 검증만 수행
-      setBrandGuide('브랜드명을 입력해주세요.', 'error');
-      return;
-    }
+      if (isAvailable === undefined) {
+        // API 호출 없이 기본 검증만 수행
+        setBrandGuide('브랜드명을 입력해주세요.', 'error');
+        return;
+      }
 
-    if (isAvailable) {
-      setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
-    } else {
-      setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
-    }
-  }, [signupFormData.brand, setBrandGuide]);
+      if (isAvailable) {
+        setBrandGuide('사용 가능한 브랜드명입니다.', 'success');
+      } else {
+        setBrandGuide('이미 사용 중인 브랜드명입니다.', 'error');
+      }
+    },
+    [signupFormData.brand, setBrandGuide],
+  );
 
   // 폼 유효성 검사
   const isFormValid = useCallback(() => {

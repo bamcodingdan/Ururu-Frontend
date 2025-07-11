@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store';
-import { AuthService } from '@/services/authService';
 import { CustomLayout } from '@/components/layout';
 
 export default function AuthSuccessPage() {
@@ -13,17 +12,16 @@ export default function AuthSuccessPage() {
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        // 백엔드에서 이미 쿠키를 설정했으므로 인증 상태 확인
-        const response = await AuthService.getCurrentAuthStatus();
+        // 인증 상태 확인
+        await checkAuth();
 
-        if (response?.member_info) {
-          login(response.member_info);
+        // 성공 시 적절한 페이지로 리다이렉트
+        // checkAuth에서 이미 user 정보를 store에 저장했으므로
+        // store의 user 정보를 확인하여 리다이렉트
+        const { user } = useAuthStore.getState();
 
-          // 인증 상태 다시 확인
-          await checkAuth();
-
-          // 성공 시 적절한 페이지로 리다이렉트
-          if (response.member_info.user_type === 'SELLER') {
+        if (user) {
+          if (user.user_type === 'SELLER') {
             router.push('/seller');
           } else {
             router.push('/mypage');
@@ -38,7 +36,7 @@ export default function AuthSuccessPage() {
     };
 
     checkAuthStatus();
-  }, [login, router, checkAuth]);
+  }, [router, checkAuth]);
 
   return (
     <CustomLayout showTopBar={false} showSearchBar={false} showMainNav={false} showFooter={false}>
