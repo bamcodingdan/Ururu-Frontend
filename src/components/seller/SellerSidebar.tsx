@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import {
   Package,
@@ -74,12 +74,10 @@ const sidebarItems: SidebarItem[] = [
 
 export function SellerSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { handleLogout } = useLogout();
 
   const handleLogoutClick = async () => {
     await handleLogout();
-    router.push('/');
   };
 
   return (

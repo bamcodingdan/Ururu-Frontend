@@ -12,7 +12,6 @@ export function TopBar() {
 
   const handleLogoutClick = async () => {
     await handleLogout();
-    router.push('/');
   };
 
   const handleAuthRequiredClick = (href: string) => {
