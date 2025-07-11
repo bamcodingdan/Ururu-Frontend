@@ -7,6 +7,7 @@ interface SidebarItemProps {
     icon: string;
     label: string;
     href?: string;
+    onClick?: () => void;
   };
   className?: string;
 }
@@ -37,6 +38,13 @@ export function SidebarItem({ item, className = '' }: SidebarItemProps) {
       role="button"
       tabIndex={0}
       aria-label={`${item.label} 메뉴로 이동`}
+      onClick={item.onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          item.onClick?.();
+        }
+      }}
     >
       {content}
     </div>
