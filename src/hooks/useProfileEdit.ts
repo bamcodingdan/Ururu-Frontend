@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 
 import { VALIDATION_CONSTANTS } from '@/constants/validation';
 import { GENDER_OPTIONS, DEFAULT_AGREEMENTS } from '@/constants/form-options';
+import { checkNicknameDuplicate } from '@/services/memberService';
 
 export const useProfileEdit = () => {
   const router = useSafeRouter();
@@ -16,15 +17,27 @@ export const useProfileEdit = () => {
   const [nicknameGuide, setNicknameGuide] = useState('');
   const [nicknameGuideType, setNicknameGuideType] = useState<'success' | 'error' | 'base'>('base');
 
-  const handleNicknameCheck = useCallback(() => {
+  const handleNicknameCheck = useCallback(async () => {
     if (!nickname.trim()) {
       setNicknameGuide('닉네임을 입력해주세요.');
       setNicknameGuideType('error');
       return;
     }
-    // TODO: 실제 중복확인 API 연동 필요
-    setNicknameGuide('사용 가능한 닉네임입니다.');
-    setNicknameGuideType('success');
+
+    try {
+      const isDuplicate = await checkNicknameDuplicate(nickname);
+      if (isDuplicate) {
+        setNicknameGuide('이미 사용 중인 닉네임입니다.');
+        setNicknameGuideType('error');
+      } else {
+        setNicknameGuide('사용 가능한 닉네임입니다.');
+        setNicknameGuideType('success');
+      }
+    } catch (error) {
+      console.error('닉네임 중복 확인 실패:', error);
+      setNicknameGuide('중복 확인 중 오류가 발생했습니다.');
+      setNicknameGuideType('error');
+    }
   }, [nickname]);
 
   const handleNicknameChange = useCallback((value: string) => {
