@@ -100,8 +100,8 @@ export function BeautyProfileFormFields({
           <Input
             type="text"
             placeholder="예: 알코올 파라벤 시트랄"
-            value={beautyProfileData.productRequest}
-            onChange={(e) => onInputChange('productRequest', e.target.value)}
+            value={beautyProfileData.allergyInput || ''}
+            onChange={(e) => onInputChange('allergyInput', e.target.value)}
             className={FORM_STYLES.input.base}
           />
         </FormField>

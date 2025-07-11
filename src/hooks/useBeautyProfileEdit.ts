@@ -12,14 +12,15 @@ import {
 import { updateBeautyProfile } from '@/services/beautyProfileService';
 
 const INITIAL_BEAUTY_PROFILE_DATA: BeautyProfileFormData = {
-  skinType: 'neutral',
-  skinTone: 'neutral',
+  skinType: 'NEUTRAL',
+  skinTone: 'NEUTRAL',
   skinConcerns: ['none'],
   skinReaction: 'no',
   interestCategories: ['none'],
   minPrice: '',
   maxPrice: '',
   productRequest: '',
+  allergyInput: '',
 };
 
 export const useBeautyProfileEdit = () => {
@@ -31,10 +32,13 @@ export const useBeautyProfileEdit = () => {
 
   const handleInputChange = useCallback(
     (field: keyof BeautyProfileFormData, value: string | string[]) => {
-      setBeautyProfileData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
+      setBeautyProfileData((prev) => {
+        // allergyInput만 별도로 처리
+        if (field === 'allergyInput') {
+          return { ...prev, allergyInput: value as string };
+        }
+        return { ...prev, [field]: value };
+      });
     },
     [],
   );
@@ -85,22 +89,34 @@ export const useBeautyProfileEdit = () => {
     async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-        // 알러지 입력값: skinReaction이 'no'가 아니면 productRequest 필드(알러지 입력란)에서 공백으로 split
+        // 알러지 입력값: skinReaction이 'no'가 아니면 allergyInput 필드에서 공백으로 split
         const allergies =
-          beautyProfileData.skinReaction !== 'no' && beautyProfileData.productRequest
-            ? beautyProfileData.productRequest.split(' ').filter(Boolean)
+          beautyProfileData.skinReaction !== 'no' && beautyProfileData.allergyInput
+            ? beautyProfileData.allergyInput.split(' ').filter(Boolean)
             : [];
+
+        // 영어 value를 한국어 label로 변환
+        const concerns = beautyProfileData.skinConcerns
+          .filter((c) => c !== 'none')
+          .map((value) => SKIN_CONCERN_OPTIONS.find((opt) => opt.value === value)?.label || value);
+
+        const interestCategories = beautyProfileData.interestCategories
+          .filter((c) => c !== 'none')
+          .map(
+            (value) => INTEREST_CATEGORY_OPTIONS.find((opt) => opt.value === value)?.label || value,
+          );
+
         // 폼 데이터를 API 요청 형식에 맞게 변환
         const payload = {
           skinType: beautyProfileData.skinType,
           skinTone: beautyProfileData.skinTone,
-          concerns: beautyProfileData.skinConcerns.filter((c) => c !== 'none'),
+          concerns,
           hasAllergy: beautyProfileData.skinReaction !== 'no',
           allergies,
-          interestCategories: beautyProfileData.interestCategories.filter((c) => c !== 'none'),
+          interestCategories,
           minPrice: Number(beautyProfileData.minPrice) || 0,
           maxPrice: Number(beautyProfileData.maxPrice) || 0,
-          additionalInfo: '',
+          additionalInfo: beautyProfileData.productRequest || '',
         };
         await updateBeautyProfile(payload);
         router.push('/mypage');
