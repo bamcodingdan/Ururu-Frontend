@@ -14,12 +14,23 @@ export default function OrdersPage() {
   const [activeFilter, setActiveFilter] = useState<OrderStatusFilter>('all');
   const hasRedirected = useRef(false);
 
+  // failed 상태 주문 제외하고 필터링
+  const filteredOrders = useMemo(() => {
+    const validOrders = mockOrders.filter((order) => order.status !== 'failed');
+
+    if (activeFilter === 'all') {
+      return validOrders;
+    }
+
+    return validOrders.filter((order) => order.status === activeFilter);
+  }, [activeFilter]);
+
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && !hasRedirected.current) {
+    if (!isLoading && !isCheckingAuth && !isAuthenticated && !hasRedirected.current) {
       hasRedirected.current = true;
       router.push('/login');
     }
-  }, [isAuthenticated, isLoading, router]);
+  }, [isAuthenticated, isLoading, isCheckingAuth, router]);
 
   // 로딩 중이거나 인증되지 않은 경우
   if (isLoading || !isAuthenticated) {
@@ -31,17 +42,6 @@ export default function OrdersPage() {
       </div>
     );
   }
-
-  // failed 상태 주문 제외하고 필터링
-  const filteredOrders = useMemo(() => {
-    const validOrders = mockOrders.filter((order) => order.status !== 'failed');
-
-    if (activeFilter === 'all') {
-      return validOrders;
-    }
-
-    return validOrders.filter((order) => order.status === activeFilter);
-  }, [activeFilter]);
 
   const handleFilterChange = (filter: OrderStatusFilter) => {
     setActiveFilter(filter);
