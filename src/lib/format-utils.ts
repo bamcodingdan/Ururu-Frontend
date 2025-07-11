@@ -33,7 +33,7 @@ export const formatPrice = (price: number) => {
 };
 
 export const formatMailOrderNumber = (value: string) => {
-  // 특수문자 제거 (하이픈, 공백은 허용)
-  const cleaned = value.replace(/[^\w\s가-힣-]/g, '');
+  // 특수문자 제거 (하이픈만 허용)
+  const cleaned = value.replace(/[^\w가-힣\-]/g, '');
   return cleaned;
 };
