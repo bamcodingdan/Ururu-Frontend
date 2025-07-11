@@ -1,31 +1,17 @@
 'use client';
 
 import { CustomLayout } from '@/components/layout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { User, Store } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthStore } from '@/store';
-import { FORM_STYLES } from '@/constants/form-styles';
-import { useSocialLogin, useSellerLogin } from '@/hooks/useAuth';
-import { useState, useEffect } from 'react';
+import { SocialLogin } from '@/components/auth/SocialLogin';
+import { SellerLogin } from '@/components/auth/SellerLogin';
+import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
-  const {
-    loginType,
-    loginFormData,
-    setLoginType,
-    setLoginFormData,
-    isLoading,
-    error,
-    isAuthenticated,
-    user,
-  } = useAuthStore();
-  const { initiateSocialLogin } = useSocialLogin();
-  const { sellerLogin } = useSellerLogin();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { loginType, setLoginType, isLoading, error, isAuthenticated, user } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -48,28 +34,12 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, user, router]);
 
-  const handleInputChange = (field: string, value: string) => {
-    setLoginFormData({ [field]: value });
+  const handleLoginSuccess = () => {
+    // 로그인 성공 시 리다이렉트는 useEffect에서 처리
   };
 
-  const handleSellerLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
-    try {
-      await sellerLogin(loginFormData.email, loginFormData.password);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleKakaoLogin = () => {
-    initiateSocialLogin('kakao');
-  };
-
-  const handleGoogleLogin = () => {
-    initiateSocialLogin('google');
+  const handleLoginError = (error: string) => {
+    console.error('Login error:', error);
   };
 
   return (
@@ -149,42 +119,16 @@ export default function LoginPage() {
           {loginType === 'buyer' && (
             <div className="min-h-[320px] space-y-4" role="region" aria-label="소셜 로그인">
               <div className="space-y-3">
-                {/* 카카오 로그인 */}
-                <button
-                  type="button"
-                  onClick={handleKakaoLogin}
-                  disabled={isLoading}
-                  className="flex h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#FEE500] text-sm font-medium text-[#3C1E1E] shadow transition hover:brightness-95 disabled:opacity-50"
-                  aria-label="카카오 계정으로 로그인"
-                >
-                  <Image
-                    src="/kakao-talk.svg"
-                    alt="카카오"
-                    width={20}
-                    height={20}
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                  {isLoading ? '로그인 중...' : '카카오 계정으로 로그인하기'}
-                </button>
-                {/* 구글 로그인 */}
-                <button
-                  type="button"
-                  onClick={handleGoogleLogin}
-                  disabled={isLoading}
-                  className="flex h-12 w-full items-center justify-center gap-3 rounded-lg border border-bg-300 bg-bg-100 text-sm font-medium text-text-200 shadow transition hover:bg-bg-200 disabled:opacity-50"
-                  aria-label="구글 계정으로 로그인"
-                >
-                  <Image
-                    src="/google-logo.svg"
-                    alt="구글"
-                    width={20}
-                    height={20}
-                    className="h-5 w-5"
-                    aria-hidden="true"
-                  />
-                  {isLoading ? '로그인 중...' : '구글 계정으로 로그인하기'}
-                </button>
+                <SocialLogin
+                  provider="kakao"
+                  onSuccess={handleLoginSuccess}
+                  onError={handleLoginError}
+                />
+                <SocialLogin
+                  provider="google"
+                  onSuccess={handleLoginSuccess}
+                  onError={handleLoginError}
+                />
               </div>
               {/* 약관 동의 문구 */}
               <div className="mt-6 text-center">
@@ -198,75 +142,8 @@ export default function LoginPage() {
 
           {/* 판매자 로그인 폼 */}
           {loginType === 'seller' && (
-            <form
-              onSubmit={handleSellerLogin}
-              className="min-h-[320px] space-y-5"
-              role="form"
-              aria-label="판매자 로그인 폼"
-            >
-              <div>
-                <label htmlFor="email" className="mb-2 block text-sm font-medium text-text-100">
-                  이메일
-                </label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="이메일을 입력하세요"
-                  value={loginFormData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="mb-2 block text-sm font-medium text-text-100">
-                  비밀번호
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="비밀번호를 입력하세요"
-                  value={loginFormData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  className="h-12 rounded-lg border-bg-300 bg-bg-100 px-4 py-3 text-base text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:outline-none focus:ring-2 focus:ring-primary-300 focus:ring-offset-0"
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              {/* 로그인 유지 & 비밀번호 찾기 */}
-              <div className="flex items-center justify-between">
-                <label className={FORM_STYLES.checkbox.container}>
-                  <input
-                    type="checkbox"
-                    className={FORM_STYLES.checkbox.base}
-                    aria-label="로그인 유지"
-                    disabled={isSubmitting}
-                  />
-                  <span className={FORM_STYLES.checkbox.label}>로그인 유지</span>
-                </label>
-                <button
-                  type="button"
-                  className="text-sm text-text-200 transition-colors hover:text-primary-300 disabled:opacity-50"
-                  aria-label="비밀번호 찾기"
-                  disabled={isSubmitting}
-                >
-                  비밀번호 찾기
-                </button>
-              </div>
-
-              {/* 로그인 버튼 */}
-              <Button
-                type="submit"
-                size="lg"
-                className="h-12 w-full rounded-lg border border-primary-300 bg-bg-100 text-primary-300 transition-colors hover:bg-primary-100 disabled:opacity-50"
-                aria-label="판매자 센터로 이동"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? '로그인 중...' : '판매자 센터로 이동'}
-              </Button>
+            <div className="min-h-[320px] space-y-5" role="region" aria-label="판매자 로그인">
+              <SellerLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />
 
               {/* 약관 동의 문구 */}
               <div className="mt-6 text-center">
@@ -287,7 +164,7 @@ export default function LoginPage() {
                   회원가입
                 </Link>
               </div>
-            </form>
+            </div>
           )}
         </div>
       </div>

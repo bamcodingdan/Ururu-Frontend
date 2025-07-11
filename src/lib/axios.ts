@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { useAuthStore } from '@/store/auth';
 
 // API 응답 타입
 export interface ApiResponse<T = any> {
@@ -22,61 +21,45 @@ const api = axios.create({
   timeout: 10000,
 });
 
-// 요청 인터셉터
-api.interceptors.request.use(
-  (config) => {
-    console.log('API 요청:', {
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL,
-      data: config.data,
-    });
-    return config;
-  },
-  (error) => {
-    console.error('API 요청 에러:', error);
-    return Promise.reject(error);
-  },
-);
-
 // 응답 인터셉터
 api.interceptors.response.use(
-  (response: AxiosResponse) => {
-    console.log('API 응답 성공:', {
-      status: response.status,
-      url: response.config.url,
-      data: response.data,
-    });
-    return response;
-  },
-  async (error: AxiosError<ApiError>) => {
-    console.error('API 응답 에러:', {
-      status: error.response?.status,
-      url: error.config?.url,
-      data: error.response?.data,
-      message: error.message,
-    });
+  (response) => response,
+  async (error) => {
+    // 네트워크 에러 처리
+    if (!error.response) {
+      console.error('Network error:', error);
+      return Promise.reject({
+        message: '네트워크 연결을 확인해주세요.',
+        status: 0,
+        code: 'NETWORK_ERROR',
+      });
+    }
 
-    const originalRequest = error.config as any;
-
-    // 401 에러이고 토큰 갱신을 시도하지 않은 경우
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      try {
-        // 토큰 갱신 시도
-        await api.post('/auth/refresh');
-
-        // 원래 요청 재시도
-        return api(originalRequest);
-      } catch (refreshError) {
-        // 토큰 갱신 실패 시 로그아웃
-        useAuthStore.getState().logout();
-        return Promise.reject(refreshError);
+    // 401 에러 처리 - 로그인 페이지로 리다이렉트
+    if (error.response?.status === 401) {
+      console.error('Authentication failed:', error);
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
       }
     }
 
-    return Promise.reject(error);
+    // 서버 에러 처리
+    const errorMessage = error.response?.data?.message || '서버 오류가 발생했습니다.';
+    const errorStatus = error.response?.status || 500;
+    const errorCode = error.response?.data?.code || 'UNKNOWN_ERROR';
+
+    console.error('API Error:', {
+      message: errorMessage,
+      status: errorStatus,
+      code: errorCode,
+      url: error.config?.url,
+    });
+
+    return Promise.reject({
+      message: errorMessage,
+      status: errorStatus,
+      code: errorCode,
+    });
   },
 );
 

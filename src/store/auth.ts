@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '@/lib/axios';
-import type { UserInfo } from '@/types/auth';
+import type { UserInfo, SellerSignupData } from '@/types/auth';
 
 // 로그인 폼 데이터 타입
 interface LoginFormData {
@@ -81,7 +81,9 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isLoading: false,
       error: null,
-      isCheckingAuth: false, // 인증 확인 중인지 체크
+      isCheckingAuth: false,
+
+      // 회원가입 초기 상태
       signupFormData: {
         email: '',
         password: '',
@@ -106,24 +108,18 @@ export const useAuthStore = create<AuthState>()(
       brandGuide: '',
       brandGuideType: 'guide',
 
-      // 로그인 관련 액션들
+      // 액션들
       setLoginType: (type) => set({ loginType: type }),
-      setLoginFormData: (data) =>
-        set((state) => ({
-          loginFormData: { ...state.loginFormData, ...data },
-        })),
-      setSignupFormData: (data) =>
-        set((state) => ({
-          signupFormData: { ...state.signupFormData, ...data },
-        })),
-      setAgreements: (agreements) =>
-        set((state) => ({
-          agreements: { ...state.agreements, ...agreements },
-        })),
+      setLoginFormData: (data) => set({ loginFormData: { ...get().loginFormData, ...data } }),
+      setSignupFormData: (data) => set({ signupFormData: { ...get().signupFormData, ...data } }),
+      setAgreements: (agreements) => set({ agreements: { ...get().agreements, ...agreements } }),
       setBrandGuide: (guide, type) => set({ brandGuide: guide, brandGuideType: type }),
       resetLoginForm: () =>
         set({
-          loginFormData: { email: '', password: '' },
+          loginFormData: {
+            email: '',
+            password: '',
+          },
           error: null,
         }),
       resetSignupForm: () =>
@@ -172,6 +168,16 @@ export const useAuthStore = create<AuthState>()(
         // 이미 인증된 상태이면 스킵
         if (state.isAuthenticated && state.user) {
           console.log('인증 확인 스킵: 이미 인증됨');
+          return;
+        }
+
+        // 이전에 인증 확인을 시도했고 실패한 경우 스킵 (무한 루프 방지)
+        if (
+          state.isCheckingAuth === false &&
+          state.isAuthenticated === false &&
+          state.user === null
+        ) {
+          console.log('인증 확인 스킵: 이전에 실패한 상태');
           return;
         }
 

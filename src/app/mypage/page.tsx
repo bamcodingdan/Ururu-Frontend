@@ -1,45 +1,17 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { ProfileCard } from '@/components/mypage/ProfileCard';
 import { BeautyProfileSummary } from '@/components/mypage/beauty-profile';
 import { MobileSidebarList } from '@/components/mypage/MobileSidebarList';
 import { useMyPage } from '@/hooks/useMyPage';
 import { useAuthStore } from '@/store';
-import { useRouter } from 'next/navigation';
+import { AuthGuard } from '@/components/auth/AuthGuard';
 
-export default function MyPage() {
+function MyPageContent() {
   const { hasBeautyProfile, summaryInfo } = useMyPage();
-  const { isAuthenticated, user, checkAuth, isLoading, isCheckingAuth } = useAuthStore();
-  const router = useRouter();
-  const hasRedirected = useRef(false);
-
-  useEffect(() => {
-    // 인증 상태 확인 (한 번만 실행)
-    if (!isAuthenticated && !isLoading && !isCheckingAuth) {
-      checkAuth();
-    }
-  }, [isAuthenticated, isLoading, isCheckingAuth, checkAuth]);
-
-  useEffect(() => {
-    // 인증되지 않은 경우 로그인 페이지로 리다이렉트 (한 번만)
-    if (!isLoading && !isAuthenticated && !hasRedirected.current) {
-      hasRedirected.current = true;
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
-
-  // 로딩 중이거나 인증되지 않은 경우
-  if (isLoading || !isAuthenticated) {
-    return (
-      <MyPageLayout>
-        <div className="flex flex-1 items-center justify-center py-20">
-          <div className="text-sm text-text-200">로딩 중...</div>
-        </div>
-      </MyPageLayout>
-    );
-  }
+  const { user } = useAuthStore();
 
   // 사용자 정보가 없는 경우
   if (!user) {
@@ -63,5 +35,13 @@ export default function MyPage() {
       {/* 모바일/태블릿: 사이드바 리스트 */}
       <MobileSidebarList />
     </MyPageLayout>
+  );
+}
+
+export default function MyPage() {
+  return (
+    <AuthGuard requireAuth={true}>
+      <MyPageContent />
+    </AuthGuard>
   );
 }

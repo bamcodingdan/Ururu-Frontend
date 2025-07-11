@@ -4,27 +4,25 @@ import type { UserInfo, SellerSignupData } from '@/types/auth';
 
 // 소셜 로그인 훅
 export const useSocialLogin = () => {
-  const { login, setLoading, setError } = useAuthStore();
+  const { setLoading, setError } = useAuthStore();
 
   const initiateSocialLogin = async (provider: 'kakao' | 'google') => {
     try {
-      console.log(`소셜 로그인 시작: ${provider}`);
       setLoading(true);
       setError(null);
 
-      // OAuth URL 생성
       const response = await api.get(`/auth/social/auth-url/${provider}`);
-      console.log('소셜 로그인 응답:', response.data);
 
-      const { authUrl } = response.data.data;
-
-      // OAuth 페이지로 리다이렉트
-      console.log('OAuth URL로 리다이렉트:', authUrl);
-      window.location.href = authUrl;
+      if (response.data.success && response.data.data?.authUrl) {
+        // 소셜 로그인 URL로 리다이렉트
+        window.location.href = response.data.data.authUrl;
+      } else {
+        throw new Error(response.data.message || '소셜 로그인 URL을 가져올 수 없습니다.');
+      }
     } catch (error: any) {
-      console.error('소셜 로그인 에러:', error);
-      console.error('에러 응답:', error.response?.data);
-      setError(error.response?.data?.message || '소셜 로그인 URL 생성에 실패했습니다.');
+      const errorMessage = error.response?.data?.message || '소셜 로그인을 시작할 수 없습니다.';
+      setError(errorMessage);
+      console.error('Social login error:', error);
     } finally {
       setLoading(false);
     }
@@ -35,28 +33,33 @@ export const useSocialLogin = () => {
 
 // 판매자 로그인 훅
 export const useSellerLogin = () => {
-  const { login, setLoading, setError } = useAuthStore();
+  const { setLoading, setError, login, checkAuth } = useAuthStore();
 
   const sellerLogin = async (email: string, password: string) => {
     try {
-      console.log('판매자 로그인 시작:', { email });
       setLoading(true);
       setError(null);
 
-      const response = await api.post('/auth/seller/login', {
-        email,
-        password,
-      });
+      const response = await api.post('/auth/seller/login', { email, password });
 
-      console.log('판매자 로그인 응답:', response.data);
+      if (response.data.success && response.data.data) {
+        const { member_info } = response.data.data;
 
-      if (response.data.success) {
-        login(response.data.data.member_info);
+        // 사용자 정보 저장 (토큰은 쿠키로 자동 관리)
+        login(member_info);
+
+        // 로그인 성공 후 인증 상태 다시 확인
+        await checkAuth();
+
+        return response.data.data;
+      } else {
+        throw new Error(response.data.message || '로그인에 실패했습니다.');
       }
     } catch (error: any) {
-      console.error('판매자 로그인 에러:', error);
-      console.error('에러 응답:', error.response?.data);
-      setError(error.response?.data?.message || '로그인에 실패했습니다.');
+      const errorMessage = error.response?.data?.message || '로그인에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Seller login error:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -71,21 +74,20 @@ export const useSellerSignup = () => {
 
   const sellerSignup = async (signupData: SellerSignupData) => {
     try {
-      console.log('판매자 회원가입 시작:', signupData);
       setLoading(true);
       setError(null);
 
       const response = await api.post('/sellers/signup', signupData);
 
-      console.log('판매자 회원가입 응답:', response.data);
-
       if (response.data.success) {
         return response.data.data;
+      } else {
+        throw new Error(response.data.message || '회원가입에 실패했습니다.');
       }
     } catch (error: any) {
-      console.error('판매자 회원가입 에러:', error);
-      console.error('에러 응답:', error.response?.data);
-      setError(error.response?.data?.message || '회원가입에 실패했습니다.');
+      const errorMessage = error.response?.data?.message || '회원가입에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Seller signup error:', error);
       throw error;
     } finally {
       setLoading(false);
@@ -97,44 +99,44 @@ export const useSellerSignup = () => {
 
 // 중복 체크 훅
 export const useAvailabilityCheck = () => {
-  const checkEmail = async (email: string) => {
+  const { setError } = useAuthStore();
+
+  const checkEmail = async (email: string): Promise<boolean> => {
     try {
-      console.log('이메일 중복 체크:', email);
-      const response = await api.get(`/sellers/check/email?email=${email}`);
-      console.log('이메일 중복 체크 응답:', response.data);
-      return response.data.data.is_available;
+      const response = await api.get(`/sellers/check/email?email=${encodeURIComponent(email)}`);
+      return response.data.success && response.data.data?.is_available;
     } catch (error: any) {
-      console.error('이메일 중복 체크 에러:', error);
-      console.error('에러 응답:', error.response?.data);
-      throw error;
+      const errorMessage = error.response?.data?.message || '이메일 중복 확인에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Email availability check error:', error);
+      return false;
     }
   };
 
-  const checkBusinessNumber = async (businessNumber: string) => {
+  const checkBusinessNumber = async (businessNumber: string): Promise<boolean> => {
     try {
-      console.log('사업자등록번호 중복 체크:', businessNumber);
       const response = await api.get(
-        `/sellers/check/business-number?businessNumber=${businessNumber}`,
+        `/sellers/check/business-number?businessNumber=${encodeURIComponent(businessNumber)}`,
       );
-      console.log('사업자등록번호 중복 체크 응답:', response.data);
-      return response.data.data.is_available;
+      return response.data.success && response.data.data?.is_available;
     } catch (error: any) {
-      console.error('사업자등록번호 중복 체크 에러:', error);
-      console.error('에러 응답:', error.response?.data);
-      throw error;
+      const errorMessage =
+        error.response?.data?.message || '사업자등록번호 중복 확인에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Business number availability check error:', error);
+      return false;
     }
   };
 
-  const checkBrandName = async (name: string) => {
+  const checkBrandName = async (name: string): Promise<boolean> => {
     try {
-      console.log('브랜드명 중복 체크:', name);
-      const response = await api.get(`/sellers/check/name?name=${name}`);
-      console.log('브랜드명 중복 체크 응답:', response.data);
-      return response.data.data.is_available;
+      const response = await api.get(`/sellers/check/name?name=${encodeURIComponent(name)}`);
+      return response.data.success && response.data.data?.is_available;
     } catch (error: any) {
-      console.error('브랜드명 중복 체크 에러:', error);
-      console.error('에러 응답:', error.response?.data);
-      throw error;
+      const errorMessage = error.response?.data?.message || '브랜드명 중복 확인에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Brand name availability check error:', error);
+      return false;
     }
   };
 
@@ -150,10 +152,25 @@ export const useLogout = () => {
       setLoading(true);
       setError(null);
 
-      await api.post('/auth/logout');
+      // 서버에 로그아웃 요청 (쿠키 자동 삭제)
+      try {
+        await api.post('/auth/logout');
+      } catch (error) {
+        // 서버 로그아웃 실패해도 클라이언트에서는 로그아웃 처리
+        console.warn('Server logout failed, but continuing with client logout:', error);
+      }
+
+      // 클라이언트 상태 정리
       logout();
+
+      // 로그인 페이지로 리다이렉트
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
     } catch (error: any) {
-      setError(error.response?.data?.message || '로그아웃에 실패했습니다.');
+      const errorMessage = error.response?.data?.message || '로그아웃에 실패했습니다.';
+      setError(errorMessage);
+      console.error('Logout error:', error);
     } finally {
       setLoading(false);
     }

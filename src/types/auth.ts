@@ -55,3 +55,18 @@ export interface SellerProfile {
   updated_at: string;
   is_available: boolean;
 }
+
+// 소셜 로그인 관련 타입
+export type SocialProvider = 'kakao' | 'google';
+
+export interface SocialAuthUrlResponse {
+  provider: string;
+  authUrl: string;
+  state: string;
+  redirectUri: string;
+}
+
+export interface SocialLoginRequest {
+  code: string;
+  state?: string;
+}

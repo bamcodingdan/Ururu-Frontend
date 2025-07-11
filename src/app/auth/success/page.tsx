@@ -3,27 +3,37 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store';
+import { AuthService } from '@/services/authService';
 import { CustomLayout } from '@/components/layout';
 
 export default function AuthSuccessPage() {
-  const { checkAuth, isAuthenticated, user } = useAuthStore();
+  const { login, checkAuth } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    // 인증 상태 확인
-    checkAuth();
-  }, [checkAuth]);
+    const checkAuthStatus = async () => {
+      try {
+        // 백엔드에서 이미 쿠키를 설정했으므로 인증 상태 확인
+        const response = await AuthService.getCurrentAuthStatus();
+        login(response.member_info);
 
-  useEffect(() => {
-    // 인증 완료 후 적절한 페이지로 리다이렉트
-    if (isAuthenticated && user) {
-      if (user.user_type === 'SELLER') {
-        router.push('/seller');
-      } else {
-        router.push('/mypage');
+        // 인증 상태 다시 확인
+        await checkAuth();
+
+        // 성공 시 적절한 페이지로 리다이렉트
+        if (response.member_info.user_type === 'SELLER') {
+          router.push('/seller');
+        } else {
+          router.push('/mypage');
+        }
+      } catch (error) {
+        console.error('Auth status check failed:', error);
+        router.push('/login?error=auth_failed');
       }
-    }
-  }, [isAuthenticated, user, router]);
+    };
+
+    checkAuthStatus();
+  }, [login, router, checkAuth]);
 
   return (
     <CustomLayout showTopBar={false} showSearchBar={false} showMainNav={false} showFooter={false}>
