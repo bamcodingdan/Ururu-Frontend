@@ -1,6 +1,5 @@
 import { useAuthStore } from '@/store/auth';
 import { AuthService } from '@/services/authService';
-import api from '@/lib/axios';
 import type { UserInfo, SellerSignupData } from '@/types/auth';
 
 // 소셜 로그인 훅
@@ -167,11 +166,8 @@ export const useSellerProfile = () => {
       setLoading(true);
       setError(null);
 
-      const response = await api.get(`/sellers/${sellerId}`);
-
-      if (response.data.success) {
-        return response.data.data;
-      }
+      const response = await AuthService.getSellerProfile(sellerId);
+      return response;
     } catch (error: any) {
       setError(error.response?.data?.message || '프로필 조회에 실패했습니다.');
       throw error;

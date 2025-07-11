@@ -154,4 +154,15 @@ export class AuthService {
 
     return response.data.data!.is_available;
   }
+
+  // 판매자 프로필 조회
+  static async getSellerProfile(sellerId: number): Promise<any> {
+    const response = await api.get<ApiResponse<any>>(`/sellers/${sellerId}`);
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || '판매자 프로필 조회에 실패했습니다.');
+    }
+
+    return response.data.data;
+  }
 }
