@@ -19,6 +19,21 @@ export const useProfileEdit = () => {
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // 에러 다이얼로그 상태
+  const [errorDialog, setErrorDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    errorDetails: '',
+  });
+
+  // 성공 다이얼로그 상태
+  const [successDialog, setSuccessDialog] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+  });
+
   // 기존 프로필 정보 조회
   useEffect(() => {
     const fetchProfile = async () => {
@@ -97,7 +112,12 @@ export const useProfileEdit = () => {
 
       // 닉네임 중복 확인이 되지 않았거나 중복인 경우
       if (!isNicknameChecked || nicknameGuideType === 'error') {
-        alert('닉네임 중복 확인을 해주세요.');
+        setErrorDialog({
+          isOpen: true,
+          title: '닉네임 확인 필요',
+          message: '닉네임 중복 확인을 완료해주세요.',
+          errorDetails: '',
+        });
         return;
       }
 
@@ -121,15 +141,47 @@ export const useProfileEdit = () => {
         }
 
         await updateProfile(payload);
-        alert('프로필이 성공적으로 수정되었습니다.');
-        router.push('/mypage');
-      } catch (error) {
+        setSuccessDialog({
+          isOpen: true,
+          title: '프로필 수정 완료',
+          message: '프로필이 성공적으로 수정되었습니다.',
+        });
+      } catch (error: any) {
         console.error('프로필 수정 실패:', error);
-        alert('프로필 수정에 실패했습니다.');
+
+        // 에러 메시지 추출
+        let errorMessage = '프로필 수정에 실패했습니다.';
+        let errorDetails = '';
+
+        if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+
+        if (error.response?.data?.detail) {
+          errorDetails = error.response.data.detail;
+        } else if (error.message) {
+          errorDetails = error.message;
+        }
+
+        setErrorDialog({
+          isOpen: true,
+          title: '프로필 수정 실패',
+          message: errorMessage,
+          errorDetails: errorDetails,
+        });
       }
     },
     [nickname, gender, birth, phone, router, isNicknameChecked, nicknameGuideType],
   );
+
+  const closeErrorDialog = useCallback(() => {
+    setErrorDialog((prev) => ({ ...prev, isOpen: false }));
+  }, []);
+
+  const closeSuccessDialog = useCallback(() => {
+    setSuccessDialog((prev) => ({ ...prev, isOpen: false }));
+    router.push('/mypage');
+  }, [router]);
 
   return {
     // 상태
@@ -142,6 +194,8 @@ export const useProfileEdit = () => {
     nicknameGuide,
     nicknameGuideType,
     loading,
+    errorDialog,
+    successDialog,
 
     // 핸들러
     handleNicknameChange,
@@ -151,6 +205,8 @@ export const useProfileEdit = () => {
     handlePhoneChange,
     handleAgreementChange,
     handleSubmit,
+    closeErrorDialog,
+    closeSuccessDialog,
 
     // 상수
     GENDER_OPTIONS,

@@ -5,7 +5,13 @@ import { Button } from '@/components/ui/button';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { BeautyProfileFormFields } from '@/components/mypage/beauty-profile-edit';
 import { Card, CardContent } from '@/components/ui/card';
-import { NoticeBanner, PageHeader, LoadingSkeleton } from '@/components/common';
+import {
+  NoticeBanner,
+  PageHeader,
+  LoadingSkeleton,
+  ErrorDialog,
+  SuccessDialog,
+} from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useBeautyProfileEdit } from '@/hooks/useBeautyProfileEdit';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -14,10 +20,14 @@ function BeautyProfileEditPageContent() {
   const {
     beautyProfileData,
     isLoading,
+    errorDialog,
+    successDialog,
     handleInputChange,
     handleSkinConcernToggle,
     handleInterestCategoryToggle,
     handleSubmit,
+    closeErrorDialog,
+    closeSuccessDialog,
     SKIN_TYPE_OPTIONS,
     SKIN_TONE_OPTIONS,
     SKIN_CONCERN_OPTIONS,
@@ -75,6 +85,23 @@ function BeautyProfileEditPageContent() {
           </form>
         </CardContent>
       </Card>
+
+      {/* 에러 다이얼로그 */}
+      <ErrorDialog
+        isOpen={errorDialog.isOpen}
+        onClose={closeErrorDialog}
+        title={errorDialog.title}
+        message={errorDialog.message}
+        errorDetails={errorDialog.errorDetails}
+      />
+
+      {/* 성공 다이얼로그 */}
+      <SuccessDialog
+        isOpen={successDialog.isOpen}
+        onClose={closeSuccessDialog}
+        title={successDialog.title}
+        message={successDialog.message}
+      />
     </MyPageLayout>
   );
 }

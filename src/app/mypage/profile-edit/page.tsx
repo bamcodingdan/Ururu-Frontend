@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { ProfileFormFields, ProfileImageUpload } from '@/components/mypage/profile-edit';
 import { Card, CardContent } from '@/components/ui/card';
-import { PageHeader } from '@/components/common';
+import { PageHeader, ErrorDialog, SuccessDialog } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useProfileEdit } from '@/hooks/useProfileEdit';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -21,6 +21,8 @@ function ProfileEditPageContent() {
     nicknameGuide,
     nicknameGuideType,
     loading,
+    errorDialog,
+    successDialog,
     handleNicknameChange,
     handleNicknameCheck,
     setGender,
@@ -28,6 +30,8 @@ function ProfileEditPageContent() {
     handlePhoneChange,
     handleAgreementChange,
     handleSubmit,
+    closeErrorDialog,
+    closeSuccessDialog,
     GENDER_OPTIONS,
   } = useProfileEdit();
 
@@ -78,6 +82,23 @@ function ProfileEditPageContent() {
           </form>
         </CardContent>
       </Card>
+
+      {/* 에러 다이얼로그 */}
+      <ErrorDialog
+        isOpen={errorDialog.isOpen}
+        onClose={closeErrorDialog}
+        title={errorDialog.title}
+        message={errorDialog.message}
+        errorDetails={errorDialog.errorDetails}
+      />
+
+      {/* 성공 다이얼로그 */}
+      <SuccessDialog
+        isOpen={successDialog.isOpen}
+        onClose={closeSuccessDialog}
+        title={successDialog.title}
+        message={successDialog.message}
+      />
     </MyPageLayout>
   );
 }

@@ -130,28 +130,34 @@ export function BeautyProfileFormFields({
 
       {/* 3-6. 선호 가격대 */}
       <FormField label="선호 가격대" required>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <Input
-              type="number"
-              min="1"
-              placeholder="최소 가격"
-              value={beautyProfileData.minPrice}
-              onChange={(e) => onInputChange('minPrice', e.target.value)}
-              className={FORM_STYLES.input.base}
-            />
+        <div className="space-y-2">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Input
+                type="number"
+                min="1"
+                max="2147483639"
+                placeholder="최소 가격"
+                value={beautyProfileData.minPrice}
+                onChange={(e) => onInputChange('minPrice', e.target.value)}
+                className={FORM_STYLES.input.base}
+              />
+            </div>
+            <div className="flex items-center text-text-300">~</div>
+            <div className="flex-1">
+              <Input
+                type="number"
+                min="1"
+                max="2147483639"
+                placeholder="최대 가격"
+                value={beautyProfileData.maxPrice}
+                onChange={(e) => onInputChange('maxPrice', e.target.value)}
+                className={FORM_STYLES.input.base}
+              />
+            </div>
+            <div className="flex items-center text-text-300">원</div>
           </div>
-          <div className="flex items-center text-text-300">~</div>
-          <div className="flex-1">
-            <Input
-              type="number"
-              placeholder="최대 가격"
-              value={beautyProfileData.maxPrice}
-              onChange={(e) => onInputChange('maxPrice', e.target.value)}
-              className={FORM_STYLES.input.base}
-            />
-          </div>
-          <div className="flex items-center text-text-300">원</div>
+          <p className="text-xs text-text-200">* 최대 2,147,483,639원까지 설정 가능합니다.</p>
         </div>
       </FormField>
 
