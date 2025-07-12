@@ -164,17 +164,23 @@ export const useBeautyProfileEdit = () => {
       e.preventDefault();
 
       // 가격 범위 검증
-      const minPrice = Number(beautyProfileData.minPrice) || 0;
-      const maxPrice = Number(beautyProfileData.maxPrice) || 0;
+      let minPrice = Number(beautyProfileData.minPrice) || 0;
+      let maxPrice = Number(beautyProfileData.maxPrice) || 0;
 
+      // 최소가격이 최대가격보다 큰 경우 자동으로 값 교체
+      let priceSwapped = false;
       if (minPrice > maxPrice && maxPrice > 0) {
-        setErrorDialog({
-          isOpen: true,
-          title: '가격 범위 오류',
-          message: '최소 가격이 최대 가격보다 클 수 없습니다.',
-          errorDetails: '',
-        });
-        return;
+        const temp = minPrice;
+        minPrice = maxPrice;
+        maxPrice = temp;
+        priceSwapped = true;
+
+        // 상태도 업데이트
+        setBeautyProfileData((prev) => ({
+          ...prev,
+          minPrice: minPrice.toString(),
+          maxPrice: maxPrice.toString(),
+        }));
       }
 
       if (minPrice >= 2147483640 || maxPrice >= 2147483640) {
@@ -221,7 +227,9 @@ export const useBeautyProfileEdit = () => {
         setSuccessDialog({
           isOpen: true,
           title: '뷰티프로필 수정 완료',
-          message: '뷰티프로필이 성공적으로 수정되었습니다.',
+          message: priceSwapped
+            ? '뷰티프로필이 성공적으로 수정되었습니다. (최소/최대 가격이 자동으로 조정되었습니다)'
+            : '뷰티프로필이 성공적으로 수정되었습니다.',
         });
       } catch (error: any) {
         console.error('뷰티프로필 수정 실패:', error);
