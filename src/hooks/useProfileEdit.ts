@@ -16,11 +16,13 @@ export const useProfileEdit = () => {
   const [profileImg] = useState('/profile-image.svg');
   const [nicknameGuide, setNicknameGuide] = useState('');
   const [nicknameGuideType, setNicknameGuideType] = useState<'success' | 'error' | 'base'>('base');
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
 
   const handleNicknameCheck = useCallback(async () => {
     if (!nickname.trim()) {
       setNicknameGuide('닉네임을 입력해주세요.');
       setNicknameGuideType('error');
+      setIsNicknameChecked(false);
       return;
     }
 
@@ -29,14 +31,17 @@ export const useProfileEdit = () => {
       if (isDuplicate) {
         setNicknameGuide('이미 사용 중인 닉네임입니다.');
         setNicknameGuideType('error');
+        setIsNicknameChecked(false);
       } else {
         setNicknameGuide('사용 가능한 닉네임입니다.');
         setNicknameGuideType('success');
+        setIsNicknameChecked(true);
       }
     } catch (error) {
       console.error('닉네임 중복 확인 실패:', error);
       setNicknameGuide('중복 확인 중 오류가 발생했습니다.');
       setNicknameGuideType('error');
+      setIsNicknameChecked(false);
     }
   }, [nickname]);
 
@@ -44,6 +49,7 @@ export const useProfileEdit = () => {
     setNickname(value);
     setNicknameGuide('');
     setNicknameGuideType('base');
+    setIsNicknameChecked(false);
   }, []);
 
   const handlePhoneChange = useCallback((value: string) => {
@@ -58,14 +64,13 @@ export const useProfileEdit = () => {
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      try {
-        // 닉네임 중복 확인
-        const isDuplicate = await checkNicknameDuplicate(nickname);
-        if (isDuplicate) {
-          alert('이미 사용 중인 닉네임입니다. 다른 닉네임을 사용해주세요.');
-          return;
-        }
+      // 닉네임 중복 확인이 되지 않았거나 중복인 경우
+      if (!isNicknameChecked || nicknameGuideType === 'error') {
+        alert('닉네임 중복 확인을 해주세요.');
+        return;
+      }
 
+      try {
         // 프로필 수정 API 요청
         const payload: any = {
           nickname: nickname.trim(),
@@ -89,7 +94,7 @@ export const useProfileEdit = () => {
         alert('프로필 수정에 실패했습니다.');
       }
     },
-    [nickname, gender, birth, phone, router],
+    [nickname, gender, birth, phone, router, isNicknameChecked, nicknameGuideType],
   );
 
   return {
