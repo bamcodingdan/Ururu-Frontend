@@ -10,32 +10,62 @@ import { useAuthStore } from '@/store';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import api from '@/lib/axios';
 import type { UserInfo } from '@/types/auth';
+import { getBeautyProfile } from '@/services/beautyProfileService';
+import { SKIN_TYPE_OPTIONS, SKIN_TONE_OPTIONS } from '@/constants/beauty-profile';
 
 function MyPageContent() {
   const { hasBeautyProfile, summaryInfo } = useMyPage();
   const { user } = useAuthStore();
   const [mypageData, setMypageData] = useState<UserInfo | null>(null);
+  const [beautyProfileData, setBeautyProfileData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchMyPageData = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/members/me/mypage');
-        console.log('마이페이지 API 응답:', response.data.data);
-        setMypageData(response.data.data);
+
+        // 마이페이지 데이터 조회
+        const mypageResponse = await api.get('/members/me/mypage');
+        setMypageData(mypageResponse.data.data);
+
+        // 뷰티프로필 데이터 조회
+        try {
+          const beautyProfileResponse = await getBeautyProfile();
+          setBeautyProfileData(beautyProfileResponse);
+        } catch (beautyError) {
+          // 뷰티프로필이 없는 경우 무시
+          console.log('뷰티프로필이 없습니다.');
+        }
+
         setError(null);
       } catch (err) {
-        console.error('마이페이지 데이터 조회 실패:', err);
+        console.error('데이터 조회 실패:', err);
         setError(err as Error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMyPageData();
+    fetchData();
   }, []);
+
+  // 뷰티프로필 요약 정보 생성
+  const beautyProfileSummary = beautyProfileData
+    ? {
+        skinType:
+          SKIN_TYPE_OPTIONS.find((opt) => opt.value === beautyProfileData.skin_type)?.label ||
+          beautyProfileData.skin_type,
+        skinTone:
+          SKIN_TONE_OPTIONS.find((opt) => opt.value === beautyProfileData.skin_tone)?.label ||
+          beautyProfileData.skin_tone,
+        skinConcerns: beautyProfileData.concerns || [],
+        interests: beautyProfileData.interest_categories || [],
+        skinReaction: beautyProfileData.has_allergy ? '있음' : '없음',
+        priceRange: `${beautyProfileData.min_price?.toLocaleString() || 0}원 ~ ${beautyProfileData.max_price?.toLocaleString() || 0}원`,
+      }
+    : null;
 
   // 로딩 중
   if (loading) {
@@ -76,7 +106,7 @@ function MyPageContent() {
       <ProfileCard user={mypageData} />
 
       {/* 뷰티 프로필 요약 카드 */}
-      {hasBeautyProfile && <BeautyProfileSummary summaryInfo={summaryInfo} />}
+      {beautyProfileData && <BeautyProfileSummary summaryInfo={beautyProfileSummary} />}
 
       {/* 모바일/태블릿: 사이드바 리스트 */}
       <MobileSidebarList />
