@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MyPageLayout } from '@/components/mypage/MyPageLayout';
 import { BeautyProfileFormFields } from '@/components/mypage/beauty-profile-edit';
 import { Card, CardContent } from '@/components/ui/card';
-import { NoticeBanner, PageHeader } from '@/components/common';
+import { NoticeBanner, PageHeader, LoadingSkeleton } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useBeautyProfileEdit } from '@/hooks/useBeautyProfileEdit';
 import { AuthGuard } from '@/components/auth/AuthGuard';
@@ -13,6 +13,7 @@ import { AuthGuard } from '@/components/auth/AuthGuard';
 function BeautyProfileEditPageContent() {
   const {
     beautyProfileData,
+    isLoading,
     handleInputChange,
     handleSkinConcernToggle,
     handleInterestCategoryToggle,
@@ -24,6 +25,19 @@ function BeautyProfileEditPageContent() {
     INTEREST_CATEGORY_OPTIONS,
     BEAUTY_PROFILE_CONSTANTS,
   } = useBeautyProfileEdit();
+
+  if (isLoading) {
+    return (
+      <MyPageLayout>
+        <Card className={FORM_STYLES.card.base}>
+          <CardContent className={FORM_STYLES.card.content}>
+            <PageHeader title="뷰티프로필 수정" />
+            <LoadingSkeleton className="h-96" />
+          </CardContent>
+        </Card>
+      </MyPageLayout>
+    );
+  }
 
   return (
     <MyPageLayout>

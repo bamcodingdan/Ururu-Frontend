@@ -1,5 +1,5 @@
 import { useSafeRouter } from '@/hooks';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { BeautyProfileFormData } from '@/types/form';
 import {
   SKIN_TYPE_OPTIONS,
@@ -9,7 +9,7 @@ import {
   INTEREST_CATEGORY_OPTIONS,
   BEAUTY_PROFILE_CONSTANTS,
 } from '@/constants/beauty-profile';
-import { updateBeautyProfile } from '@/services/beautyProfileService';
+import { updateBeautyProfile, getBeautyProfile } from '@/services/beautyProfileService';
 
 const INITIAL_BEAUTY_PROFILE_DATA: BeautyProfileFormData = {
   skinType: 'NEUTRAL',
@@ -29,6 +29,56 @@ export const useBeautyProfileEdit = () => {
   const [beautyProfileData, setBeautyProfileData] = useState<BeautyProfileFormData>(
     INITIAL_BEAUTY_PROFILE_DATA,
   );
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 기존 뷰티프로필 데이터 가져오기
+  useEffect(() => {
+    const fetchBeautyProfile = async () => {
+      try {
+        const profileData = await getBeautyProfile();
+        console.log('기존 뷰티프로필 데이터:', profileData);
+
+        // API 응답을 폼 데이터 형식으로 변환
+        const transformedData: BeautyProfileFormData = {
+          skinType: profileData.skin_type || 'NEUTRAL',
+          skinTone: profileData.skin_tone || 'NEUTRAL',
+          skinConcerns:
+            profileData.concerns && profileData.concerns.length > 0
+              ? profileData.concerns.map(
+                  (concern: string) =>
+                    SKIN_CONCERN_OPTIONS.find((opt) => opt.label === concern)?.value || concern,
+                )
+              : ['none'],
+          skinReaction: profileData.has_allergy ? 'yes' : 'no',
+          interestCategories:
+            profileData.interest_categories && profileData.interest_categories.length > 0
+              ? profileData.interest_categories.map(
+                  (category: string) =>
+                    INTEREST_CATEGORY_OPTIONS.find((opt) => opt.label === category)?.value ||
+                    category,
+                )
+              : ['none'],
+          minPrice: profileData.min_price ? profileData.min_price.toString() : '',
+          maxPrice: profileData.max_price ? profileData.max_price.toString() : '',
+          productRequest: profileData.additional_info || '',
+          allergyInput:
+            profileData.allergies && profileData.allergies.length > 0
+              ? profileData.allergies.join(' ')
+              : '',
+        };
+
+        console.log('변환된 폼 데이터:', transformedData);
+        setBeautyProfileData(transformedData);
+      } catch (error) {
+        console.error('뷰티프로필 데이터 가져오기 실패:', error);
+        // 에러가 발생해도 기본값으로 시작
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBeautyProfile();
+  }, []);
 
   const handleInputChange = useCallback(
     (field: keyof BeautyProfileFormData, value: string | string[]) => {
@@ -129,6 +179,7 @@ export const useBeautyProfileEdit = () => {
 
   return {
     beautyProfileData,
+    isLoading,
     handleInputChange,
     handleSkinConcernToggle,
     handleInterestCategoryToggle,
