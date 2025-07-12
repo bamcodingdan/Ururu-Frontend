@@ -28,7 +28,9 @@ export const useProfileEdit = () => {
 
         // 기존 프로필 정보로 초기값 설정
         setNickname(profileData.nickname || '');
-        setGender(profileData.gender || '');
+        console.log('API에서 받은 성별 값:', profileData.gender);
+        // API에서 받은 성별 값을 소문자로 변환 (FEMALE → female)
+        setGender(profileData.gender ? profileData.gender.toLowerCase() : '');
         setPhone(profileData.phone || '');
         setProfileImg(profileData.profile_image || '/profile-image.svg');
 
@@ -100,10 +102,13 @@ export const useProfileEdit = () => {
       }
 
       try {
+        // 성별 값을 API 형식으로 변환 (소문자 → 대문자)
+        const apiGender = gender ? gender.toUpperCase() : '';
+
         // 프로필 수정 API 요청
         const payload: any = {
           nickname: nickname.trim(),
-          gender,
+          gender: apiGender,
           phone: phone.trim(),
         };
 
