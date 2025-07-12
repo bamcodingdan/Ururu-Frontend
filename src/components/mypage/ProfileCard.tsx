@@ -43,10 +43,6 @@ export function ProfileCard({ user }: ProfileCardProps) {
                 {displayName}
               </div>
               <div className="flex gap-1 md:gap-2">
-                {/* 사용자 타입에 따른 뱃지 */}
-                <Badge className="rounded-full border border-primary-300 bg-primary-100 px-1.5 py-0.5 text-[10px] font-semibold text-primary-300 md:px-3 md:py-1 md:text-xs">
-                  {userType === 'SELLER' ? '판매자' : '구매자'}
-                </Badge>
                 {/* skin_type, skin_tone 뱃지 */}
                 {skinTypeLabel && (
                   <Badge className="rounded-full border border-primary-300 bg-primary-100 px-1.5 py-0.5 text-[10px] font-semibold text-primary-300 md:px-3 md:py-1 md:text-xs">
