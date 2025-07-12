@@ -134,6 +134,7 @@ export function BeautyProfileFormFields({
           <div className="flex-1">
             <Input
               type="number"
+              min="1"
               placeholder="최소 가격"
               value={beautyProfileData.minPrice}
               onChange={(e) => onInputChange('minPrice', e.target.value)}
