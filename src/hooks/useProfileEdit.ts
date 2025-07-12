@@ -1,9 +1,9 @@
 import { useSafeRouter } from '@/hooks';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { VALIDATION_CONSTANTS } from '@/constants/validation';
 import { GENDER_OPTIONS, DEFAULT_AGREEMENTS } from '@/constants/form-options';
-import { checkNicknameDuplicate, updateProfile } from '@/services/memberService';
+import { checkNicknameDuplicate, updateProfile, getProfile } from '@/services/memberService';
 
 export const useProfileEdit = () => {
   const router = useSafeRouter();
@@ -13,10 +13,39 @@ export const useProfileEdit = () => {
   const [birth, setBirth] = useState<Date | undefined>(undefined);
   const [phone, setPhone] = useState('');
   const [agreements, setAgreements] = useState(DEFAULT_AGREEMENTS);
-  const [profileImg] = useState('/profile-image.svg');
+  const [profileImg, setProfileImg] = useState('/profile-image.svg');
   const [nicknameGuide, setNicknameGuide] = useState('');
   const [nicknameGuideType, setNicknameGuideType] = useState<'success' | 'error' | 'base'>('base');
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // 기존 프로필 정보 조회
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        setLoading(true);
+        const profileData = await getProfile();
+
+        // 기존 프로필 정보로 초기값 설정
+        setNickname(profileData.nickname || '');
+        setGender(profileData.gender || '');
+        setPhone(profileData.phone || '');
+        setProfileImg(profileData.profile_image || '/profile-image.svg');
+
+        // 생년월일이 있으면 Date 객체로 변환
+        if (profileData.birth) {
+          setBirth(new Date(profileData.birth));
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('프로필 정보 조회 실패:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleNicknameCheck = useCallback(async () => {
     if (!nickname.trim()) {
@@ -107,6 +136,7 @@ export const useProfileEdit = () => {
     profileImg,
     nicknameGuide,
     nicknameGuideType,
+    loading,
 
     // 핸들러
     handleNicknameChange,

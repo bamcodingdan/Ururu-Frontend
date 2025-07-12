@@ -20,6 +20,7 @@ function ProfileEditPageContent() {
     profileImg,
     nicknameGuide,
     nicknameGuideType,
+    loading,
     handleNicknameChange,
     handleNicknameCheck,
     setGender,
@@ -29,6 +30,17 @@ function ProfileEditPageContent() {
     handleSubmit,
     GENDER_OPTIONS,
   } = useProfileEdit();
+
+  // 로딩 중
+  if (loading) {
+    return (
+      <MyPageLayout>
+        <div className="flex flex-1 items-center justify-center py-20">
+          <div className="text-sm text-text-200">로딩 중...</div>
+        </div>
+      </MyPageLayout>
+    );
+  }
 
   return (
     <MyPageLayout>
