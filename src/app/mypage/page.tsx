@@ -56,14 +56,19 @@ function MyPageContent() {
     ? {
         skinType:
           SKIN_TYPE_OPTIONS.find((opt) => opt.value === beautyProfileData.skin_type)?.label ||
-          beautyProfileData.skin_type,
+          beautyProfileData.skin_type ||
+          '없음',
         skinTone:
           SKIN_TONE_OPTIONS.find((opt) => opt.value === beautyProfileData.skin_tone)?.label ||
-          beautyProfileData.skin_tone,
+          beautyProfileData.skin_tone ||
+          '없음',
         skinConcerns: beautyProfileData.concerns || [],
         interests: beautyProfileData.interest_categories || [],
         skinReaction: beautyProfileData.has_allergy ? '있음' : '없음',
-        priceRange: `${beautyProfileData.min_price?.toLocaleString() || 0}원 ~ ${beautyProfileData.max_price?.toLocaleString() || 0}원`,
+        priceRange:
+          beautyProfileData.min_price && beautyProfileData.max_price
+            ? `${beautyProfileData.min_price.toLocaleString()}원 ~ ${beautyProfileData.max_price.toLocaleString()}원`
+            : '없음',
       }
     : null;
 
