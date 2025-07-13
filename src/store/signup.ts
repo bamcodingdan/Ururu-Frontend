@@ -30,7 +30,6 @@ export const useSignupStore = create<SignupState>((set, get) => ({
     zonecode: '',
     address1: '',
     address2: '',
-    addressDetail: '',
     mailOrderNumber: '',
   },
   agreements: {
@@ -60,7 +59,6 @@ export const useSignupStore = create<SignupState>((set, get) => ({
         zonecode: '',
         address1: '',
         address2: '',
-        addressDetail: '',
         mailOrderNumber: '',
       },
       agreements: {

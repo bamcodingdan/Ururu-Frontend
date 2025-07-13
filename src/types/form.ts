@@ -11,7 +11,6 @@ export type FormFieldType =
   | 'zonecode'
   | 'address1'
   | 'address2'
-  | 'addressDetail'
   | 'mailOrderNumber';
 
 // 약관 동의 타입 정의
@@ -36,7 +35,6 @@ export interface SignupFormData {
   zonecode: string;
   address1: string;
   address2: string;
-  addressDetail: string;
   mailOrderNumber: string;
 }
 

@@ -113,6 +113,12 @@ export default function SellerSignUpPage() {
         return;
       }
 
+      // 상세주소 검증
+      if (!signupFormData.address2 || !signupFormData.address2.trim()) {
+        setError('상세주소를 입력해주세요.');
+        return;
+      }
+
       // 회원가입 데이터 변환
       const signupData = {
         name: signupFormData.brand,
@@ -124,7 +130,7 @@ export default function SellerSignUpPage() {
         phone: signupFormData.phone.replace(/[^0-9]/g, ''),
         zonecode: signupFormData.zonecode,
         address1: signupFormData.address1,
-        address2: signupFormData.addressDetail,
+        address2: signupFormData.address2,
         mailOrderNumber: signupFormData.mailOrderNumber,
       };
 
@@ -198,7 +204,7 @@ export default function SellerSignUpPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="******"
+                placeholder="********"
                 value={signupFormData.password}
                 onChange={(e) => handleInputChange('password' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base}
@@ -443,13 +449,14 @@ export default function SellerSignUpPage() {
               <Input
                 type="text"
                 placeholder="상세주소를 입력해주세요"
-                value={signupFormData.addressDetail}
-                onChange={(e) =>
-                  handleInputChange('addressDetail' as FormFieldType, e.target.value)
-                }
+                value={signupFormData.address2}
+                onChange={(e) => handleInputChange('address2' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base}
                 maxLength={100}
+                required
                 disabled={isSubmitting}
+                aria-label="상세주소"
+                aria-describedby="address-detail-help"
               />
             </FormField>
 
