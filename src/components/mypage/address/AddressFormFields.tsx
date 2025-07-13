@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { formatPhoneNumber } from '@/lib/format-utils';
 import { VALIDATION_CONSTANTS } from '@/constants/validation';
+import { usePostcode } from '@/hooks/usePostcode';
 
 interface AddressFormFieldsProps {
   addressData: {
@@ -25,6 +26,16 @@ export function AddressFormFields({
   onInputChange,
   showDefaultCheckbox = true,
 }: AddressFormFieldsProps) {
+  // 우편번호 검색 기능
+  const handlePostcodeComplete = (data: any) => {
+    onInputChange('zonecode', data.zonecode);
+    onInputChange('address1', data.address);
+  };
+
+  const { openPostcode } = usePostcode({
+    onComplete: handlePostcodeComplete,
+  });
+
   return (
     <div className="space-y-6">
       {/* 배송지명 */}
@@ -98,6 +109,7 @@ export function AddressFormFields({
           <button
             type="button"
             className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
+            onClick={openPostcode}
           >
             우편 번호
           </button>

@@ -17,6 +17,7 @@ import { formatPhoneNumber, formatBusinessNumber } from '@/lib/format-utils';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { useSignupForm } from '@/hooks/useSignupForm';
 import { useSellerSignup, useAvailabilityCheck } from '@/hooks/useAuth';
+import { usePostcode } from '@/hooks/usePostcode';
 import { FormFieldType, AgreementType } from '@/types/form';
 import { useAuthStore } from '@/store';
 import { useState } from 'react';
@@ -39,6 +40,16 @@ export default function SellerSignUpPage() {
   const { error, setError } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  // 우편번호 검색 기능
+  const handlePostcodeComplete = (data: any) => {
+    handleInputChange('zonecode' as FormFieldType, data.zonecode);
+    handleInputChange('address1' as FormFieldType, data.address);
+  };
+
+  const { openPostcode } = usePostcode({
+    onComplete: handlePostcodeComplete,
+  });
 
   const handleBrandDuplicateCheckWithAPI = async () => {
     if (!signupFormData.brand) {
@@ -401,7 +412,12 @@ export default function SellerSignUpPage() {
                   type="text"
                   placeholder="우편번호"
                   value={signupFormData.zonecode}
-                  onChange={(e) => handleInputChange('zonecode' as FormFieldType, e.target.value.replace(/[^0-9]/g, ''))}
+                  onChange={(e) =>
+                    handleInputChange(
+                      'zonecode' as FormFieldType,
+                      e.target.value.replace(/[^0-9]/g, ''),
+                    )
+                  }
                   className={FORM_STYLES.input.base + ' flex-1'}
                   maxLength={5}
                   disabled={isSubmitting}
@@ -409,6 +425,7 @@ export default function SellerSignUpPage() {
                 <button
                   type="button"
                   className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
+                  onClick={openPostcode}
                   disabled={isSubmitting}
                 >
                   우편 번호
