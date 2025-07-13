@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AlertCircle } from 'lucide-react';
+import { FORM_STYLES } from '@/constants/form-styles';
 
 interface ErrorDialogProps {
   isOpen: boolean;
@@ -43,7 +44,7 @@ export const ErrorDialog: React.FC<ErrorDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={onClose} className="bg-primary-200 text-text-on hover:bg-primary-300">
+          <Button onClick={onClose} className={FORM_STYLES.button.dialog}>
             확인
           </Button>
         </DialogFooter>

@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { CheckCircle } from 'lucide-react';
+import { FORM_STYLES } from '@/constants/form-styles';
 
 interface SuccessDialogProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export const SuccessDialog: React.FC<SuccessDialogProps> = ({
           <DialogDescription className="text-left text-text-200">{message}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={onClose} className="bg-primary-200 text-text-on hover:bg-primary-300">
+          <Button onClick={onClose} className={FORM_STYLES.button.dialog}>
             확인
           </Button>
         </DialogFooter>
