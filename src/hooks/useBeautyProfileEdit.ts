@@ -107,6 +107,24 @@ export const useBeautyProfileEdit = () => {
           }
         }
 
+        // 가격 입력 시 자동 정렬
+        if (field === 'minPrice' || field === 'maxPrice') {
+          const newData = { ...prev, [field]: value };
+          const minPrice = field === 'minPrice' ? Number(value) : Number(prev.minPrice);
+          const maxPrice = field === 'maxPrice' ? Number(value) : Number(prev.maxPrice);
+
+          // 두 가격이 모두 입력되었고, 최소가격이 최대가격보다 큰 경우 자동 정렬
+          if (minPrice > 0 && maxPrice > 0 && minPrice > maxPrice) {
+            return {
+              ...newData,
+              minPrice: maxPrice.toString(),
+              maxPrice: minPrice.toString(),
+            };
+          }
+
+          return newData;
+        }
+
         // allergyInput만 별도로 처리
         if (field === 'allergyInput') {
           return { ...prev, allergyInput: value as string };
@@ -164,24 +182,8 @@ export const useBeautyProfileEdit = () => {
       e.preventDefault();
 
       // 가격 범위 검증
-      let minPrice = Number(beautyProfileData.minPrice) || 0;
-      let maxPrice = Number(beautyProfileData.maxPrice) || 0;
-
-      // 최소가격이 최대가격보다 큰 경우 자동으로 값 교체
-      let priceSwapped = false;
-      if (minPrice > maxPrice && maxPrice > 0) {
-        const temp = minPrice;
-        minPrice = maxPrice;
-        maxPrice = temp;
-        priceSwapped = true;
-
-        // 상태도 업데이트
-        setBeautyProfileData((prev) => ({
-          ...prev,
-          minPrice: minPrice.toString(),
-          maxPrice: maxPrice.toString(),
-        }));
-      }
+      const minPrice = Number(beautyProfileData.minPrice) || 0;
+      const maxPrice = Number(beautyProfileData.maxPrice) || 0;
 
       if (minPrice >= 2147483640 || maxPrice >= 2147483640) {
         setErrorDialog({
@@ -227,9 +229,7 @@ export const useBeautyProfileEdit = () => {
         setSuccessDialog({
           isOpen: true,
           title: '뷰티프로필 수정 완료',
-          message: priceSwapped
-            ? '뷰티프로필이 성공적으로 수정되었습니다. (최소/최대 가격이 자동으로 조정되었습니다)'
-            : '뷰티프로필이 성공적으로 수정되었습니다.',
+          message: '뷰티프로필이 성공적으로 수정되었습니다.',
         });
       } catch (error: any) {
         console.error('뷰티프로필 수정 실패:', error);
