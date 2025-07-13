@@ -47,6 +47,22 @@ export interface Product {
   options: ProductOption[];
 }
 
+export interface Category {
+  value: number;
+  label: string;
+  children: Category[];
+}
+
+export interface Tag {
+  value: number;
+  label: string;
+}
+
+export interface ProductMetadataResponse {
+  categories: Category[];
+  tags: Tag[];
+}
+
 // 진행률 계산 유틸리티 함수
 export const calculateProgress = (participants: number, targetParticipants: number): number => {
   if (targetParticipants <= 0) return 0;

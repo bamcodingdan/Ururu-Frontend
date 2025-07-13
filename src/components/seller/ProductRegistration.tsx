@@ -17,6 +17,11 @@ import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 import { useFormArray } from '@/hooks/seller/useFormArray';
 import { OptionList } from './common/OptionList';
 import { SectionHeader } from '@/components/common/SectionHeader';
+import type { Category, Tag } from '@/types/product';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import { useEffect } from 'react';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 
 interface ProductOption {
   id: string;
@@ -48,7 +53,12 @@ interface ProductFormData {
   customerService: string;
 }
 
-export function ProductRegistration() {
+interface ProductRegistrationProps {
+  categories: Category[];
+  tags: Tag[];
+}
+
+export function ProductRegistration({ categories, tags }: ProductRegistrationProps) {
   const [formData, setFormData] = useState<ProductFormData>({
     name: '',
     description: '',
@@ -110,27 +120,138 @@ export function ProductRegistration() {
     // TODO: API 호출
   };
 
+  // 카테고리/태그 로딩/에러 상태 관리
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 카테고리 변경 핸들러
+  const handleCategoryMainChange = (value: string) => {
+    handleInputChange('categoryMain', value);
+    handleInputChange('categoryMiddle', '');
+    handleInputChange('categorySub', '');
+  };
+
+  const handleCategoryMiddleChange = (value: string) => {
+    handleInputChange('categoryMiddle', value);
+    handleInputChange('categorySub', '');
+  };
+
+  const handleCategorySubChange = (value: string) => {
+    handleInputChange('categorySub', value);
+  };
+
+  // 카테고리 제거 핸들러
+  const handleRemoveCategory = (type: 'main' | 'middle' | 'sub') => {
+    if (type === 'main') {
+      handleInputChange('categoryMain', '');
+      handleInputChange('categoryMiddle', '');
+      handleInputChange('categorySub', '');
+    } else if (type === 'middle') {
+      handleInputChange('categoryMiddle', '');
+      handleInputChange('categorySub', '');
+    } else if (type === 'sub') {
+      handleInputChange('categorySub', '');
+    }
+  };
+
+  // 태그 변경 핸들러
+  const handleTagsChange = (newTags: Tag[]) => {
+    setSelectedTags(newTags);
+  };
+
+  // API 데이터에서 카테고리 가져오기
+  const getMainCategories = () => {
+    return categories.map((cat: Category) => cat.label);
+  };
+
   const getMiddleCategories = () => {
-    return formData.categoryMain
-      ? PRODUCT_CATEGORY_DATA.middle[
-          formData.categoryMain as keyof typeof PRODUCT_CATEGORY_DATA.middle
-        ] || []
-      : [];
+    if (!formData.categoryMain) return [];
+    const mainCategory = categories.find((cat: Category) => cat.label === formData.categoryMain);
+    return mainCategory?.children?.map((cat: Category) => cat.label) || [];
   };
 
   const getSubCategories = () => {
-    return formData.categoryMiddle
-      ? PRODUCT_CATEGORY_DATA.sub[
-          formData.categoryMiddle as keyof typeof PRODUCT_CATEGORY_DATA.sub
-        ] || []
-      : [];
+    if (!formData.categoryMiddle) return [];
+    const mainCategory = categories.find((cat: Category) => cat.label === formData.categoryMain);
+    const middleCategory = mainCategory?.children?.find(
+      (cat: Category) => cat.label === formData.categoryMiddle,
+    );
+    return middleCategory?.children?.map((cat: Category) => cat.label) || [];
   };
+
+  // 태그 비동기 로딩/에러/선택 상태 관리
+  const [tagList, setTagList] = useState<Tag[]>([]);
+  const [tagLoading, setTagLoading] = useState(false);
+  const [tagError, setTagError] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+
+  useEffect(() => {
+    setTagLoading(true);
+    setTagError(null);
+    // 비동기 태그 데이터 로딩 (실제 API 연동 시 ProductService.getProductMetadata() 등 사용)
+    Promise.resolve(tags)
+      .then((data) => setTagList(data))
+      .catch((e) => setTagError('태그를 불러오지 못했습니다.'))
+      .finally(() => setTagLoading(false));
+  }, [tags]);
+
+  const handleTagToggle = (tag: Tag) => {
+    setSelectedTags((prev) => {
+      if (prev.find((t) => t.value === tag.value)) {
+        return prev.filter((t) => t.value !== tag.value);
+      }
+      if (prev.length >= 3) return prev;
+      return [...prev, tag];
+    });
+  };
+  const handleTagRemove = (tag: Tag) => {
+    setSelectedTags((prev) => prev.filter((t) => t.value !== tag.value));
+  };
+
+  // 카테고리 chip 텍스트 생성
+  const categoryChips = [
+    formData.categoryMain ? { label: formData.categoryMain } : null,
+    formData.categoryMiddle ? { label: formData.categoryMiddle } : null,
+    formData.categorySub ? { label: formData.categorySub } : null,
+  ].filter((chip): chip is { label: string } => Boolean(chip));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
       {/* 타이틀 */}
       <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">상품 등록</h1>
-
+      {/* 선택된 카테고리 chip */}
+      {categoryChips.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {categoryChips.map((chip, i) => (
+            <Badge key={chip.label} variant="default" className="bg-primary text-white">
+              {chip.label}
+              {i < categoryChips.length - 1 && <span className="mx-1">&gt;</span>}
+            </Badge>
+          ))}
+        </div>
+      )}
+      {/* 선택된 태그 chip */}
+      {selectedTags.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {selectedTags.map((tag) => (
+            <Badge
+              key={tag.value}
+              variant="default"
+              className="bg-primary flex items-center gap-1 text-white"
+            >
+              {tag.label}
+              <button
+                type="button"
+                aria-label="태그 해제"
+                onClick={() => handleTagRemove(tag)}
+                className="ml-1 focus:outline-none"
+              >
+                <X size={14} />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="space-y-16">
         {/* 상품 기본 정보 */}
         <section>
@@ -168,74 +289,197 @@ export function ProductRegistration() {
 
             {/* 카테고리 */}
             <FormField label="카테고리" required>
-              <div className="flex gap-2">
-                <Select
-                  value={formData.categoryMain}
-                  onValueChange={(value) => {
-                    handleInputChange('categoryMain', value);
-                    handleInputChange('categoryMiddle', '');
-                    handleInputChange('categorySub', '');
-                  }}
-                >
-                  <SelectTrigger className="h-12 w-1/3 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300">
-                    <SelectValue placeholder="대분류" />
-                  </SelectTrigger>
-                  <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                    {PRODUCT_CATEGORY_DATA.main.map((category) => (
-                      <SelectItem
-                        key={category}
-                        value={category}
-                        className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
-                      >
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={formData.categoryMiddle}
-                  onValueChange={(value) => {
-                    handleInputChange('categoryMiddle', value);
-                    handleInputChange('categorySub', '');
-                  }}
-                  disabled={!formData.categoryMain}
-                >
-                  <SelectTrigger className="h-12 w-1/3 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-60">
-                    <SelectValue placeholder="중분류" />
-                  </SelectTrigger>
-                  <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                    {getMiddleCategories().map((category) => (
-                      <SelectItem
-                        key={category}
-                        value={category}
-                        className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
-                      >
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={formData.categorySub}
-                  onValueChange={(value) => handleInputChange('categorySub', value)}
-                  disabled={!formData.categoryMiddle}
-                >
-                  <SelectTrigger className="h-12 w-1/3 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-60">
-                    <SelectValue placeholder="소분류" />
-                  </SelectTrigger>
-                  <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                    {getSubCategories().map((category) => (
-                      <SelectItem
-                        key={category}
-                        value={category}
-                        className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
-                      >
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {isLoading ? (
+                <LoadingSkeleton className="h-12 w-full" />
+              ) : error ? (
+                <div className="text-sm text-red-500">카테고리 정보를 불러오지 못했습니다.</div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <Select value={formData.categoryMain} onValueChange={handleCategoryMainChange}>
+                      <SelectTrigger className="h-12 w-1/3 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300">
+                        <SelectValue placeholder="대분류" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[80] max-h-60 overflow-auto scroll-smooth bg-bg-100">
+                        {getMainCategories().map((category: string) => (
+                          <SelectItem
+                            key={category}
+                            value={category}
+                            className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
+                          >
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={formData.categoryMiddle}
+                      onValueChange={handleCategoryMiddleChange}
+                      disabled={!formData.categoryMain || getMiddleCategories().length === 0}
+                    >
+                      <SelectTrigger className="h-12 w-1/3 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-60">
+                        <SelectValue
+                          placeholder={
+                            formData.categoryMain && getMiddleCategories().length === 0
+                              ? '다음 분류가 없습니다.'
+                              : '중분류'
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="z-[80] max-h-60 overflow-auto scroll-smooth bg-bg-100">
+                        {getMiddleCategories().length > 0 &&
+                          getMiddleCategories().map((category: string) => (
+                            <SelectItem
+                              key={category}
+                              value={category}
+                              className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
+                            >
+                              {category}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={formData.categorySub}
+                      onValueChange={handleCategorySubChange}
+                      disabled={!formData.categoryMiddle || getSubCategories().length === 0}
+                    >
+                      <SelectTrigger className="h-12 w-1/3 rounded-lg border-bg-300 bg-bg-100 px-4 text-left text-sm text-text-100 placeholder:text-text-300 focus:border-primary-300 focus:ring-2 focus:ring-primary-300 disabled:cursor-not-allowed disabled:opacity-60">
+                        <SelectValue
+                          placeholder={
+                            formData.categoryMiddle && getSubCategories().length === 0
+                              ? '다음 분류가 없습니다.'
+                              : '소분류'
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="z-[80] max-h-60 overflow-auto scroll-smooth bg-bg-100">
+                        {getSubCategories().length > 0 &&
+                          getSubCategories().map((category: string) => (
+                            <SelectItem
+                              key={category}
+                              value={category}
+                              className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
+                            >
+                              {category}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {/* 선택된 카테고리 루트 경로 표시 및 제거 ( > 구분자 사용) */}
+                  {(formData.categoryMain || formData.categoryMiddle || formData.categorySub) && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+                      <span>선택된 카테고리:</span>
+                      {formData.categoryMain && (
+                        <span className="flex items-center gap-1 rounded bg-gray-100 px-2 py-1">
+                          {formData.categoryMain}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCategory('main')}
+                            className="ml-1"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      )}
+                      {formData.categoryMiddle && (
+                        <>
+                          <span className="mx-1">&gt;</span>
+                          <span className="flex items-center gap-1 rounded bg-gray-100 px-2 py-1">
+                            {formData.categoryMiddle}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCategory('middle')}
+                              className="ml-1"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        </>
+                      )}
+                      {formData.categorySub && (
+                        <>
+                          <span className="mx-1">&gt;</span>
+                          <span className="flex items-center gap-1 rounded bg-gray-100 px-2 py-1">
+                            {formData.categorySub}
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveCategory('sub')}
+                              className="ml-1"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </FormField>
+
+            {/* 태그 */}
+            <FormField label={`태그 (${selectedTags.length}/3)`} required>
+              {isLoading ? (
+                <LoadingSkeleton className="h-12 w-full" />
+              ) : error ? (
+                <div className="text-sm text-red-500">태그 정보를 불러오지 못했습니다.</div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <div
+                    className="grid grid-cols-5 gap-2"
+                    role="group"
+                    aria-label="태그 선택 그리드"
+                  >
+                    {Array.from({ length: 20 }, (_, i) => tags[i] || null).map((tag, idx) =>
+                      tag ? (
+                        <button
+                          key={tag.value}
+                          type="button"
+                          className={`h-10 w-full rounded-full border px-2 text-xs font-medium transition-colors ${
+                            selectedTags.some((t) => t.value === tag.value)
+                              ? 'border-primary-100 bg-primary-100 text-primary-300 shadow-md'
+                              : 'border-bg-300 bg-bg-100 text-text-100 hover:bg-primary-100 hover:text-primary-300'
+                          } `}
+                          aria-pressed={selectedTags.some((t) => t.value === tag.value)}
+                          onClick={() => handleTagToggle(tag)}
+                        >
+                          <span
+                            className={`block w-full truncate text-center ${selectedTags.some((t) => t.value === tag.value) ? 'text-primary-300' : 'text-text-100'}`}
+                          >
+                            {tag.label}
+                          </span>
+                        </button>
+                      ) : (
+                        <div key={idx} />
+                      ),
+                    )}
+                  </div>
+                  {/* 선택된 태그 chip - 카테고리 chip과 동일한 형식으로 */}
+                  {selectedTags.length > 0 && (
+                    <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+                      <span>선택된 태그:</span>
+                      {selectedTags.map((tag, i) => (
+                        <span
+                          key={tag.value}
+                          className="flex items-center gap-1 rounded bg-gray-100 px-2 py-1"
+                        >
+                          {tag.label}
+                          <button
+                            type="button"
+                            aria-label="태그 해제"
+                            onClick={() => handleTagRemove(tag)}
+                            className="ml-1 focus:outline-none"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </FormField>
           </div>
         </section>
