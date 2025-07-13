@@ -113,6 +113,18 @@ export default function SellerSignUpPage() {
         return;
       }
 
+      // 우편번호 검증
+      if (!signupFormData.zonecode || !signupFormData.zonecode.trim()) {
+        setError('우편번호를 입력해주세요.');
+        return;
+      }
+
+      // 기본주소 검증
+      if (!signupFormData.address1 || !signupFormData.address1.trim()) {
+        setError('기본주소를 입력해주세요.');
+        return;
+      }
+
       // 상세주소 검증
       if (!signupFormData.address2 || !signupFormData.address2.trim()) {
         setError('상세주소를 입력해주세요.');
@@ -426,6 +438,7 @@ export default function SellerSignUpPage() {
                   }
                   className={FORM_STYLES.input.base + ' flex-1'}
                   maxLength={5}
+                  required
                   disabled={isSubmitting}
                 />
                 <button
@@ -444,6 +457,7 @@ export default function SellerSignUpPage() {
                 onChange={(e) => handleInputChange('address1' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base + ' mb-2'}
                 maxLength={100}
+                required
                 disabled={isSubmitting}
               />
               <Input
@@ -458,6 +472,9 @@ export default function SellerSignUpPage() {
                 aria-label="상세주소"
                 aria-describedby="address-detail-help"
               />
+              <div id="address-detail-help" className="sr-only">
+                상세주소는 건물명, 층수, 호수 등을 포함하여 정확한 위치를 입력해주세요.
+              </div>
             </FormField>
 
             {/* 약관 동의 */}
