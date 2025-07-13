@@ -32,6 +32,7 @@ function ProfileEditPageContent() {
     handleSubmit,
     closeErrorDialog,
     closeSuccessDialog,
+    isNicknameChanged,
     GENDER_OPTIONS,
   } = useProfileEdit();
 
@@ -64,6 +65,7 @@ function ProfileEditPageContent() {
               agreements={agreements}
               nicknameGuide={nicknameGuide}
               nicknameGuideType={nicknameGuideType}
+              isNicknameChanged={isNicknameChanged()}
               onNicknameChange={handleNicknameChange}
               onNicknameCheck={handleNicknameCheck}
               onGenderChange={setGender}

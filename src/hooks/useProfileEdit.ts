@@ -9,6 +9,7 @@ export const useProfileEdit = () => {
   const router = useSafeRouter();
 
   const [nickname, setNickname] = useState('');
+  const [originalNickname, setOriginalNickname] = useState(''); // 기존 닉네임 저장
   const [gender, setGender] = useState('');
   const [birth, setBirth] = useState<Date | undefined>(undefined);
   const [phone, setPhone] = useState('');
@@ -43,6 +44,7 @@ export const useProfileEdit = () => {
 
         // 기존 프로필 정보로 초기값 설정
         setNickname(profileData.nickname || '');
+        setOriginalNickname(profileData.nickname || ''); // 기존 닉네임 저장
         console.log('API에서 받은 성별 값:', profileData.gender);
         // API에서 받은 성별 값을 소문자로 변환 (FEMALE → female)
         setGender(profileData.gender ? profileData.gender.toLowerCase() : '');
@@ -106,19 +108,26 @@ export const useProfileEdit = () => {
     setAgreements((prev) => ({ ...prev, [field]: checked }));
   }, []);
 
+  // 닉네임 변경 여부 감지
+  const isNicknameChanged = useCallback(() => {
+    return nickname.trim() !== originalNickname.trim();
+  }, [nickname, originalNickname]);
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      // 닉네임 중복 확인이 되지 않았거나 중복인 경우
-      if (!isNicknameChecked || nicknameGuideType === 'error') {
-        setErrorDialog({
-          isOpen: true,
-          title: '닉네임 확인 필요',
-          message: '닉네임 중복 확인을 완료해주세요.',
-          errorDetails: '',
-        });
-        return;
+      // 닉네임이 변경된 경우에만 중복 확인 검증
+      if (isNicknameChanged()) {
+        if (!isNicknameChecked || nicknameGuideType === 'error') {
+          setErrorDialog({
+            isOpen: true,
+            title: '닉네임 확인 필요',
+            message: '닉네임을 변경하셨습니다. 중복 확인을 완료해주세요.',
+            errorDetails: '',
+          });
+          return;
+        }
       }
 
       try {
@@ -171,7 +180,16 @@ export const useProfileEdit = () => {
         });
       }
     },
-    [nickname, gender, birth, phone, router, isNicknameChecked, nicknameGuideType],
+    [
+      nickname,
+      gender,
+      birth,
+      phone,
+      router,
+      isNicknameChecked,
+      nicknameGuideType,
+      isNicknameChanged,
+    ],
   );
 
   const closeErrorDialog = useCallback(() => {
@@ -186,6 +204,7 @@ export const useProfileEdit = () => {
   return {
     // 상태
     nickname,
+    originalNickname, // 기존 닉네임 상태 추가
     gender,
     birth,
     phone,
@@ -207,6 +226,7 @@ export const useProfileEdit = () => {
     handleSubmit,
     closeErrorDialog,
     closeSuccessDialog,
+    isNicknameChanged,
 
     // 상수
     GENDER_OPTIONS,
