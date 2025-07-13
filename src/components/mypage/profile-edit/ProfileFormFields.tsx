@@ -76,7 +76,7 @@ export function ProfileFormFields({
             className={`${
               isNicknameChanged
                 ? FORM_STYLES.button.pinkOutline
-                : 'cursor-not-allowed bg-gray-100 text-gray-400'
+                : 'cursor-not-allowed bg-bg-200 text-text-300 text-sm font-medium'
             } h-12 min-w-[120px] rounded-lg`}
             onClick={onNicknameCheck}
           >
