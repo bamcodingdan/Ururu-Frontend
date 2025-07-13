@@ -111,7 +111,8 @@ export default function SellerSignUpPage() {
         email: signupFormData.email,
         password: signupFormData.password,
         phone: signupFormData.phone.replace(/[^0-9]/g, ''),
-        address1: signupFormData.addressRoad,
+        zonecode: signupFormData.zonecode,
+        address1: signupFormData.address1,
         address2: signupFormData.addressDetail,
         mailOrderNumber: signupFormData.mailOrderNumber,
       };
@@ -244,7 +245,7 @@ export default function SellerSignUpPage() {
               required
               helperText={brandGuide || undefined}
               helperTextType={brandGuideType === 'guide' ? 'base' : brandGuideType}
-              characterCount={{ current: signupFormData.brand?.length || 0, max: 20 }}
+              characterCount={{ current: signupFormData.brand?.length || 0, max: 50 }}
             >
               <div className="flex gap-2">
                 <Input
@@ -254,7 +255,7 @@ export default function SellerSignUpPage() {
                   value={signupFormData.brand}
                   onChange={(e) => handleInputChange('brand' as FormFieldType, e.target.value)}
                   className={FORM_STYLES.input.base + ' flex-1'}
-                  maxLength={20}
+                  maxLength={50}
                   required
                   disabled={isSubmitting}
                 />
@@ -272,7 +273,7 @@ export default function SellerSignUpPage() {
             <FormField
               label="상호명"
               required
-              characterCount={{ current: signupFormData.company?.length || 0, max: 20 }}
+              characterCount={{ current: signupFormData.company?.length || 0, max: 100 }}
             >
               <Input
                 id="company"
@@ -281,7 +282,7 @@ export default function SellerSignUpPage() {
                 value={signupFormData.company}
                 onChange={(e) => handleInputChange('company' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base}
-                maxLength={20}
+                maxLength={100}
                 required
                 disabled={isSubmitting}
               />
@@ -290,7 +291,7 @@ export default function SellerSignUpPage() {
             <FormField
               label="대표이름"
               required
-              characterCount={{ current: signupFormData.ceo?.length || 0, max: 20 }}
+              characterCount={{ current: signupFormData.ceo?.length || 0, max: 50 }}
             >
               <Input
                 id="ceo"
@@ -299,7 +300,7 @@ export default function SellerSignUpPage() {
                 value={signupFormData.ceo}
                 onChange={(e) => handleInputChange('ceo' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base}
-                maxLength={20}
+                maxLength={50}
                 required
                 disabled={isSubmitting}
               />
@@ -376,7 +377,7 @@ export default function SellerSignUpPage() {
               label="휴대폰 번호"
               required
               helperText="하이픈(-)을 제외하고 숫자만 입력해주세요"
-              characterCount={{ current: signupFormData.phone?.length || 0, max: 11 }}
+              characterCount={{ current: signupFormData.phone?.length || 0, max: 20 }}
             >
               <Input
                 id="phone"
@@ -387,7 +388,7 @@ export default function SellerSignUpPage() {
                   handleInputChange('phone' as FormFieldType, e.target.value.replace(/[^0-9]/g, ''))
                 }
                 className={FORM_STYLES.input.base}
-                maxLength={13}
+                maxLength={20}
                 required
                 disabled={isSubmitting}
               />
@@ -396,9 +397,15 @@ export default function SellerSignUpPage() {
             {/* 주소 */}
             <FormField label="주소" required>
               <div className="mb-2 flex gap-2">
-                <div className={FORM_STYLES.zipcode.display}>
-                  {signupFormData.zipcode || '우편번호'}
-                </div>
+                <Input
+                  type="text"
+                  placeholder="우편번호"
+                  value={signupFormData.zonecode}
+                  onChange={(e) => handleInputChange('zonecode' as FormFieldType, e.target.value.replace(/[^0-9]/g, ''))}
+                  className={FORM_STYLES.input.base + ' flex-1'}
+                  maxLength={5}
+                  disabled={isSubmitting}
+                />
                 <button
                   type="button"
                   className={FORM_STYLES.button.pinkOutline + ' h-12 min-w-[120px] rounded-lg'}
@@ -409,18 +416,11 @@ export default function SellerSignUpPage() {
               </div>
               <Input
                 type="text"
-                placeholder="도로명"
-                value={signupFormData.addressRoad}
-                onChange={(e) => handleInputChange('addressRoad' as FormFieldType, e.target.value)}
+                placeholder="기본주소"
+                value={signupFormData.address1}
+                onChange={(e) => handleInputChange('address1' as FormFieldType, e.target.value)}
                 className={FORM_STYLES.input.base + ' mb-2'}
-                disabled={isSubmitting}
-              />
-              <Input
-                type="text"
-                placeholder="지번"
-                value={signupFormData.addressJibun}
-                onChange={(e) => handleInputChange('addressJibun' as FormFieldType, e.target.value)}
-                className={FORM_STYLES.input.base + ' mb-2'}
+                maxLength={100}
                 disabled={isSubmitting}
               />
               <Input
@@ -431,6 +431,7 @@ export default function SellerSignUpPage() {
                   handleInputChange('addressDetail' as FormFieldType, e.target.value)
                 }
                 className={FORM_STYLES.input.base}
+                maxLength={100}
                 disabled={isSubmitting}
               />
             </FormField>

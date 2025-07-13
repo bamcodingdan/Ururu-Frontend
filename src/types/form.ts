@@ -8,9 +8,9 @@ export type FormFieldType =
   | 'ceo'
   | 'businessNumber'
   | 'phone'
-  | 'zipcode'
-  | 'addressRoad'
-  | 'addressJibun'
+  | 'zonecode'
+  | 'address1'
+  | 'address2'
   | 'addressDetail'
   | 'mailOrderNumber';
 
@@ -33,9 +33,9 @@ export interface SignupFormData {
   ceo: string;
   businessNumber: string;
   phone: string;
-  zipcode: string;
-  addressRoad: string;
-  addressJibun: string;
+  zonecode: string;
+  address1: string;
+  address2: string;
   addressDetail: string;
   mailOrderNumber: string;
 }

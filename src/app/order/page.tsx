@@ -19,9 +19,9 @@ function OrderPageContent() {
     addressName: '',
     isDefault: true,
     phone: '',
-    zipcode: '',
-    addressRoad: '',
-    addressJibun: '',
+    zonecode: '',
+    address1: '',
+    address2: '',
     addressDetail: '',
   });
 

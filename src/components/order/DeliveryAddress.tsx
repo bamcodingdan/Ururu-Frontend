@@ -19,9 +19,9 @@ interface DeliveryAddressProps {
     addressName: string;
     isDefault: boolean;
     phone: string;
-    zipcode: string;
-    addressRoad: string;
-    addressJibun: string;
+    zonecode: string;
+    address1: string;
+    address2: string;
     addressDetail: string;
   };
   onDeliveryTypeChange: (type: 'existing' | 'new') => void;
