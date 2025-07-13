@@ -30,20 +30,20 @@ export const ErrorDialog: React.FC<ErrorDialogProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <AlertCircle className="text-destructive h-5 w-5" />
-            <DialogTitle className="text-destructive">{title}</DialogTitle>
+            <AlertCircle className="h-5 w-5 text-primary-300" />
+            <DialogTitle className="text-text-100">{title}</DialogTitle>
           </div>
-          <DialogDescription className="text-left">
+          <DialogDescription className="text-left text-text-200">
             {message}
             {errorDetails && (
-              <div className="bg-muted mt-2 rounded p-2 text-xs">
+              <div className="mt-2 rounded bg-bg-100 p-2 text-xs text-text-300">
                 <strong>상세 오류:</strong> {errorDetails}
               </div>
             )}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={onClose} variant="outline">
+          <Button onClick={onClose} className="bg-primary-200 text-text-on hover:bg-primary-300">
             확인
           </Button>
         </DialogFooter>

@@ -28,13 +28,13 @@ export const SuccessDialog: React.FC<SuccessDialogProps> = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <DialogTitle className="text-green-600">{title}</DialogTitle>
+            <CheckCircle className="h-5 w-5 text-primary-300" />
+            <DialogTitle className="text-text-100">{title}</DialogTitle>
           </div>
-          <DialogDescription className="text-left">{message}</DialogDescription>
+          <DialogDescription className="text-left text-text-200">{message}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={onClose} className="bg-green-600 hover:bg-green-700">
+          <Button onClick={onClose} className="bg-primary-200 text-text-on hover:bg-primary-300">
             확인
           </Button>
         </DialogFooter>
