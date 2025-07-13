@@ -269,7 +269,7 @@ export const useBeautyProfileEdit = () => {
         });
       }
     },
-    [beautyProfileData, router],
+    [beautyProfileData],
   );
 
   const closeErrorDialog = useCallback(() => {

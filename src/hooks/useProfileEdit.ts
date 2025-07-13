@@ -180,16 +180,7 @@ export const useProfileEdit = () => {
         });
       }
     },
-    [
-      nickname,
-      gender,
-      birth,
-      phone,
-      router,
-      isNicknameChecked,
-      nicknameGuideType,
-      isNicknameChanged,
-    ],
+    [nickname, gender, birth, phone, isNicknameChecked, nicknameGuideType, isNicknameChanged],
   );
 
   const closeErrorDialog = useCallback(() => {
