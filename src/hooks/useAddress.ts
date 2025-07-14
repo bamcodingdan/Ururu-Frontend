@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSafeSearchParams, useSafeRouter } from '@/hooks';
 import { mockAddressData, AddressData } from '@/data/address';
+import { postShippingAddress } from '@/services/memberService';
 
 export const useAddress = () => {
   const router = useSafeRouter();
@@ -32,14 +33,29 @@ export const useAddress = () => {
   }, []);
 
   const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
+    async (e: React.FormEvent) => {
       e.preventDefault();
-      // TODO: 실제 배송지 저장 API 연동 필요
-      // TODO: 실제 배송지 저장 API 호출
-      // 저장 후 배송지 관리 페이지로 이동
-      router.push('/mypage/address');
+      if (isEditMode) {
+        // 수정 모드는 아직 미구현
+        router.push('/mypage/address');
+        return;
+      }
+      try {
+        await postShippingAddress({
+          label: addressData.addressName,
+          phone: addressData.phone,
+          zonecode: addressData.zonecode,
+          address1: addressData.address1,
+          address2: addressData.address2,
+          isDefault: addressData.isDefault,
+        });
+        router.push('/mypage/address');
+      } catch (err) {
+        alert('배송지 등록에 실패했습니다.');
+        console.error('배송지 등록 오류:', err);
+      }
     },
-    [addressData, router],
+    [addressData, router, isEditMode],
   );
 
   const resetForm = useCallback(() => {
