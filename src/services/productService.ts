@@ -80,7 +80,7 @@ export class ProductService {
    */
   static async getAllSellerProducts(): Promise<SellerProduct[]> {
     // 먼저 첫 페이지로 totalElements 확인
-    const firstPage = await this.getSellerProducts(0, 1);
+    const firstPage = await ProductService.getSellerProducts(0, 1);
     const totalElements = firstPage.totalElements;
 
     // 필요한 경우에만 전체 데이터 조회
