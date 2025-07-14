@@ -5,6 +5,7 @@ import type {
   CreateProductRequest,
   SellerProductListApiResponse,
   SellerProductListResponse,
+  SellerProduct,
 } from '@/types/product';
 
 /**
@@ -71,5 +72,28 @@ export class ProductService {
     }
 
     return response.data.data;
+  }
+
+  /**
+   * 판매자 전체 상품 목록 조회 (통계 계산용)
+   * @returns {Promise<SellerProduct[]>}
+   */
+  static async getAllSellerProducts(): Promise<SellerProduct[]> {
+    const response = await api.get<SellerProductListApiResponse>('/products', {
+      params: {
+        page: 0,
+        size: 1000, // 충분히 큰 수로 설정하여 전체 데이터 조회
+      },
+    });
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || '전체 상품 목록 조회에 실패했습니다.');
+    }
+
+    if (!response.data.data) {
+      throw new Error('응답 데이터가 없습니다.');
+    }
+
+    return response.data.data.content;
   }
 }

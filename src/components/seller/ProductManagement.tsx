@@ -20,6 +20,7 @@ export function ProductManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [productData, setProductData] = useState<SellerProductListResponse | null>(null);
+  const [allProducts, setAllProducts] = useState<SellerProduct[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(10);
 
@@ -28,8 +29,12 @@ export function ProductManagement() {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await ProductService.getSellerProducts(page, pageSize);
+      const [data, allData] = await Promise.all([
+        ProductService.getSellerProducts(page, pageSize),
+        ProductService.getAllSellerProducts(),
+      ]);
       setProductData(data);
+      setAllProducts(allData);
     } catch (err: any) {
       setError(err.message || '상품 목록을 불러오는데 실패했습니다.');
     } finally {
@@ -86,9 +91,10 @@ export function ProductManagement() {
   const isFirst = productData?.first || true;
   const isLast = productData?.last || true;
 
-  // 카운트 계산
-  const activeCount = products.filter((p) => p.status === 'ACTIVE').length;
-  const inactiveCount = products.filter((p) => p.status === 'INACTIVE').length;
+  // 전체 데이터에서 카운트 계산
+  const activeCount = allProducts.filter((p) => p.status === 'ACTIVE').length;
+  const inactiveCount = allProducts.filter((p) => p.status === 'INACTIVE').length;
+  const totalCount = allProducts.length;
 
   if (error) {
     return <div className="py-20 text-center text-red-500">서버 오류가 발생했습니다.</div>;
@@ -115,7 +121,7 @@ export function ProductManagement() {
       {/* 상단 카운트 3개 */}
       <div className="mx-auto mb-10 flex w-full max-w-md justify-center">
         <div className="flex flex-1 flex-col items-center">
-          <span className="text-2xl font-bold text-text-100 md:text-4xl">{totalElements}</span>
+          <span className="text-2xl font-bold text-text-100 md:text-4xl">{totalCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
             전체
           </span>
@@ -123,13 +129,13 @@ export function ProductManagement() {
         <div className="flex flex-1 flex-col items-center">
           <span className="text-2xl font-bold text-text-100 md:text-4xl">{activeCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            판매중
+            공구 중
           </span>
         </div>
         <div className="flex flex-1 flex-col items-center">
           <span className="text-2xl font-bold text-text-100 md:text-4xl">{inactiveCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            판매 대기
+            공구 대기
           </span>
         </div>
       </div>

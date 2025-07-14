@@ -184,3 +184,12 @@ export interface ApiResponse<T> {
 
 // 상품 목록 API 응답 타입
 export type SellerProductListApiResponse = ApiResponse<SellerProductListResponse>;
+
+// 판매자 상품 통계 타입
+export interface SellerProductStats {
+  totalCount: number;
+  activeCount: number;
+  inactiveCount: number;
+}
+
+export type SellerProductStatsApiResponse = ApiResponse<SellerProductStats>;
