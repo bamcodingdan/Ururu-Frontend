@@ -22,6 +22,7 @@ import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+import { ProductService } from '@/services/productService';
 
 interface ProductOption {
   id: string;
@@ -114,10 +115,88 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('상품 등록:', formData);
-    // TODO: API 호출
+    setSubmitLoading(true);
+    setSubmitError(null);
+    setSubmitSuccess(false);
+    try {
+      // 카테고리 ID 배열 생성 (예시: 마지막 선택된 카테고리까지)
+      const categoryIds: number[] = [];
+      const findCategoryId = (label: string, cats: Category[]): number | null => {
+        for (const cat of cats) {
+          if (cat.label === label) return cat.value;
+          if (cat.children) {
+            const found = findCategoryId(label, cat.children);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+      if (formData.categoryMain) {
+        const id = findCategoryId(formData.categoryMain, categories);
+        if (id) categoryIds.push(id);
+      }
+      if (formData.categoryMiddle) {
+        const main = categories.find((c) => c.label === formData.categoryMain);
+        if (main && main.children) {
+          const id = findCategoryId(formData.categoryMiddle, main.children);
+          if (id) categoryIds.push(id);
+        }
+      }
+      if (formData.categorySub) {
+        const main = categories.find((c) => c.label === formData.categoryMain);
+        const middle = main?.children?.find((c) => c.label === formData.categoryMiddle);
+        if (middle && middle.children) {
+          const id = findCategoryId(formData.categorySub, middle.children);
+          if (id) categoryIds.push(id);
+        }
+      }
+      // 태그 ID 배열
+      const tagCategoryIds = selectedTags.map((tag) => tag.value);
+      // 옵션
+      const productOptions = optionArray.items.map((opt) => ({
+        name: opt.name,
+        price: opt.price,
+        fullIngredients: opt.stock,
+      }));
+      // 옵션 이미지
+      const optionImages = optionArray.items
+        .map((opt) => opt.image)
+        .filter((img): img is File => !!img);
+      // 상품 공시
+      const productNotice = {
+        capacity: formData.capacity + (formData.capacityUnit ? `/${formData.capacityUnit}` : ''),
+        spec: formData.specification,
+        expiry: formData.expiryDate,
+        usage: formData.usage,
+        manufacturer: formData.manufacturer,
+        responsibleSeller: formData.seller,
+        countryOfOrigin: formData.country,
+        functionalCosmetics: formData.functionalTest === 'yes' ? true : false,
+        caution: formData.precautions,
+        warranty: formData.qualityStandard,
+        customerServiceNumber: formData.customerService,
+      };
+      const product = {
+        name: formData.name,
+        description: formData.description,
+        categoryIds,
+        tagCategoryIds,
+        productOptions,
+        productNotice,
+      };
+      await ProductService.createProduct(product, optionImages);
+      setSubmitSuccess(true);
+    } catch (err: any) {
+      setSubmitError(err?.message || '상품 등록에 실패했습니다.');
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
   // 카테고리/태그 로딩/에러 상태 관리
@@ -668,9 +747,18 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
           <Button
             type="submit"
             className="h-12 w-full rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
+            disabled={submitLoading}
           >
-            등록하기
+            {submitLoading ? '등록 중...' : '등록하기'}
           </Button>
+          {submitError && (
+            <div className="mt-2 text-center text-sm text-red-500">{submitError}</div>
+          )}
+          {submitSuccess && (
+            <div className="mt-2 text-center text-sm text-green-600">
+              상품이 성공적으로 등록되었습니다.
+            </div>
+          )}
         </div>
       </form>
     </div>

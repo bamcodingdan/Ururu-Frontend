@@ -17,4 +17,20 @@ export class ProductService {
     }
     return response.data.data!;
   }
+
+  /**
+   * 상품 등록
+   * @param product 상품 정보(JSON 직렬화)
+   * @param optionImages 옵션 이미지 파일 배열
+   */
+  static async createProduct(product: object, optionImages: File[]): Promise<any> {
+    const formData = new FormData();
+    // Content-Type 명시적으로 지정
+    formData.append('product', new Blob([JSON.stringify(product)], { type: 'application/json' }));
+    optionImages.forEach((file) => {
+      formData.append('optionImages', file);
+    });
+    const response = await api.post('/products', formData);
+    return response.data;
+  }
 }
