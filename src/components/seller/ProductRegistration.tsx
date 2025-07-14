@@ -592,9 +592,13 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
               <FormField label="내용물의 용량 또는 중량" required className="flex-1">
                 <Input
                   value={formData.capacity}
-                  onChange={(e) => handleInputChange('capacity', e.target.value)}
-                  placeholder=""
+                  onChange={(e) =>
+                    handleInputChange('capacity', e.target.value.replace(/[^0-9]/g, ''))
+                  }
+                  placeholder="예: 50, 100, 200 등 숫자만 입력"
                   className={FORM_STYLES.input.base}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
               </FormField>
               <FormField label="단위" required className="w-32">
