@@ -79,10 +79,19 @@ export class ProductService {
    * @returns {Promise<SellerProduct[]>}
    */
   static async getAllSellerProducts(): Promise<SellerProduct[]> {
+    // 먼저 첫 페이지로 totalElements 확인
+    const firstPage = await this.getSellerProducts(0, 1);
+    const totalElements = firstPage.totalElements;
+
+    // 필요한 경우에만 전체 데이터 조회
+    if (totalElements > 1000) {
+      console.warn('대량 데이터 조회 시 성능 저하 가능');
+    }
+
     const response = await api.get<SellerProductListApiResponse>('/products', {
       params: {
         page: 0,
-        size: 1000, // 충분히 큰 수로 설정하여 전체 데이터 조회
+        size: totalElements,
       },
     });
 
