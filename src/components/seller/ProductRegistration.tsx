@@ -503,16 +503,20 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                         <button
                           key={tag.value}
                           type="button"
-                          className={`h-10 w-full rounded-full border px-2 text-xs font-medium transition-colors ${
+                          className={`h-10 w-full rounded-lg border px-2 text-xs font-medium transition-colors ${
                             selectedTags.some((t) => t.value === tag.value)
                               ? 'border-primary-100 bg-primary-100 text-primary-300 shadow-md'
-                              : 'border-bg-300 bg-bg-100 text-text-100 hover:bg-primary-100 hover:text-primary-300'
+                              : 'border-bg-300 bg-bg-100 text-text-100 hover:bg-bg-200 hover:text-primary-300'
                           } `}
                           aria-pressed={selectedTags.some((t) => t.value === tag.value)}
                           onClick={() => handleTagToggle(tag)}
                         >
                           <span
-                            className={`block w-full truncate text-center ${selectedTags.some((t) => t.value === tag.value) ? 'text-primary-300' : 'text-text-100'}`}
+                            className={`block w-full truncate text-center ${
+                              selectedTags.some((t) => t.value === tag.value)
+                                ? 'text-primary-300'
+                                : 'text-text-100'
+                            }`}
                           >
                             {tag.label}
                           </span>
