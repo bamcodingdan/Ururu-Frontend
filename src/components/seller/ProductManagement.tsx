@@ -162,22 +162,17 @@ export function ProductManagement() {
             >
               {products.map((product) => (
                 <Card key={product.id} className={FORM_STYLES.card.seller}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2">
-                      <h3 className="flex-1 text-lg font-semibold text-text-100">{product.name}</h3>
-                      {getStatusBadge(product.status)}
-                    </div>
-                    <p className="mb-2 line-clamp-2 text-sm text-text-200">{product.description}</p>
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-text-200">
+                  <CardContent className="relative p-6">
+                    {/* 상단: 카테고리(좌, 진한 글씨) + 중앙 구분선(bg-text-300, h-5) + 태그(우) */}
+                    <div className="mb-1 flex items-center">
                       {getCategoryPath(product.categories) && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-text-300">카테고리:</span>
-                          <span className="font-medium">{getCategoryPath(product.categories)}</span>
+                        <div className="text-sm text-text-100">
+                          {getCategoryPath(product.categories)}
                         </div>
                       )}
                       {getTagNames(product.tagCategories).length > 0 && (
-                        <div className="flex items-center gap-1">
-                          <span className="text-text-300">태그:</span>
+                        <>
+                          <div className="mx-2 h-5 w-px self-center bg-text-300" />
                           <div className="flex flex-wrap gap-1">
                             {getTagNames(product.tagCategories).map((tag, index) => (
                               <Badge
@@ -189,14 +184,22 @@ export function ProductManagement() {
                               </Badge>
                             ))}
                           </div>
-                        </div>
+                        </>
                       )}
                     </div>
-                    <div className="mt-2 flex items-center gap-4 text-xs text-text-300">
-                      <span>등록일: {formatDate(product.createdAt)}</span>
-                      <span>수정일: {formatDate(product.updatedAt)}</span>
+                    {/* 상태 뱃지: 우측 상단 고정 */}
+                    <div className="absolute right-6 top-6 z-10">
+                      {getStatusBadge(product.status)}
                     </div>
-                    <div className="mt-4 flex items-center gap-2">
+                    {/* 제목, 설명 */}
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-lg font-semibold text-text-100">{product.name}</h2>
+                      <p className="mb-2 mt-1 line-clamp-2 text-sm text-text-200">
+                        {product.description}
+                      </p>
+                    </div>
+                    {/* 하단: 버튼 3개(좌) */}
+                    <div className="mt-4 flex gap-2">
                       <Button
                         onClick={() => console.log('View product:', product.id)}
                         className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-base text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
@@ -215,6 +218,11 @@ export function ProductManagement() {
                       >
                         삭제하기
                       </Button>
+                    </div>
+                    {/* 등록일/수정일: 오른쪽 하단, 글자 크기 text-sm */}
+                    <div className="absolute bottom-6 right-6 whitespace-nowrap text-sm text-text-300">
+                      등록일: {formatDate(product.createdAt)} 수정일:{' '}
+                      {formatDate(product.updatedAt)}
                     </div>
                   </CardContent>
                 </Card>
