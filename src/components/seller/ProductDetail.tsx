@@ -283,20 +283,18 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       </Card>
 
       {/* 수정하기 삭제하기 버튼 */}
-      <div className="pt-8">
+      <div className="pt-2">
         <div className="flex gap-4">
           <Button
             onClick={handleEdit}
             className="h-12 flex-1 rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
           >
-            <Edit className="mr-2 h-4 w-4" />
             수정하기
           </Button>
           <Button
             onClick={handleDelete}
             className="h-12 flex-1 rounded-lg bg-primary-200 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-200 active:opacity-90"
           >
-            <Trash2 className="mr-2 h-4 w-4" />
             삭제하기
           </Button>
         </div>
