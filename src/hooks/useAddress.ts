@@ -16,7 +16,6 @@ export const useAddress = () => {
     zonecode: '',
     address1: '',
     address2: '',
-    addressDetail: '',
   });
 
   // 수정 모드일 때 기존 데이터 API로 로드
@@ -32,7 +31,6 @@ export const useAddress = () => {
             zonecode: data.zonecode,
             address1: data.address1,
             address2: data.address2,
-            addressDetail: '', // addressDetail은 API에 없으므로 빈 값
           });
         } catch (err) {
           alert('배송지 정보를 불러오지 못했습니다.');
@@ -80,7 +78,6 @@ export const useAddress = () => {
       zonecode: '',
       address1: '',
       address2: '',
-      addressDetail: '',
     });
   }, []);
 
