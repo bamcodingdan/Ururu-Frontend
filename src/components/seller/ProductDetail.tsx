@@ -104,28 +104,16 @@ export function ProductDetail({ productId }: ProductDetailProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
-      {/* 타이틀 & 버튼 */}
-      <div className="mb-10 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={handleBack}
-            variant="ghost"
-            className="h-10 w-10 rounded-lg border border-bg-300 bg-bg-100 p-0 text-text-200 hover:bg-bg-200"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-3xl font-semibold text-text-100">상품 상세</h1>
-        </div>
-        <div className="flex gap-2">
-          <Button onClick={handleEdit} className={FORM_STYLES.button.submit + ' h-10 px-6'}>
-            <Edit className="mr-2 h-4 w-4" />
-            수정하기
-          </Button>
-          <Button onClick={handleDelete} className={FORM_STYLES.button.refundButton + ' h-10 px-6'}>
-            <Trash2 className="mr-2 h-4 w-4" />
-            삭제하기
-          </Button>
-        </div>
+      {/* 타이틀 */}
+      <div className="relative mb-10">
+        <Button
+          onClick={handleBack}
+          variant="ghost"
+          className="absolute left-0 top-1/2 h-10 w-10 -translate-y-1/2 rounded-lg border border-bg-300 bg-bg-100 p-0 text-text-200 hover:bg-bg-200"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-center text-3xl font-semibold text-text-100">상품 상세</h1>
       </div>
 
       {/* 상품 기본 정보 카드 */}
@@ -219,7 +207,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       </Card>
 
       {/* 화장품 정보제공고시 카드 */}
-      <Card className={FORM_STYLES.card.seller}>
+      <Card className={FORM_STYLES.card.seller + ' mb-12'}>
         <CardHeader className="pb-4">
           <CardTitle className="text-xl font-semibold text-text-100">화장품 정보제공고시</CardTitle>
         </CardHeader>
@@ -293,6 +281,27 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* 수정하기 삭제하기 버튼 */}
+      <div className="pt-8">
+        <div className="flex gap-4">
+          <Button
+            onClick={handleEdit}
+            className="h-12 flex-1 rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            수정하기
+          </Button>
+          <Button
+            onClick={handleDelete}
+            className="h-12 flex-1 rounded-lg bg-primary-200 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-200 active:opacity-90"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            삭제하기
+          </Button>
+        </div>
+      </div>
+
       <ScrollToTopButton />
     </div>
   );
