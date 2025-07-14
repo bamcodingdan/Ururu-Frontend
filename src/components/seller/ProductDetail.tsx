@@ -37,18 +37,15 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         setIsLoading(false);
       }
     };
-
     fetchProductDetail();
   }, [productId]);
 
   const handleBack = () => {
     router.push('/seller/products');
   };
-
   const handleEdit = () => {
     router.push(`/seller/products/${productId}/edit`);
   };
-
   const handleDelete = () => {
     // TODO: 삭제 확인 다이얼로그 및 삭제 로직 구현
     console.log('Delete product:', productId);
@@ -64,28 +61,26 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             공구 대기중
           </span>
         );
-
       default:
         return null;
     }
   };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR');
-  };
-
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('ko-KR');
   const getCategoryPath = (categories: any[]) => {
     if (!categories || categories.length === 0) return null;
     return categories.map((cat) => cat.name).join(' > ');
   };
 
   if (error) {
-    return <div className="py-20 text-center text-red-500">서버 오류가 발생했습니다.</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-20 text-center text-red-500 md:ml-0">
+        서버 오류가 발생했습니다.
+      </div>
+    );
   }
-
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+      <div className="mx-auto max-w-3xl px-4 py-10 md:ml-0 md:px-0">
         <div className="mb-6 flex items-center gap-4">
           <LoadingSkeleton className="h-8 w-8" />
           <LoadingSkeleton className="h-8 w-32" />
@@ -99,16 +94,19 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       </div>
     );
   }
-
   if (!product) {
-    return <div className="py-20 text-center text-red-500">상품을 찾을 수 없습니다.</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-20 text-center text-red-500 md:ml-0">
+        상품을 찾을 수 없습니다.
+      </div>
+    );
   }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
-      {/* 헤더 */}
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      {/* 타이틀 & 버튼 */}
+      <div className="mb-10 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <Button
             onClick={handleBack}
             variant="ghost"
@@ -116,163 +114,185 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-semibold text-text-100">상품 상세</h1>
+          <h1 className="text-3xl font-semibold text-text-100">상품 상세</h1>
         </div>
         <div className="flex gap-2">
-          <Button
-            onClick={handleEdit}
-            className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-base text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
-          >
+          <Button onClick={handleEdit} className={FORM_STYLES.button.submit + ' h-10 px-6'}>
             <Edit className="mr-2 h-4 w-4" />
             수정하기
           </Button>
-          <Button
-            onClick={handleDelete}
-            className="h-10 rounded-lg border border-primary-200 bg-bg-100 px-6 text-base text-primary-200 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-200"
-          >
+          <Button onClick={handleDelete} className={FORM_STYLES.button.refundButton + ' h-10 px-6'}>
             <Trash2 className="mr-2 h-4 w-4" />
             삭제하기
           </Button>
         </div>
       </div>
 
-      {/* 상품 기본 정보 */}
-      <Card className={FORM_STYLES.card.seller}>
+      {/* 상품 기본 정보 카드 */}
+      <Card className={FORM_STYLES.card.seller + ' mb-12'}>
         <CardHeader className="pb-4">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <CardTitle className="text-xl font-semibold text-text-100">{product.name}</CardTitle>
-              <p className="mt-2 text-sm text-text-200">{product.description}</p>
-            </div>
-            <div className="ml-4">{getStatusBadge(product.status)}</div>
-          </div>
+          <CardTitle className="text-xl font-semibold text-text-100">상품 기본 정보</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {/* 카테고리 및 태그 */}
-          <div className="flex items-center gap-4">
-            {getCategoryPath(product.categories) && (
-              <div className="text-sm text-text-100">
-                <span className="font-medium">카테고리:</span> {getCategoryPath(product.categories)}
+        <CardContent className="space-y-6">
+          <div className="flex flex-col gap-6">
+            {/* 상품명 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">상품명</div>
+              <div className="text-base text-text-100">{product.name}</div>
+            </div>
+            {/* 상품 설명 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">상품 설명</div>
+              <div className="whitespace-pre-line text-base text-text-100">
+                {product.description}
               </div>
-            )}
-            {product.productTags.length > 0 && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-text-100">태그:</span>
-                <div className="flex flex-wrap gap-1">
-                  {product.productTags.map((tag, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="rounded-lg border-bg-300 bg-bg-100 px-2 py-0.5 text-xs text-text-200"
-                    >
-                      {tag.tagCategoryName}
-                    </Badge>
-                  ))}
-                </div>
+            </div>
+            {/* 카테고리 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">카테고리</div>
+              <div className="text-base text-text-100">{getCategoryPath(product.categories)}</div>
+            </div>
+            {/* 태그 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">태그</div>
+              <div className="flex flex-wrap gap-1">
+                {product.productTags.map((tag, idx) => (
+                  <Badge
+                    key={idx}
+                    variant="outline"
+                    className="rounded-lg border-bg-300 bg-bg-100 px-2 py-0.5 text-xs text-text-200"
+                  >
+                    {tag.tagCategoryName}
+                  </Badge>
+                ))}
               </div>
-            )}
-          </div>
-
-          {/* 등록일/수정일 */}
-          <div className="flex gap-4 text-sm text-text-300">
-            <span>등록일: {formatDate(product.createdAt)}</span>
-            <span>수정일: {formatDate(product.updatedAt)}</span>
+            </div>
+            {/* 상태 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">상태</div>
+              <div>{getStatusBadge(product.status)}</div>
+            </div>
+            {/* 등록일 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">등록일</div>
+              <div className="text-base text-text-100">{formatDate(product.createdAt)}</div>
+            </div>
+            {/* 수정일 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">수정일</div>
+              <div className="text-base text-text-100">{formatDate(product.updatedAt)}</div>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* 상품 옵션 */}
-      <section className="mt-8">
-        <SectionHeader title="상품 옵션" />
-        <div className="mt-4 space-y-4">
+      {/* 상품 옵션 카드 */}
+      <Card className={FORM_STYLES.card.seller + ' mb-12'}>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold text-text-100">상품 옵션</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
           {product.productOptions.map((option) => (
-            <Card key={option.id} className={FORM_STYLES.card.seller}>
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  {option.imageUrl && (
-                    <img
-                      src={option.imageUrl}
-                      alt={option.name}
-                      className="h-20 w-20 rounded-lg object-cover"
-                    />
-                  )}
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-text-100">{option.name}</h3>
-                    <p className="mt-1 text-2xl font-bold text-primary-300">
-                      {option.price.toLocaleString()}원
-                    </p>
-                    <p className="mt-2 text-sm text-text-200">{option.fullIngredients}</p>
-                  </div>
+            <div
+              key={option.id}
+              className="flex items-center gap-6 border-b border-bg-200 pb-4 last:border-b-0 last:pb-0"
+            >
+              {option.imageUrl && (
+                <img
+                  src={option.imageUrl}
+                  alt={option.name}
+                  className="h-20 w-20 rounded-lg object-cover"
+                />
+              )}
+              <div className="flex-1">
+                <div className="flex items-center gap-4">
+                  <span className="text-base font-semibold text-text-100">{option.name}</span>
+                  <span className="text-2xl font-bold text-primary-300">
+                    {option.price.toLocaleString()}원
+                  </span>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </section>
-
-      {/* 화장품 정보제공고시 */}
-      <section className="mt-8">
-        <SectionHeader title="화장품 정보제공고시" />
-        <Card className={FORM_STYLES.card.seller}>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <span className="text-sm font-medium text-text-200">내용물의 용량 또는 중량</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.capacity}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">제품 주요 사양</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.spec}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">사용기한</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.expiry}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">화장품제조업자</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.manufacturer}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">화장품책임판매업자</span>
-                <p className="mt-1 text-sm text-text-100">
-                  {product.productNotice.responsibleSeller}
-                </p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">제조국</span>
-                <p className="mt-1 text-sm text-text-100">
-                  {product.productNotice.countryOfOrigin}
-                </p>
-              </div>
-              <div className="md:col-span-2">
-                <span className="text-sm font-medium text-text-200">사용법</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.usage}</p>
-              </div>
-              <div className="md:col-span-2">
-                <span className="text-sm font-medium text-text-200">사용할 때의 주의사항</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.caution}</p>
-              </div>
-              <div className="md:col-span-2">
-                <span className="text-sm font-medium text-text-200">품질보증기준</span>
-                <p className="mt-1 text-sm text-text-100">{product.productNotice.warranty}</p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">기능성 화장품 여부</span>
-                <p className="mt-1 text-sm text-text-100">
-                  {product.productNotice.functionalCosmetics ? '있음' : '없음'}
-                </p>
-              </div>
-              <div>
-                <span className="text-sm font-medium text-text-200">소비자상담 전화번호</span>
-                <p className="mt-1 text-sm text-text-100">
-                  {product.productNotice.customerServiceNumber}
-                </p>
+                <div className="mt-2 text-sm text-text-200">{option.fullIngredients}</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </section>
+          ))}
+        </CardContent>
+      </Card>
 
+      {/* 화장품 정보제공고시 카드 */}
+      <Card className={FORM_STYLES.card.seller}>
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold text-text-100">화장품 정보제공고시</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-6">
+            {/* 내용물의 용량 또는 중량 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">내용물의 용량 또는 중량</div>
+              <div className="text-base text-text-100">{product.productNotice.capacity}</div>
+            </div>
+            {/* 제품 주요 사양 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">제품 주요 사양</div>
+              <div className="text-base text-text-100">{product.productNotice.spec}</div>
+            </div>
+            {/* 사용기한 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">
+                사용기한(또는 개봉 후 사용기간)
+              </div>
+              <div className="text-base text-text-100">{product.productNotice.expiry}</div>
+            </div>
+            {/* 사용법 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">사용법</div>
+              <div className="text-base text-text-100">{product.productNotice.usage}</div>
+            </div>
+            {/* 화장품제조업자 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">화장품제조업자</div>
+              <div className="text-base text-text-100">{product.productNotice.manufacturer}</div>
+            </div>
+            {/* 화장품책임판매업자 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">화장품책임판매업자</div>
+              <div className="text-base text-text-100">
+                {product.productNotice.responsibleSeller}
+              </div>
+            </div>
+            {/* 제조국 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">제조국</div>
+              <div className="text-base text-text-100">{product.productNotice.countryOfOrigin}</div>
+            </div>
+            {/* 기능성 화장품 여부 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">
+                기능성 화장품 식품의약품안전처 심사필 여부
+              </div>
+              <div className="text-base text-text-100">
+                {product.productNotice.functionalCosmetics ? '있음' : '없음'}
+              </div>
+            </div>
+            {/* 사용할 때의 주의사항 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">사용할 때의 주의사항</div>
+              <div className="text-base text-text-100">{product.productNotice.caution}</div>
+            </div>
+            {/* 품질보증기준 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">품질보증기준</div>
+              <div className="text-base text-text-100">{product.productNotice.warranty}</div>
+            </div>
+            {/* 소비자상담 전화번호 */}
+            <div>
+              <div className="mb-1 text-sm font-medium text-text-200">소비자상담 전화번호</div>
+              <div className="text-base text-text-100">
+                {product.productNotice.customerServiceNumber}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       <ScrollToTopButton />
     </div>
   );
