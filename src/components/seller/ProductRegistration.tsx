@@ -271,17 +271,18 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
   };
 
   // 카테고리 chip 텍스트 생성
-  const categoryChips = [
-    formData.categoryMain ? { label: formData.categoryMain } : null,
-    formData.categoryMiddle ? { label: formData.categoryMiddle } : null,
-    formData.categorySub ? { label: formData.categorySub } : null,
-  ].filter((chip): chip is { label: string } => Boolean(chip));
+  // const categoryChips = [
+  //   formData.categoryMain ? { label: formData.categoryMain } : null,
+  //   formData.categoryMiddle ? { label: formData.categoryMiddle } : null,
+  //   formData.categorySub ? { label: formData.categorySub } : null,
+  // ].filter((chip): chip is { label: string } => Boolean(chip));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
       {/* 타이틀 */}
       <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">상품 등록</h1>
-      {/* 선택된 카테고리 chip */}
+      {/* 선택된 카테고리 chip (제거됨) */}
+      {/*
       {categoryChips.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2">
           {categoryChips.map((chip, i) => (
@@ -292,7 +293,9 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
           ))}
         </div>
       )}
-      {/* 선택된 태그 chip */}
+      */}
+      {/* 선택된 태그 chip (제거됨) */}
+      {/*
       {selectedTags.length > 0 && (
         <div className="mb-4 flex flex-wrap gap-2">
           {selectedTags.map((tag) => (
@@ -314,6 +317,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
           ))}
         </div>
       )}
+      */}
       <form onSubmit={handleSubmit} className="space-y-16">
         {/* 상품 기본 정보 */}
         <section>
@@ -427,7 +431,8 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                       </SelectContent>
                     </Select>
                   </div>
-                  {/* 선택된 카테고리 루트 경로 표시 및 제거 ( > 구분자 사용) */}
+                  {/* 선택된 카테고리 루트 경로 표시 및 제거 ( > 구분자 사용) (제거됨) */}
+                  {/*
                   {(formData.categoryMain || formData.categoryMiddle || formData.categorySub) && (
                     <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
                       <span>선택된 카테고리:</span>
@@ -475,6 +480,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                       )}
                     </div>
                   )}
+                  */}
                 </div>
               )}
             </FormField>
@@ -516,7 +522,8 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                       ),
                     )}
                   </div>
-                  {/* 선택된 태그 chip - 카테고리 chip과 동일한 형식으로 */}
+                  {/* 선택된 태그 chip - 카테고리 chip과 동일한 형식으로 (제거됨) */}
+                  {/*
                   {selectedTags.length > 0 && (
                     <div className="mt-2 flex items-center gap-2 text-sm text-gray-700">
                       <span>선택된 태그:</span>
@@ -538,6 +545,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                       ))}
                     </div>
                   )}
+                  */}
                 </div>
               )}
             </FormField>
