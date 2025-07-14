@@ -129,17 +129,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
     setSubmitError(null);
     setSubmitSuccess(false);
     try {
-      // 세분화된 필수 입력값 체크 및 메시지
-      if (!formData.categoryMain) {
-        setSubmitError('카테고리를 선택해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (selectedTags.length === 0) {
-        setSubmitError('태그를 1개 이상 선택해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
+      // 세분화된 필수 입력값 체크 및 메시지 (폼 필드 순서대로)
       if (!formData.name) {
         setSubmitError('상품명을 입력해주세요.');
         setSubmitLoading(false);
@@ -147,6 +137,16 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
       }
       if (!formData.description) {
         setSubmitError('상품 설명을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.categoryMain) {
+        setSubmitError('카테고리를 선택해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (selectedTags.length === 0) {
+        setSubmitError('태그를 1개 이상 선택해주세요.');
         setSubmitLoading(false);
         return;
       }
