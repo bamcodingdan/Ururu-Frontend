@@ -74,3 +74,16 @@ export const calculateDiscountRate = (originalPrice: number, currentPrice: numbe
   if (originalPrice <= 0) return 0;
   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
 };
+
+export interface CreateProductRequest {
+  name: string;
+  description: string;
+  categoryIds: number[];
+  tagCategoryIds: number[];
+  productOptions: Array<{
+    name: string;
+    price: number;
+    fullIngredients: string;
+  }>;
+  productNotice: Record<string, any>;
+}

@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import type { ApiResponse } from '@/types/api';
-import type { ProductMetadataResponse } from '@/types/product';
+import type { ProductMetadataResponse, CreateProductRequest } from '@/types/product';
 
 /**
  * 상품 관련 서비스 (상품 등록 등)
@@ -26,7 +26,7 @@ export class ProductService {
    * @param product 상품 정보(JSON 직렬화)
    * @param optionImages 옵션 이미지 파일 배열
    */
-  static async createProduct(product: object, optionImages: File[]): Promise<any> {
+  static async createProduct(product: CreateProductRequest, optionImages: File[]): Promise<any> {
     const formData = new FormData();
     // Content-Type 명시적으로 지정
     formData.append('product', new Blob([JSON.stringify(product)], { type: 'application/json' }));

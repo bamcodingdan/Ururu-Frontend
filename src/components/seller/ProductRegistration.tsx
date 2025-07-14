@@ -17,7 +17,7 @@ import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 import { useFormArray } from '@/hooks/seller/useFormArray';
 import { OptionList } from './common/OptionList';
 import { SectionHeader } from '@/components/common/SectionHeader';
-import type { Category, Tag } from '@/types/product';
+import type { Category, Tag, CreateProductRequest } from '@/types/product';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
@@ -266,7 +266,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
       const productOptions = optionArray.items.map((opt) => ({
         name: opt.name,
         price: opt.price,
-        fullIngredients: opt.stock,
+        fullIngredients: String(opt.stock),
       }));
       // 옵션 이미지
       const optionImages = optionArray.items
@@ -286,7 +286,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
         warranty: formData.qualityStandard,
         customerServiceNumber: formData.customerService,
       };
-      const product = {
+      const product: CreateProductRequest = {
         name: formData.name,
         description: formData.description,
         categoryIds,
