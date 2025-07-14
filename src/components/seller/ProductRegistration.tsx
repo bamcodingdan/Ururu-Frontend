@@ -409,7 +409,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                         <button
                           key={tag.value}
                           type="button"
-                          className={`${FORM_STYLES.button.selectable.base} h-10 w-full px-2 text-xs ${
+                          className={`${FORM_STYLES.button.selectable.base} w-full ${
                             selectedTags.some((t) => t.value === tag.value)
                               ? FORM_STYLES.button.selectable.selected
                               : FORM_STYLES.button.selectable.unselected
