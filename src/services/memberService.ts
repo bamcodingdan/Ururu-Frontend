@@ -85,5 +85,5 @@ export async function putShippingAddress(addressId: number, data: ShippingAddres
 
 export async function deleteShippingAddress(addressId: number) {
   const response = await api.delete(`/members/shipping-addresses/${addressId}`);
-  return response.data;
+  return response.data.data;
 }
