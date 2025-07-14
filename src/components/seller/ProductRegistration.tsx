@@ -712,12 +712,17 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 rows={2}
               />
             </FormField>
-            <FormField label="소비자상담 전화번호" required>
+            <FormField
+              label="소비자상담 전화번호"
+              required
+              helperText="번호는 하이픈(-)을 포함해서 입력해주세요. 예: 0000-0000"
+            >
               <Input
                 value={formData.customerService}
                 onChange={(e) => handleInputChange('customerService', e.target.value)}
                 placeholder="0000-0000"
                 className={FORM_STYLES.input.base}
+                maxLength={13}
               />
             </FormField>
           </div>
