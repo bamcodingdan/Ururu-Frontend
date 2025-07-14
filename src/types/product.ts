@@ -7,8 +7,11 @@ export interface SelectedOption {
 }
 
 export interface ProductOption {
-  label: string;
-  value: string;
+  id: string;
+  name: string;
+  price: number;
+  image: File | null;
+  stock: number;
 }
 
 export interface RewardTier {
@@ -86,4 +89,30 @@ export interface CreateProductRequest {
     fullIngredients: string;
   }>;
   productNotice: Record<string, any>;
+}
+
+export interface ProductFormData {
+  name: string;
+  description: string;
+  categoryMain: string;
+  categoryMiddle: string;
+  categorySub: string;
+  options: ProductOption[];
+  capacity: string;
+  capacityUnit: string;
+  specification: string;
+  expiryDate: string;
+  usage: string;
+  manufacturer: string;
+  seller: string;
+  country: string;
+  functionalTest: 'yes' | 'no';
+  precautions: string;
+  qualityStandard: string;
+  customerService: string;
+}
+
+export interface ProductRegistrationProps {
+  categories: Category[];
+  tags: Tag[];
 }

@@ -17,7 +17,14 @@ import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 import { useFormArray } from '@/hooks/seller/useFormArray';
 import { OptionList } from './common/OptionList';
 import { SectionHeader } from '@/components/common/SectionHeader';
-import type { Category, Tag, CreateProductRequest } from '@/types/product';
+import type {
+  Category,
+  Tag,
+  CreateProductRequest,
+  ProductFormData,
+  ProductOption,
+  ProductRegistrationProps,
+} from '@/types/product';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
@@ -25,41 +32,7 @@ import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { ProductService } from '@/services/productService';
 import { SuccessDialog } from '@/components/common/SuccessDialog';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
-
-interface ProductOption {
-  id: string;
-  name: string;
-  price: number;
-  image: File | null;
-  stock: number;
-}
-
-interface ProductFormData {
-  name: string;
-  description: string;
-  categoryMain: string;
-  categoryMiddle: string;
-  categorySub: string;
-  options: ProductOption[];
-  // 화장품 정보제공고시
-  capacity: string;
-  capacityUnit: string;
-  specification: string;
-  expiryDate: string;
-  usage: string;
-  manufacturer: string;
-  seller: string;
-  country: string;
-  functionalTest: 'yes' | 'no';
-  precautions: string;
-  qualityStandard: string;
-  customerService: string;
-}
-
-interface ProductRegistrationProps {
-  categories: Category[];
-  tags: Tag[];
-}
+import { validateProductForm } from '@/lib/product/validation';
 
 export function ProductRegistration({ categories, tags }: ProductRegistrationProps) {
   const [formData, setFormData] = useState<ProductFormData>({
@@ -129,103 +102,9 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
     setSubmitError(null);
     setSubmitSuccess(false);
     try {
-      // 세분화된 필수 입력값 체크 및 메시지 (폼 필드 순서대로)
-      if (!formData.name) {
-        setSubmitError('상품명을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.description) {
-        setSubmitError('상품 설명을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.categoryMain) {
-        setSubmitError('카테고리를 선택해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (selectedTags.length === 0) {
-        setSubmitError('태그를 1개 이상 선택해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (optionArray.items.length === 0) {
-        setSubmitError('상품 옵션을 1개 이상 추가해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      // 옵션별 필수 필드 검증
-      for (let i = 0; i < optionArray.items.length; i++) {
-        const option = optionArray.items[i];
-        if (!option.name) {
-          setSubmitError(`옵션 ${i + 1}의 옵션명을 입력해주세요.`);
-          setSubmitLoading(false);
-          return;
-        }
-        if (!option.price || option.price <= 0) {
-          setSubmitError(`옵션 ${i + 1}의 기본 가격을 입력해주세요.`);
-          setSubmitLoading(false);
-          return;
-        }
-        if (!option.stock) {
-          setSubmitError(`옵션 ${i + 1}의 전성분을 입력해주세요.`);
-          setSubmitLoading(false);
-          return;
-        }
-      }
-      if (!formData.capacity) {
-        setSubmitError('용량 또는 중량을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.specification) {
-        setSubmitError('제품 주요 사양을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.expiryDate) {
-        setSubmitError('사용기한(또는 개봉 후 사용기간)을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.usage) {
-        setSubmitError('사용법을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.manufacturer) {
-        setSubmitError('화장품제조업자를 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.seller) {
-        setSubmitError('화장품책임판매업자를 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.country) {
-        setSubmitError('제조국을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.functionalTest) {
-        setSubmitError('기능성 화장품 심사필 여부를 선택해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.precautions) {
-        setSubmitError('사용할 때의 주의사항을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.qualityStandard) {
-        setSubmitError('품질보증기준을 입력해주세요.');
-        setSubmitLoading(false);
-        return;
-      }
-      if (!formData.customerService) {
-        setSubmitError('소비자상담 전화번호를 입력해주세요.');
+      const validationError = validateProductForm(formData, optionArray, selectedTags);
+      if (validationError) {
+        setSubmitError(validationError);
         setSubmitLoading(false);
         return;
       }
