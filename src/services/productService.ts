@@ -34,6 +34,9 @@ export class ProductService {
       formData.append('optionImages', file);
     });
     const response = await api.post('/products', formData);
-    return response.data;
+    if (!response.data.success) {
+      throw new Error(response.data.message || '상품 등록에 실패했습니다.');
+    }
+    return response.data.data;
   }
 }
