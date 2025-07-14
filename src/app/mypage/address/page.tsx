@@ -61,7 +61,9 @@ function AddressListPageContent() {
               <p className="text-center text-text-300">등록된 배송지가 없습니다.</p>
             </div>
           ) : (
-            addresses.map((address) => <AddressCard key={address.id} address={address} />)
+            [...addresses]
+              .sort((a, b) => (b.is_default ? 1 : 0) - (a.is_default ? 1 : 0))
+              .map((address) => <AddressCard key={address.id} address={address} />)
           )}
         </div>
 
