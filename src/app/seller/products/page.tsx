@@ -1,7 +1,7 @@
 'use client';
 
-import { EmptyPage } from '@/components/seller/common';
+import { ProductManagement } from '@/components/seller/ProductManagement';
 
 export default function ProductsPage() {
-  return <EmptyPage title="준비중이에요" />;
+  return <ProductManagement />;
 }

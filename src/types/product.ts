@@ -116,3 +116,61 @@ export interface ProductRegistrationProps {
   categories: Category[];
   tags: Tag[];
 }
+
+// 상품 관리 API 관련 타입
+export interface SellerProductCategory {
+  id: number;
+  name: string;
+  depth: number;
+  path: string;
+  orderIndex: number;
+}
+
+export interface SellerProductTagCategory {
+  id: number;
+  tagCategoryName: string;
+}
+
+export interface SellerProduct {
+  id: number;
+  name: string;
+  description: string;
+  status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  createdAt: string;
+  updatedAt: string;
+  categories: SellerProductCategory[];
+  tagCategories: SellerProductTagCategory[];
+}
+
+export interface Pageable {
+  offset: number;
+  sort: {
+    empty: boolean;
+    sorted: boolean;
+    unsorted: boolean;
+  };
+  unpaged: boolean;
+  paged: boolean;
+  pageNumber: number;
+  pageSize: number;
+}
+
+export interface Sort {
+  empty: boolean;
+  sorted: boolean;
+  unsorted: boolean;
+}
+
+export interface SellerProductListResponse {
+  totalPages: number;
+  totalElements: number;
+  first: boolean;
+  last: boolean;
+  size: number;
+  content: SellerProduct[];
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  pageable: Pageable;
+  empty: boolean;
+}
