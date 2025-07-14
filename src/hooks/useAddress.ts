@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSafeSearchParams, useSafeRouter } from '@/hooks';
 import { mockAddressData, AddressData } from '@/data/address';
-import { postShippingAddress, getShippingAddressById } from '@/services/memberService';
+import {
+  postShippingAddress,
+  getShippingAddressById,
+  putShippingAddress,
+} from '@/services/memberService';
 
 export const useAddress = () => {
   const router = useSafeRouter();
@@ -47,27 +51,33 @@ export const useAddress = () => {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (isEditMode) {
-        // 수정 모드는 아직 미구현
-        router.push('/mypage/address');
-        return;
-      }
       try {
-        await postShippingAddress({
-          label: addressData.addressName,
-          phone: addressData.phone,
-          zonecode: addressData.zonecode,
-          address1: addressData.address1,
-          address2: addressData.address2,
-          isDefault: addressData.isDefault,
-        });
+        if (isEditMode && addressId) {
+          await putShippingAddress(Number(addressId), {
+            label: addressData.addressName,
+            phone: addressData.phone,
+            zonecode: addressData.zonecode,
+            address1: addressData.address1,
+            address2: addressData.address2,
+            isDefault: addressData.isDefault,
+          });
+        } else {
+          await postShippingAddress({
+            label: addressData.addressName,
+            phone: addressData.phone,
+            zonecode: addressData.zonecode,
+            address1: addressData.address1,
+            address2: addressData.address2,
+            isDefault: addressData.isDefault,
+          });
+        }
         router.push('/mypage/address');
       } catch (err) {
-        alert('배송지 등록에 실패했습니다.');
-        console.error('배송지 등록 오류:', err);
+        alert(isEditMode ? '배송지 수정에 실패했습니다.' : '배송지 등록에 실패했습니다.');
+        console.error(isEditMode ? '배송지 수정 오류:' : '배송지 등록 오류:', err);
       }
     },
-    [addressData, router, isEditMode],
+    [addressData, router, isEditMode, addressId],
   );
 
   const resetForm = useCallback(() => {

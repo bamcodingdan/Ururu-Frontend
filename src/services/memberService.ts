@@ -70,3 +70,15 @@ export async function getShippingAddressById(addressId: number) {
   const response = await api.get(`/members/shipping-addresses/${addressId}`);
   return response.data.data;
 }
+
+export async function putShippingAddress(addressId: number, data: ShippingAddressRequest) {
+  const response = await api.put(`/members/shipping-addresses/${addressId}`, {
+    label: data.label,
+    phone: data.phone,
+    zonecode: data.zonecode,
+    address1: data.address1,
+    address2: data.address2,
+    isDefault: data.isDefault,
+  });
+  return response.data.data;
+}
