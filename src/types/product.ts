@@ -1,4 +1,5 @@
 // 상품 관련 공통 타입 정의
+import type { ApiResponse } from './api';
 
 export interface SelectedOption {
   value: string;
@@ -175,12 +176,7 @@ export interface SellerProductListResponse {
   empty: boolean;
 }
 
-// API 응답 래퍼 타입
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+// API 응답 래퍼 타입은 api.ts에서 import하여 사용
 
 // 상품 목록 API 응답 타입
 export type SellerProductListApiResponse = ApiResponse<SellerProductListResponse>;
