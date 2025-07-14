@@ -39,3 +39,8 @@ export async function getProfile() {
   const response = await api.get('/members/me');
   return response.data.data;
 }
+
+export async function getShippingAddresses() {
+  const response = await api.get('/members/shipping-addresses');
+  return response.data.data;
+}

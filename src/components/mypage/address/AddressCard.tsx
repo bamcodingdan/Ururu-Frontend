@@ -2,11 +2,11 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { AddressData } from '@/data/address';
+import { ShippingAddress } from '@/types/api';
 import { FORM_STYLES } from '@/constants/form-styles';
 
 interface AddressCardProps {
-  address: AddressData;
+  address: ShippingAddress;
 }
 
 export function AddressCard({ address }: AddressCardProps) {
@@ -14,8 +14,8 @@ export function AddressCard({ address }: AddressCardProps) {
     <Card className="w-full rounded-2xl border-0 bg-bg-100 p-6 shadow-sm">
       <CardContent className="p-0">
         <div className="mb-2 flex items-center">
-          <span className="text-base font-semibold text-text-100">{address.addressName}</span>
-          {address.isDefault && (
+          <span className="text-base font-semibold text-text-100">{address.label}</span>
+          {address.is_default && (
             <span className="ml-2 rounded-full bg-primary-300 px-3 py-1 text-xs font-semibold text-text-on">
               기본 배송지
             </span>
