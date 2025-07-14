@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSafeSearchParams, useSafeRouter } from '@/hooks';
 import { mockAddressData, AddressData } from '@/data/address';
-import { postShippingAddress } from '@/services/memberService';
+import { postShippingAddress, getShippingAddressById } from '@/services/memberService';
 
 export const useAddress = () => {
   const router = useSafeRouter();
@@ -19,13 +19,27 @@ export const useAddress = () => {
     addressDetail: '',
   });
 
-  // 수정 모드일 때 기존 데이터 로드
+  // 수정 모드일 때 기존 데이터 API로 로드
   useEffect(() => {
-    if (isEditMode && addressId && mockAddressData[Number(addressId)]) {
-      const existingData = mockAddressData[Number(addressId)];
-      const { id, ...dataWithoutId } = existingData;
-      setAddressData(dataWithoutId);
-    }
+    const fetchAddress = async () => {
+      if (isEditMode && addressId) {
+        try {
+          const data = await getShippingAddressById(Number(addressId));
+          setAddressData({
+            addressName: data.label,
+            isDefault: data.is_default,
+            phone: data.phone,
+            zonecode: data.zonecode,
+            address1: data.address1,
+            address2: data.address2,
+            addressDetail: '', // addressDetail은 API에 없으므로 빈 값
+          });
+        } catch (err) {
+          alert('배송지 정보를 불러오지 못했습니다.');
+        }
+      }
+    };
+    fetchAddress();
   }, [isEditMode, addressId]);
 
   const handleInputChange = useCallback((field: string, value: string | boolean) => {

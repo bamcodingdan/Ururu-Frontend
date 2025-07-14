@@ -65,3 +65,8 @@ export async function postShippingAddress(data: ShippingAddressRequest) {
   });
   return response.data.data;
 }
+
+export async function getShippingAddressById(addressId: number) {
+  const response = await api.get(`/members/shipping-addresses/${addressId}`);
+  return response.data.data;
+}
