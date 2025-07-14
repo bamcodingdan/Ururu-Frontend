@@ -411,8 +411,8 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                           type="button"
                           className={`${FORM_STYLES.button.selectable.base} w-full ${
                             selectedTags.some((t) => t.value === tag.value)
-                              ? 'border-primary-300 bg-bg-100 text-primary-300'
-                              : 'border-bg-300 text-text-300 hover:bg-bg-300'
+                              ? 'border-primary-300 bg-primary-100 text-primary-300'
+                              : 'border-bg-300 text-text-300 hover:bg-bg-200'
                           }`}
                           aria-pressed={selectedTags.some((t) => t.value === tag.value)}
                           onClick={() => handleTagToggle(tag)}
