@@ -158,7 +158,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
         .filter((img): img is File => !!img);
       // 상품 공시
       const productNotice = {
-        capacity: formData.capacity + (formData.capacityUnit ? `/${formData.capacityUnit}` : ''),
+        capacity: formData.capacity + (formData.capacityUnit ? formData.capacityUnit : ''),
         spec: formData.specification,
         expiry: formData.expiryDate,
         usage: formData.usage,
