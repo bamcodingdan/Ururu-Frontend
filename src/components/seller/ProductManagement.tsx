@@ -64,6 +64,10 @@ export function ProductManagement() {
     router.push(`/seller/products/${productId}`);
   };
 
+  const handleEditProduct = (productId: number) => {
+    router.push(`/seller/products/${productId}/edit`);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'ACTIVE':
@@ -224,7 +228,7 @@ export function ProductManagement() {
                         상세보기
                       </Button>
                       <Button
-                        onClick={() => console.log('Edit product:', product.id)}
+                        onClick={() => handleEditProduct(product.id)}
                         className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-base text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
                       >
                         수정하기

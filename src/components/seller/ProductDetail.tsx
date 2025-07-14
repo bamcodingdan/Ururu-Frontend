@@ -11,7 +11,8 @@ import { StatusBadge } from '@/components/common/StatusBadge';
 import { ScrollToTopButton } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { ProductService } from '@/services/productService';
-import type { SellerProductDetail } from '@/types/product';
+import { useProductStore } from '@/store';
+import type { SellerProductDetail, Tag } from '@/types/product';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 
 interface ProductDetailProps {
@@ -20,6 +21,7 @@ interface ProductDetailProps {
 
 export function ProductDetail({ productId }: ProductDetailProps) {
   const router = useRouter();
+  const { setCurrentProduct, setCurrentProductTags } = useProductStore();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [product, setProduct] = useState<SellerProductDetail | null>(null);
@@ -30,7 +32,29 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       setError(null);
       try {
         const data = await ProductService.getSellerProductDetail(productId);
+        console.log('ProductDetail: 상품 데이터 로드 완료:', data);
         setProduct(data);
+        setCurrentProduct(data); // 스토어에 상품 데이터 저장
+        console.log('ProductDetail: 스토어에 상품 데이터 저장 완료');
+
+        // 스토어 상태 확인
+        setTimeout(() => {
+          const store = useProductStore.getState();
+          console.log('ProductDetail: 스토어 상태 확인:', {
+            currentProduct: !!store.currentProduct,
+            currentProductTags: store.currentProductTags,
+          });
+        }, 100);
+
+        // 상품의 태그 정보를 Tag 형태로 변환하여 스토어에 저장
+        if (data.productTags) {
+          const productTags: Tag[] = data.productTags.map((tag) => ({
+            value: tag.id,
+            label: tag.tagCategoryName,
+          }));
+          setCurrentProductTags(productTags);
+          console.log('ProductDetail: 스토어에 태그 데이터 저장 완료:', productTags);
+        }
       } catch (err: any) {
         setError(err.message || '상품 상세 정보를 불러오는데 실패했습니다.');
       } finally {
@@ -44,6 +68,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
     router.push('/seller/products');
   };
   const handleEdit = () => {
+    console.log('ProductDetail: 수정하기 버튼 클릭, 상품 ID:', productId);
     router.push(`/seller/products/${productId}/edit`);
   };
   const handleDelete = () => {

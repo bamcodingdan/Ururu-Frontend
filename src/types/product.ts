@@ -118,6 +118,23 @@ export interface ProductRegistrationProps {
   tags: Tag[];
 }
 
+export interface ProductEditProps {
+  productId: string;
+}
+
+export interface UpdateProductRequest {
+  name: string;
+  description: string;
+  categoryIds: number[];
+  tagCategoryIds: number[];
+  productOptions: Array<{
+    name: string;
+    price: number;
+    fullIngredients: string;
+  }>;
+  productNotice: Record<string, any>;
+}
+
 // 상품 관리 API 관련 타입
 export interface SellerProductCategory {
   id: number;
