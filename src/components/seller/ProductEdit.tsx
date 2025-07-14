@@ -31,6 +31,7 @@ import { ProductService } from '@/services/productService';
 import { SuccessDialog } from '@/components/common/SuccessDialog';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { validateProductForm } from '@/lib/product/validation';
+import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 
 export function ProductEdit({ productId }: { productId: string }) {
   const router = useRouter();
@@ -583,8 +584,15 @@ export function ProductEdit({ productId }: { productId: string }) {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                    {/* CAPACITY_UNITS 데이터가 없으므로 임시로 빈 배열 사용 */}
-                    {[]}
+                    {CAPACITY_UNITS.map((unit) => (
+                      <SelectItem
+                        key={unit}
+                        value={unit}
+                        className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
+                      >
+                        {unit}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </FormField>
