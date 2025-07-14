@@ -1,6 +1,11 @@
 import api from '@/lib/axios';
 import type { ApiResponse } from '@/types/api';
-import type { ProductMetadataResponse, CreateProductRequest } from '@/types/product';
+import type {
+  ProductMetadataResponse,
+  CreateProductRequest,
+  SellerProductListApiResponse,
+  SellerProductListResponse,
+} from '@/types/product';
 
 /**
  * 상품 관련 서비스 (상품 등록 등)
@@ -37,6 +42,34 @@ export class ProductService {
     if (!response.data.success) {
       throw new Error(response.data.message || '상품 등록에 실패했습니다.');
     }
+    return response.data.data;
+  }
+
+  /**
+   * 판매자 상품 목록 조회 (페이지네이션 지원)
+   * @param page 페이지 번호 (0부터 시작)
+   * @param size 페이지 크기
+   * @returns {Promise<SellerProductListResponse>}
+   */
+  static async getSellerProducts(
+    page: number = 0,
+    size: number = 10,
+  ): Promise<SellerProductListResponse> {
+    const response = await api.get<SellerProductListApiResponse>('/products', {
+      params: {
+        page,
+        size,
+      },
+    });
+
+    if (!response.data.success) {
+      throw new Error(response.data.message || '상품 목록 조회에 실패했습니다.');
+    }
+
+    if (!response.data.data) {
+      throw new Error('응답 데이터가 없습니다.');
+    }
+
     return response.data.data;
   }
 }

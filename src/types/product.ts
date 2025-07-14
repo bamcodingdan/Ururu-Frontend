@@ -174,3 +174,13 @@ export interface SellerProductListResponse {
   pageable: Pageable;
   empty: boolean;
 }
+
+// API 응답 래퍼 타입
+export interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+// 상품 목록 API 응답 타입
+export type SellerProductListApiResponse = ApiResponse<SellerProductListResponse>;
