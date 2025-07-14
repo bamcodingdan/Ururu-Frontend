@@ -15,7 +15,10 @@ export class ProductService {
     if (!response.data.success) {
       throw new Error(response.data.message || '상품 메타데이터 조회에 실패했습니다.');
     }
-    return response.data.data!;
+    if (!response.data.data) {
+      throw new Error('응답 데이터가 없습니다.');
+    }
+    return response.data.data;
   }
 
   /**
