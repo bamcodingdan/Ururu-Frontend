@@ -597,7 +597,12 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
             >
               <Input
                 value={formData.customerService}
-                onChange={(e) => handleInputChange('customerService', e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // 숫자와 하이픈만 허용하는 정규식
+                  const filteredValue = value.replace(/[^0-9-]/g, '');
+                  handleInputChange('customerService', filteredValue);
+                }}
                 placeholder="0000-0000"
                 className={FORM_STYLES.input.base}
                 maxLength={13}
