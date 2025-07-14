@@ -60,6 +60,10 @@ export function ProductManagement() {
     router.push('/seller/products/new');
   };
 
+  const handleViewProduct = (productId: number) => {
+    router.push(`/seller/products/${productId}`);
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'ACTIVE':
@@ -214,7 +218,7 @@ export function ProductManagement() {
                     {/* 하단: 버튼 3개(좌) */}
                     <div className="mt-4 flex gap-2">
                       <Button
-                        onClick={() => console.log('View product:', product.id)}
+                        onClick={() => handleViewProduct(product.id)}
                         className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-base text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
                       >
                         상세보기
