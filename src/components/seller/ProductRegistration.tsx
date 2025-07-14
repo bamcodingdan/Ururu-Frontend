@@ -129,6 +129,106 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
     setSubmitError(null);
     setSubmitSuccess(false);
     try {
+      // 세분화된 필수 입력값 체크 및 메시지
+      if (!formData.categoryMain) {
+        setSubmitError('카테고리를 선택해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (selectedTags.length === 0) {
+        setSubmitError('태그를 1개 이상 선택해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.name) {
+        setSubmitError('상품명을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.description) {
+        setSubmitError('상품 설명을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (optionArray.items.length === 0) {
+        setSubmitError('상품 옵션을 1개 이상 추가해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      // 옵션별 필수 필드 검증
+      for (let i = 0; i < optionArray.items.length; i++) {
+        const option = optionArray.items[i];
+        if (!option.name) {
+          setSubmitError(`옵션 ${i + 1}의 옵션명을 입력해주세요.`);
+          setSubmitLoading(false);
+          return;
+        }
+        if (!option.price || option.price <= 0) {
+          setSubmitError(`옵션 ${i + 1}의 기본 가격을 입력해주세요.`);
+          setSubmitLoading(false);
+          return;
+        }
+        if (!option.stock) {
+          setSubmitError(`옵션 ${i + 1}의 전성분을 입력해주세요.`);
+          setSubmitLoading(false);
+          return;
+        }
+      }
+      if (!formData.capacity) {
+        setSubmitError('용량 또는 중량을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.specification) {
+        setSubmitError('제품 주요 사양을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.expiryDate) {
+        setSubmitError('사용기한(또는 개봉 후 사용기간)을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.usage) {
+        setSubmitError('사용법을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.manufacturer) {
+        setSubmitError('화장품제조업자를 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.seller) {
+        setSubmitError('화장품책임판매업자를 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.country) {
+        setSubmitError('제조국을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.functionalTest) {
+        setSubmitError('기능성 화장품 심사필 여부를 선택해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.precautions) {
+        setSubmitError('사용할 때의 주의사항을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.qualityStandard) {
+        setSubmitError('품질보증기준을 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
+      if (!formData.customerService) {
+        setSubmitError('소비자상담 전화번호를 입력해주세요.');
+        setSubmitLoading(false);
+        return;
+      }
       // 카테고리 ID 배열 생성 (예시: 마지막 선택된 카테고리까지)
       const categoryIds: number[] = [];
       const findCategoryId = (label: string, cats: Category[]): number | null => {
@@ -350,7 +450,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('name', e.target.value)}
                 placeholder="EX) 컬러그램 누디 블러 틴트 20 COLOR"
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
 
@@ -366,7 +465,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 className={FORM_STYLES.textarea.base}
                 rows={2}
                 maxLength={200}
-                required
               />
             </FormField>
 
@@ -606,7 +704,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                   onChange={(e) => handleInputChange('capacity', e.target.value)}
                   placeholder=""
                   className={FORM_STYLES.input.base}
-                  required
                 />
               </FormField>
               <FormField label="단위" required className="w-32">
@@ -637,7 +734,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('specification', e.target.value)}
                 placeholder="EX) 모든 피부"
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
             <FormField label="사용기한(또는 개봉 후 사용기간)" required>
@@ -646,7 +742,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('expiryDate', e.target.value)}
                 placeholder="EX) 제조일로부터 24개월"
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
             <FormField label="사용법" required>
@@ -656,7 +751,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 placeholder="EX) 적당량의 내용을 손에 덜어 얼굴에 부드럽게 펴 발라줍니다."
                 className={FORM_STYLES.textarea.base}
                 rows={2}
-                required
               />
             </FormField>
             <FormField label="화장품제조업자" required>
@@ -665,7 +759,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('manufacturer', e.target.value)}
                 placeholder=""
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
             <FormField label="화장품책임판매업자" required>
@@ -674,7 +767,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('seller', e.target.value)}
                 placeholder=""
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
             <FormField label="제조국" required>
@@ -683,7 +775,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('country', e.target.value)}
                 placeholder="대한민국"
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
             <FormField label="기능성 화장품 식품의약품안전처 심사필 여부" required>
@@ -696,7 +787,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                     checked={formData.functionalTest === 'yes'}
                     onChange={(e) => handleInputChange('functionalTest', e.target.value)}
                     className="custom-radio"
-                    required
                   />
                   <span className="text-sm text-text-100">있음</span>
                 </label>
@@ -708,7 +798,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                     checked={formData.functionalTest === 'no'}
                     onChange={(e) => handleInputChange('functionalTest', e.target.value)}
                     className="custom-radio"
-                    required
                   />
                   <span className="text-sm text-text-100">없음</span>
                 </label>
@@ -721,7 +810,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 placeholder=""
                 className={FORM_STYLES.textarea.base}
                 rows={2}
-                required
               />
             </FormField>
             <FormField label="품질보증기준" required>
@@ -731,7 +819,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 placeholder="EX) 본 상품에 이상이 있을 경우 공정거래위원회 고시 '소비자분쟁 해결기준'에 의해 보상해 드립니다."
                 className={FORM_STYLES.textarea.base}
                 rows={2}
-                required
               />
             </FormField>
             <FormField label="소비자상담 전화번호" required>
@@ -740,7 +827,6 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                 onChange={(e) => handleInputChange('customerService', e.target.value)}
                 placeholder="0000-0000"
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
           </div>
