@@ -17,7 +17,11 @@ export function Pagination({
   maxPageButtons = 10,
   className = '',
 }: PaginationProps) {
-  const pageCount = Math.min(maxPageButtons, totalPages);
+  // 현재 페이지 주변의 페이지들을 계산
+  const startPage = Math.max(0, currentPage - Math.floor(maxPageButtons / 2));
+  const endPage = Math.min(totalPages - 1, startPage + maxPageButtons - 1);
+  const adjustedStartPage = Math.max(0, endPage - maxPageButtons + 1);
+
   return (
     <div className={`flex items-center justify-center gap-2 ${className}`}>
       <Button
@@ -28,20 +32,23 @@ export function Pagination({
       >
         <ChevronsLeft className="h-5 w-5" />
       </Button>
-      {Array.from({ length: pageCount }).map((_, idx) => (
-        <Button
-          key={idx}
-          onClick={() => onPageChange(idx)}
-          className={
-            'h-10 w-10 rounded-lg border px-0 font-semibold transition-colors ' +
-            (currentPage === idx
-              ? 'border-primary-300 bg-primary-300 text-text-on'
-              : 'border-primary-300 bg-bg-100 text-primary-300 hover:bg-primary-100')
-          }
-        >
-          {idx + 1}
-        </Button>
-      ))}
+      {Array.from({ length: endPage - adjustedStartPage + 1 }).map((_, idx) => {
+        const pageNum = adjustedStartPage + idx;
+        return (
+          <Button
+            key={pageNum}
+            onClick={() => onPageChange(pageNum)}
+            className={
+              'h-10 w-10 rounded-lg border px-0 font-semibold transition-colors ' +
+              (currentPage === pageNum
+                ? 'border-primary-300 bg-primary-300 text-text-on'
+                : 'border-primary-300 bg-bg-100 text-primary-300 hover:bg-primary-100')
+            }
+          >
+            {pageNum + 1}
+          </Button>
+        );
+      })}
       <Button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages - 1}
