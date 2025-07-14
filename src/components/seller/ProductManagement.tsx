@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ import { StatusBadge } from '@/components/common/StatusBadge';
 import { Pagination } from '@/components/seller/common/Pagination';
 
 export function ProductManagement() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [productData, setProductData] = useState<SellerProductListResponse | null>(null);
@@ -52,6 +54,10 @@ export function ProductManagement() {
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
+  };
+
+  const handleRegisterProduct = () => {
+    router.push('/seller/products/new');
   };
 
   const getStatusBadge = (status: string) => {
@@ -152,7 +158,7 @@ export function ProductManagement() {
                 description="첫 번째 상품을 등록해보세요"
               />
               <div className="text-center">
-                <Button className={FORM_STYLES.button.submit}>
+                <Button onClick={handleRegisterProduct} className={FORM_STYLES.button.submit}>
                   <Plus className="mr-2 h-4 w-4" />
                   상품 등록하기
                 </Button>
