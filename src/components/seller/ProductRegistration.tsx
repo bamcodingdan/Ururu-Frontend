@@ -23,6 +23,8 @@ import { X } from 'lucide-react';
 import { useEffect } from 'react';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { ProductService } from '@/services/productService';
+import { SuccessDialog } from '@/components/common/SuccessDialog';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
 
 interface ProductOption {
   id: string;
@@ -118,6 +120,8 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const handleSuccessDialogClose = () => setSubmitSuccess(false);
+  const handleErrorDialogClose = () => setSubmitError(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -751,14 +755,18 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
           >
             {submitLoading ? '등록 중...' : '등록하기'}
           </Button>
-          {submitError && (
-            <div className="mt-2 text-center text-sm text-red-500">{submitError}</div>
-          )}
-          {submitSuccess && (
-            <div className="mt-2 text-center text-sm text-green-600">
-              상품이 성공적으로 등록되었습니다.
-            </div>
-          )}
+          <ErrorDialog
+            isOpen={!!submitError}
+            onClose={handleErrorDialogClose}
+            title="상품 등록 실패"
+            message={submitError || ''}
+          />
+          <SuccessDialog
+            isOpen={submitSuccess}
+            onClose={handleSuccessDialogClose}
+            title="상품 등록 완료"
+            message="상품이 성공적으로 등록되었습니다."
+          />
         </div>
       </form>
     </div>
