@@ -14,6 +14,7 @@ import { ProductService } from '@/services/productService';
 import type { SellerProduct, SellerProductListResponse } from '@/types/product';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { StatusBadge } from '@/components/common/StatusBadge';
+import { Pagination } from '@/components/seller/common/Pagination';
 
 export function ProductManagement() {
   const [isLoading, setIsLoading] = useState(true);
@@ -234,29 +235,12 @@ export function ProductManagement() {
 
       {/* 페이지네이션: 상품 관리 페이지 하단 */}
       {totalPages > 1 && (
-        <div className="mt-12 flex items-center justify-center gap-2">
-          {Array.from({ length: Math.min(10, totalPages) }).map((_, idx) => (
-            <Button
-              key={idx}
-              onClick={() => setCurrentPage(idx)}
-              className={
-                'h-10 w-10 rounded-lg border px-0 font-semibold transition-colors ' +
-                (currentPage === idx
-                  ? 'border-primary-300 bg-primary-300 text-text-on'
-                  : 'border-primary-300 bg-bg-100 text-primary-300 hover:bg-primary-100')
-              }
-            >
-              {idx + 1}
-            </Button>
-          ))}
-          <Button
-            onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages - 1))}
-            disabled={currentPage === totalPages - 1}
-            className="h-10 w-10 rounded-lg border border-primary-300 bg-bg-100 px-0 font-semibold text-primary-300 transition-colors hover:bg-primary-100"
-            aria-label="다음 페이지"
-          >
-            <span className="inline-block align-middle">&raquo;</span>
-          </Button>
+        <div className="mt-12">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       )}
 
