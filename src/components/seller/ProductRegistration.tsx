@@ -409,23 +409,15 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
                         <button
                           key={tag.value}
                           type="button"
-                          className={`h-10 w-full rounded-lg border px-2 text-xs font-medium transition-colors ${
+                          className={`${FORM_STYLES.button.selectable.base} h-10 w-full px-2 text-xs ${
                             selectedTags.some((t) => t.value === tag.value)
-                              ? 'border-primary-300 bg-bg-100 text-primary-300'
-                              : 'border-bg-300 text-text-300 hover:bg-bg-300'
-                          } `}
+                              ? FORM_STYLES.button.selectable.selected
+                              : FORM_STYLES.button.selectable.unselected
+                          }`}
                           aria-pressed={selectedTags.some((t) => t.value === tag.value)}
                           onClick={() => handleTagToggle(tag)}
                         >
-                          <span
-                            className={`block w-full truncate text-center ${
-                              selectedTags.some((t) => t.value === tag.value)
-                                ? 'text-primary-300'
-                                : 'text-text-300'
-                            }`}
-                          >
-                            {tag.label}
-                          </span>
+                          <span className="block w-full truncate text-center">{tag.label}</span>
                         </button>
                       ) : (
                         <div key={idx} />
