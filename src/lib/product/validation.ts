@@ -14,7 +14,7 @@ export function validateProductForm(
     const option = optionArray.items[i];
     if (!option.name) return `옵션 ${i + 1}의 옵션명을 입력해주세요.`;
     if (!option.price || option.price <= 0) return `옵션 ${i + 1}의 기본 가격을 입력해주세요.`;
-    if (!option.stock) return `옵션 ${i + 1}의 전성분을 입력해주세요.`;
+    if (!option.fullIngredients) return `옵션 ${i + 1}의 전성분을 입력해주세요.`;
   }
   if (!formData.capacity) return '용량 또는 중량을 입력해주세요.';
   if (!formData.specification) return '제품 주요 사양을 입력해주세요.';

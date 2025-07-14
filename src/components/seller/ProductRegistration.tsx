@@ -86,7 +86,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
       name: '',
       price: 0,
       image: null,
-      stock: 0,
+      fullIngredients: '',
     });
   };
 
@@ -145,7 +145,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
       const productOptions = optionArray.items.map((opt) => ({
         name: opt.name,
         price: opt.price,
-        fullIngredients: String(opt.stock),
+        fullIngredients: opt.fullIngredients,
       }));
       // 옵션 이미지
       const optionImages = optionArray.items

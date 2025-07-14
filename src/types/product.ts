@@ -11,7 +11,7 @@ export interface ProductOption {
   name: string;
   price: number;
   image: File | null;
-  stock: number;
+  fullIngredients: string;
 }
 
 export interface RewardTier {
