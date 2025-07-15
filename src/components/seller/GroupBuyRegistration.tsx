@@ -117,113 +117,57 @@ function OptionSelector({
                     <label className={`text-xs ${isSelected ? 'text-text-200' : 'text-text-300'}`}>
                       공동구매 시작가 *
                     </label>
-                    <Input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="0"
-                      value={optionData[option.optionId]?.priceOverride || ''}
-                      className={`${FORM_STYLES.input.base} ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
-                      disabled={!isSelected}
-                      onClick={(e) => e.stopPropagation()}
-                      onCompositionStart={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                      }}
-                      onKeyDown={(e) => {
-                        e.stopPropagation();
-                        // 숫자, 백스페이스, 삭제, 화살표 키만 허용
-                        const allowedKeys = [
-                          'Backspace',
-                          'Delete',
-                          'ArrowLeft',
-                          'ArrowRight',
-                          'Tab',
-                          'Enter',
-                        ];
-                        const isNumber = /^[0-9]$/.test(e.key);
-                        const isAllowedKey = allowedKeys.includes(e.key);
-
-                        if (!isNumber && !isAllowedKey) {
-                          e.preventDefault();
-                        }
-                      }}
-                      onPaste={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        // 붙여넣기된 텍스트에서 숫자만 추출
-                        const pastedText = e.clipboardData.getData('text');
-                        const numbersOnly = pastedText.replace(/[^0-9]/g, '');
-                        if (numbersOnly && isSelected) {
-                          const numValue = Math.max(0, parseInt(numbersOnly, 10));
-                          onOptionDataChange(option.optionId, 'priceOverride', numValue);
-                        }
-                      }}
-                      onInput={(e) => {
-                        e.stopPropagation();
-                        if (isSelected) {
-                          // 숫자만 허용하고 음수 방지
-                          const value = e.currentTarget.value.replace(/[^0-9]/g, '');
-                          const numValue = value === '' ? 0 : Math.max(0, parseInt(value, 10));
-                          onOptionDataChange(option.optionId, 'priceOverride', numValue);
-                        }
-                      }}
-                    />
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={optionData[option.optionId]?.priceOverride || ''}
+                        className={`${FORM_STYLES.input.base} pr-8 ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
+                        disabled={!isSelected}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          if (isSelected) {
+                            // 숫자만 허용하고 앞의 0 제거
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            const numValue = value === '' ? 0 : parseInt(value, 10);
+                            onOptionDataChange(option.optionId, 'priceOverride', numValue);
+                          }
+                        }}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-300">
+                        원
+                      </span>
+                    </div>
                   </div>
                   <div>
                     <label className={`text-xs ${isSelected ? 'text-text-200' : 'text-text-300'}`}>
                       재고 *
                     </label>
-                    <Input
-                      type="text"
-                      inputMode="numeric"
-                      placeholder="0"
-                      value={optionData[option.optionId]?.stock || ''}
-                      className={`${FORM_STYLES.input.base} ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
-                      disabled={!isSelected}
-                      onClick={(e) => e.stopPropagation()}
-                      onCompositionStart={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                      }}
-                      onKeyDown={(e) => {
-                        e.stopPropagation();
-                        // 숫자, 백스페이스, 삭제, 화살표 키만 허용
-                        const allowedKeys = [
-                          'Backspace',
-                          'Delete',
-                          'ArrowLeft',
-                          'ArrowRight',
-                          'Tab',
-                          'Enter',
-                        ];
-                        const isNumber = /^[0-9]$/.test(e.key);
-                        const isAllowedKey = allowedKeys.includes(e.key);
-
-                        if (!isNumber && !isAllowedKey) {
-                          e.preventDefault();
-                        }
-                      }}
-                      onPaste={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        // 붙여넣기된 텍스트에서 숫자만 추출
-                        const pastedText = e.clipboardData.getData('text');
-                        const numbersOnly = pastedText.replace(/[^0-9]/g, '');
-                        if (numbersOnly && isSelected) {
-                          const numValue = Math.max(0, parseInt(numbersOnly, 10));
-                          onOptionDataChange(option.optionId, 'stock', numValue);
-                        }
-                      }}
-                      onInput={(e) => {
-                        e.stopPropagation();
-                        if (isSelected) {
-                          // 숫자만 허용하고 음수 방지
-                          const value = e.currentTarget.value.replace(/[^0-9]/g, '');
-                          const numValue = value === '' ? 0 : Math.max(0, parseInt(value, 10));
-                          onOptionDataChange(option.optionId, 'stock', numValue);
-                        }
-                      }}
-                    />
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="0"
+                        value={optionData[option.optionId]?.stock || ''}
+                        className={`${FORM_STYLES.input.base} pr-8 ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
+                        disabled={!isSelected}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          if (isSelected) {
+                            // 숫자만 허용하고 앞의 0 제거
+                            const value = e.target.value.replace(/[^0-9]/g, '');
+                            const numValue = value === '' ? 0 : parseInt(value, 10);
+                            onOptionDataChange(option.optionId, 'stock', numValue);
+                          }
+                        }}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-text-300">
+                        개
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -452,12 +396,21 @@ export function GroupBuyRegistration() {
 
             <FormField label="1인당 최대 구매 수량" required>
               <Input
-                type="number"
-                value={maxQuantityPerPerson}
-                onChange={(e) => setMaxQuantityPerPerson(Number(e.target.value))}
+                type="text"
+                inputMode="numeric"
+                value={maxQuantityPerPerson || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // 빈 값이면 빈 문자열로 설정, 아니면 숫자로 변환
+                  if (value === '') {
+                    setMaxQuantityPerPerson(0);
+                  } else {
+                    const numValue = parseInt(value.replace(/[^0-9]/g, ''), 10);
+                    setMaxQuantityPerPerson(isNaN(numValue) ? 0 : numValue);
+                  }
+                }}
                 placeholder="1"
                 className={FORM_STYLES.input.base}
-                min="1"
                 required
               />
             </FormField>
@@ -508,26 +461,14 @@ export function GroupBuyRegistration() {
               id="main-image-upload"
             />
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <DatePickerField
-                label="시작일"
-                required
-                value={formData.startDate}
-                onSelect={(date) => setFormData((prev) => ({ ...prev, startDate: date }))}
-                placeholder="시작일 선택"
-                disabled={(date) => date < new Date()}
-              />
-              <DatePickerField
-                label="종료일"
-                required
-                value={formData.endDate}
-                onSelect={(date) => setFormData((prev) => ({ ...prev, endDate: date }))}
-                placeholder="종료일 선택"
-                disabled={(date) =>
-                  date < new Date() || (formData.startDate ? date < formData.startDate : false)
-                }
-              />
-            </div>
+            <DatePickerField
+              label="종료일"
+              required
+              value={formData.endDate}
+              onSelect={(date) => setFormData((prev) => ({ ...prev, endDate: date }))}
+              placeholder="종료일 선택"
+              disabled={(date) => date < new Date()}
+            />
           </div>
         </section>
 
