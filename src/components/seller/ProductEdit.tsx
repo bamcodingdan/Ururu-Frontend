@@ -34,7 +34,7 @@ import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { validateProductForm } from '@/lib/product/validation';
 import { PRODUCT_CATEGORY_DATA, CAPACITY_UNITS } from '@/data/seller';
 
-export function ProductEdit({ productId }: { productId: string }) {
+export function ProductEdit({ productId }: { productId: number }) {
   const router = useRouter();
 
   const [formData, setFormData] = useState<ProductFormData>({

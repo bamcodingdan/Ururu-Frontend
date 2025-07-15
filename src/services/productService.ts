@@ -133,7 +133,7 @@ export class ProductService {
    * @param productId 상품 ID
    * @returns {Promise<any>}
    */
-  static async getProduct(productId: string): Promise<any> {
+  static async getProduct(productId: number): Promise<any> {
     const response = await api.get(`/products/${productId}`);
     if (!response.data.success) {
       throw new Error(response.data.message || '상품 조회에 실패했습니다.');
@@ -148,7 +148,7 @@ export class ProductService {
    * @param optionImages 옵션 이미지 파일 배열
    */
   static async updateProduct(
-    productId: string,
+    productId: number,
     product: UpdateProductRequest,
     optionImages: File[],
   ): Promise<any> {
