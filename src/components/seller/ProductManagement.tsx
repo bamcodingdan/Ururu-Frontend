@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
-import { ScrollToTopButton } from '@/components/common';
+import { ScrollToTopButton, ErrorDialog } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { PRODUCT_CONSTANTS } from '@/constants/product-constants';
 import { ProductService } from '@/services/productService';
@@ -25,6 +25,19 @@ export function ProductManagement() {
   const [allProducts, setAllProducts] = useState<SellerProduct[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(10);
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    isOpen: boolean;
+    productId: number | null;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: null,
+    productName: '',
+  });
+  const [deleteError, setDeleteError] = useState<{ isOpen: boolean; message: string }>({
+    isOpen: false,
+    message: '',
+  });
 
   // 상품 목록 조회
   const fetchProducts = async (page: number = 0) => {
@@ -66,6 +79,39 @@ export function ProductManagement() {
 
   const handleEditProduct = (productId: number) => {
     router.push(`/seller/products/${productId}/edit`);
+  };
+
+  const handleDeleteClick = (productId: number, productName: string) => {
+    setDeleteConfirm({
+      isOpen: true,
+      productId,
+      productName,
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteConfirm.productId) return;
+
+    try {
+      // TODO: 실제 삭제 API 호출
+      console.log('Deleting product:', deleteConfirm.productId);
+      // await ProductService.deleteProduct(deleteConfirm.productId);
+
+      // 삭제 후 목록 새로고침
+      await fetchProducts(currentPage);
+      setDeleteConfirm({ isOpen: false, productId: null, productName: '' });
+    } catch (error: any) {
+      console.error('Delete failed:', error);
+      setDeleteError({
+        isOpen: true,
+        message: error.message || '상품 삭제에 실패했습니다.',
+      });
+      setDeleteConfirm({ isOpen: false, productId: null, productName: '' });
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirm({ isOpen: false, productId: null, productName: '' });
   };
 
   const getStatusBadge = (status: string) => {
@@ -234,7 +280,7 @@ export function ProductManagement() {
                         수정하기
                       </Button>
                       <Button
-                        onClick={() => console.log('Delete product:', product.id)}
+                        onClick={() => handleDeleteClick(product.id, product.name)}
                         className="h-10 rounded-lg border border-bg-300 bg-bg-100 px-6 text-sm text-text-300 shadow-none transition-colors hover:border-primary-200 hover:text-primary-200"
                       >
                         삭제하기
@@ -266,6 +312,22 @@ export function ProductManagement() {
 
       {/* ScrollToTopButton - 일관된 스크롤 동작 */}
       <ScrollToTopButton />
+
+      {/* 삭제 확인 모달창 */}
+      <ErrorDialog
+        isOpen={deleteConfirm.isOpen}
+        onClose={handleDeleteCancel}
+        title="상품 삭제 확인"
+        message={`"${deleteConfirm.productName}" 상품을 삭제하시겠습니까?\n\n삭제된 상품은 복구할 수 없습니다.`}
+      />
+
+      {/* 삭제 에러 모달창 */}
+      <ErrorDialog
+        isOpen={deleteError.isOpen}
+        onClose={() => setDeleteError({ isOpen: false, message: '' })}
+        title="상품 삭제 실패"
+        message={`"${deleteConfirm.productName}" 상품 삭제에 실패했습니다.\n\n${deleteError.message}`}
+      />
     </div>
   );
 }
