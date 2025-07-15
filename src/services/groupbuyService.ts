@@ -1,5 +1,9 @@
 import api from '@/lib/axios';
-import type { GroupBuyTop3Response, GroupBuyRankingTop100Response } from '@/types/groupbuy';
+import type {
+  GroupBuyTop3Response,
+  GroupBuyRankingTop100Response,
+  GroupBuyCreateResponse,
+} from '@/types/groupbuy';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
   const res = await api.get<GroupBuyTop3Response>('/groupbuys/top3');
