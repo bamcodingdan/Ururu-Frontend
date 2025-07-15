@@ -179,28 +179,52 @@ function OptionSelector({
   );
 }
 
-export function GroupBuyRegistration() {
+interface GroupBuyFormProps {
+  mode: 'create' | 'edit';
+  initialData?: {
+    groupBuyId?: string;
+    selectedProductId?: string;
+    selectedOptions?: string[];
+    optionData?: Record<number, { stock: number; priceOverride: number }>;
+    maxQuantityPerPerson?: number;
+    title?: string;
+    description?: string;
+    mainImage?: File | null;
+    endDate?: Date;
+    detailImages?: File[];
+    discountTiers?: DiscountTier[];
+  };
+  onSubmit?: (data: any) => void;
+}
+
+export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps) {
   // API 데이터 상태
   const [products, setProducts] = useState<ApiGroupBuyProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // 상품 1개만 선택
-  const [selectedProductId, setSelectedProductId] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [selectedProductId, setSelectedProductId] = useState(initialData?.selectedProductId || '');
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(
+    initialData?.selectedOptions || [],
+  );
   const [optionData, setOptionData] = useState<
     Record<number, { stock: number; priceOverride: number }>
-  >({});
-  const [maxQuantityPerPerson, setMaxQuantityPerPerson] = useState(1);
+  >(initialData?.optionData || {});
+  const [maxQuantityPerPerson, setMaxQuantityPerPerson] = useState(
+    initialData?.maxQuantityPerPerson || 1,
+  );
   const [formData, setFormData] = useState<Omit<GroupBuyFormData, 'products' | 'discountTiers'>>({
-    title: '',
-    description: '',
-    mainImage: null,
+    title: initialData?.title || '',
+    description: initialData?.description || '',
+    mainImage: initialData?.mainImage || null,
     startDate: undefined,
-    endDate: undefined,
-    detailImages: [],
+    endDate: initialData?.endDate || undefined,
+    detailImages: initialData?.detailImages || [],
   });
-  const [discountTiers, setDiscountTiers] = useState<DiscountTier[]>([]);
+  const [discountTiers, setDiscountTiers] = useState<DiscountTier[]>(
+    initialData?.discountTiers || [],
+  );
 
   const selectedProduct = products.find((p) => p.productId.toString() === selectedProductId);
   const { validateImageFile, validateMultipleFiles } = useImageValidation();
@@ -303,16 +327,23 @@ export function GroupBuyRegistration() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // 실제 등록 데이터 구조 예시
+    // 실제 등록/수정 데이터 구조 예시
     const submitData = {
       ...formData,
       productId: selectedProductId,
       selectedOptions,
       maxQuantityPerPerson,
       discountTiers,
+      optionData,
+      ...(mode === 'edit' && { groupBuyId: initialData?.groupBuyId }),
     };
-    console.log('공구 등록:', submitData);
-    // TODO: API 호출
+
+    if (onSubmit) {
+      onSubmit(submitData);
+    } else {
+      console.log(`공구 ${mode === 'create' ? '등록' : '수정'}:`, submitData);
+      // TODO: API 호출
+    }
   };
 
   if (isLoading) {
@@ -334,7 +365,9 @@ export function GroupBuyRegistration() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
       {/* 타이틀 */}
-      <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">공구 등록</h1>
+      <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">
+        공구 {mode === 'create' ? '등록' : '수정'}
+      </h1>
 
       {/* 알림 배너 */}
       <div className="mb-8 flex items-start gap-3 rounded-lg bg-bg-100 p-6 shadow-sm">
@@ -347,7 +380,9 @@ export function GroupBuyRegistration() {
         />
         <div className="flex-1">
           <p className="text-sm font-medium text-text-200">
-            새로운 상품을 등록하여 공동구매를 시작하세요!
+            {mode === 'create'
+              ? '새로운 상품을 등록하여 공동구매를 시작하세요!'
+              : '공동구매 정보를 수정하세요!'}
           </p>
         </div>
       </div>
@@ -514,16 +549,21 @@ export function GroupBuyRegistration() {
           </div>
         </section>
 
-        {/* 등록 버튼 */}
+        {/* 등록/수정 버튼 */}
         <div className="pt-8">
           <Button
             type="submit"
             className="h-12 w-full rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
           >
-            등록하기
+            {mode === 'create' ? '등록하기' : '수정하기'}
           </Button>
         </div>
       </form>
     </div>
   );
+}
+
+// 기존 등록 페이지용 래퍼 컴포넌트
+export function GroupBuyRegistration() {
+  return <GroupBuyForm mode="create" />;
 }
