@@ -286,16 +286,16 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       <div className="pt-2">
         <div className="flex gap-4">
           <Button
-            onClick={handleEdit}
-            className="h-12 flex-1 rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
-          >
-            수정하기
-          </Button>
-          <Button
             onClick={handleDelete}
-            className="h-12 flex-1 rounded-lg bg-primary-200 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-200 active:opacity-90"
+            className="border-border-300 h-12 flex-1 rounded-lg border bg-bg-100 text-sm font-medium text-text-300 shadow-none transition hover:border-primary-200 hover:text-primary-200"
           >
             삭제하기
+          </Button>
+          <Button
+            onClick={handleEdit}
+            className="h-12 flex-1 rounded-lg bg-primary-300 text-sm font-medium text-text-on shadow-none transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
+          >
+            수정하기
           </Button>
         </div>
       </div>
