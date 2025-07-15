@@ -91,6 +91,7 @@ export function ProductManagement() {
 
   const handleDeleteConfirm = async () => {
     if (!deleteConfirm.productId) return;
+    const productName = deleteConfirm.productName;
 
     try {
       // 실제 삭제 API 호출
@@ -103,7 +104,7 @@ export function ProductManagement() {
       console.error('Delete failed:', error);
       setDeleteError({
         isOpen: true,
-        message: error.message || '상품 삭제에 실패했습니다.',
+        message: `"${productName}" ${error.message || '상품 삭제에 실패했습니다.'}`,
       });
       setDeleteConfirm({ isOpen: false, productId: null, productName: '' });
     }
@@ -329,7 +330,7 @@ export function ProductManagement() {
         isOpen={deleteError.isOpen}
         onClose={() => setDeleteError({ isOpen: false, message: '' })}
         title="상품 삭제 실패"
-        message={`"${deleteConfirm.productName}" 상품 삭제에 실패했습니다.\n\n${deleteError.message}`}
+        message={deleteError.message}
       />
     </div>
   );
