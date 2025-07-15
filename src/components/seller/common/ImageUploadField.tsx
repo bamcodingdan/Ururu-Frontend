@@ -49,6 +49,14 @@ export function ImageUploadField({
     onUpload(e);
   };
 
+  const handleUploadClick = (e: React.MouseEvent) => {
+    if (multiple && uploadedFiles.length >= 10) {
+      e.preventDefault();
+      setIsErrorOpen(true);
+      return;
+    }
+  };
+
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
@@ -81,12 +89,17 @@ export function ImageUploadField({
     setDragOverIndex(null);
   };
 
+  const isMaxReached = multiple && uploadedFiles.length >= 10;
+
   return (
     <FormField label={label} required={required}>
       <div
-        className={`cursor-pointer rounded-lg border-2 border-dashed border-bg-300 p-6 text-center ${
-          isOptionVariant ? 'bg-bg-100' : ''
+        className={`rounded-lg border-2 border-dashed p-6 text-center ${
+          isMaxReached
+            ? 'bg-bg-50 cursor-not-allowed border-bg-200'
+            : `cursor-pointer border-bg-300 ${isOptionVariant ? 'bg-bg-100' : ''}`
         }`}
+        onClick={handleUploadClick}
       >
         <input
           type="file"
@@ -95,10 +108,18 @@ export function ImageUploadField({
           onChange={handleUpload}
           className="hidden"
           id={id}
+          disabled={isMaxReached}
         />
-        <label htmlFor={id} className="flex cursor-pointer flex-col items-center justify-center">
-          <Upload className="mb-2 h-8 w-8 text-text-300" />
-          <span className="text-sm text-text-300">{placeholder}</span>
+        <label
+          htmlFor={id}
+          className={`flex flex-col items-center justify-center ${
+            isMaxReached ? 'cursor-not-allowed' : 'cursor-pointer'
+          }`}
+        >
+          <Upload className={`mb-2 h-8 w-8 ${isMaxReached ? 'text-text-200' : 'text-text-300'}`} />
+          <span className={`text-sm ${isMaxReached ? 'text-text-200' : 'text-text-300'}`}>
+            {isMaxReached ? '최대 10개까지 업로드 가능합니다' : placeholder}
+          </span>
         </label>
         {/* 대표 이미지 미리보기 */}
         {!multiple && uploadedFiles.length === 1 && (
@@ -221,7 +242,7 @@ export function ImageUploadField({
         isOpen={isErrorOpen}
         onClose={() => setIsErrorOpen(false)}
         title="이미지 업로드 제한"
-        message="상세 이미지는 최대 10개까지 업로드할 수 있습니다."
+        message="상세 이미지는 최대 10개까지 업로드할 수 있습니다. 추가 이미지를 업로드하려면 기존 이미지를 먼저 삭제해주세요."
       />
     </FormField>
   );
