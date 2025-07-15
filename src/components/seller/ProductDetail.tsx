@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { StatusBadge } from '@/components/common/StatusBadge';
-import { ScrollToTopButton, ErrorDialog } from '@/components/common';
+import { ScrollToTopButton, ErrorDialog, ConfirmDialog } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { ProductService } from '@/services/productService';
 import { useProductStore } from '@/store';
@@ -77,9 +77,8 @@ export function ProductDetail({ productId }: ProductDetailProps) {
 
   const handleDeleteConfirm = async () => {
     try {
-      // TODO: 실제 삭제 API 호출
-      console.log('Deleting product:', productId);
-      // await ProductService.deleteProduct(productId);
+      // 실제 삭제 API 호출
+      await ProductService.deleteProduct(productId);
 
       // 삭제 후 목록으로 이동
       router.push('/seller/products');
@@ -221,62 +220,53 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         </CardContent>
       </Card>
 
-      {/* 상품 옵션 카드 */}
+      {/* 상품 옵션 정보 카드 */}
       <Card className={FORM_STYLES.card.seller + ' mb-12'}>
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-text-100">상품 옵션</CardTitle>
+          <CardTitle className="text-xl font-semibold text-text-100">상품 옵션 정보</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {product.productOptions.map((option) => (
-            <div
-              key={option.id}
-              className="flex items-center gap-6 border-b border-bg-200 pb-4 last:border-b-0 last:pb-0"
-            >
-              <img
-                src={
-                  option.imageUrl === '/images/default-product-option.jpg'
-                    ? 'https://ururu-bucket.s3.ap-northeast-2.amazonaws.com/groupbuy/thumbnail/default_thumbnail.png'
-                    : option.imageUrl
-                }
-                alt={option.name}
-                className="h-20 w-20 rounded-lg object-cover"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-4">
-                  <span className="text-base font-semibold text-text-100">{option.name}</span>
-                  <span className="text-2xl font-bold text-primary-300">
-                    {option.price.toLocaleString()}원
-                  </span>
+        <CardContent className="space-y-6">
+          {product.productOptions.map((option, index) => (
+            <div key={index} className="rounded-lg border border-bg-300 p-4">
+              <div className="mb-4">
+                <div className="mb-1 text-sm font-medium text-text-200">옵션명</div>
+                <div className="text-base text-text-100">{option.name}</div>
+              </div>
+              <div className="mb-4">
+                <div className="mb-1 text-sm font-medium text-text-200">가격</div>
+                <div className="text-base text-text-100">{option.price.toLocaleString()}원</div>
+              </div>
+              <div>
+                <div className="mb-1 text-sm font-medium text-text-200">전성분</div>
+                <div className="whitespace-pre-line text-base text-text-100">
+                  {option.fullIngredients}
                 </div>
-                <div className="mt-2 text-sm text-text-200">{option.fullIngredients}</div>
               </div>
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* 화장품 정보제공고시 카드 */}
+      {/* 상품 공시 정보 카드 */}
       <Card className={FORM_STYLES.card.seller + ' mb-12'}>
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-text-100">화장품 정보제공고시</CardTitle>
+          <CardTitle className="text-xl font-semibold text-text-100">상품 공시 정보</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-6">
-            {/* 내용물의 용량 또는 중량 */}
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* 용량 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">내용물의 용량 또는 중량</div>
+              <div className="mb-1 text-sm font-medium text-text-200">용량</div>
               <div className="text-base text-text-100">{product.productNotice.capacity}</div>
             </div>
-            {/* 제품 주요 사양 */}
+            {/* 규격 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">제품 주요 사양</div>
+              <div className="mb-1 text-sm font-medium text-text-200">규격</div>
               <div className="text-base text-text-100">{product.productNotice.spec}</div>
             </div>
-            {/* 사용기한 */}
+            {/* 유통기한 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">
-                사용기한(또는 개봉 후 사용기간)
-              </div>
+              <div className="mb-1 text-sm font-medium text-text-200">유통기한</div>
               <div className="text-base text-text-100">{product.productNotice.expiry}</div>
             </div>
             {/* 사용법 */}
@@ -284,9 +274,9 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               <div className="mb-1 text-sm font-medium text-text-200">사용법</div>
               <div className="text-base text-text-100">{product.productNotice.usage}</div>
             </div>
-            {/* 화장품제조업자 */}
+            {/* 제조사 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">화장품제조업자</div>
+              <div className="mb-1 text-sm font-medium text-text-200">제조사</div>
               <div className="text-base text-text-100">{product.productNotice.manufacturer}</div>
             </div>
             {/* 화장품책임판매업자 */}
@@ -352,11 +342,15 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       <ScrollToTopButton />
 
       {/* 삭제 확인 모달창 */}
-      <ErrorDialog
+      <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
         onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
         title="상품 삭제 확인"
-        message={`"${deleteConfirm.productName}" 상품을 삭제하시겠습니까?\n\n삭제된 상품은 복구할 수 없습니다.`}
+        message={`"${deleteConfirm.productName}"\n\n상품을 삭제하시겠습니까? 삭제하면 복구가 불가능합니다.`}
+        confirmText="삭제하기"
+        cancelText="취소"
+        variant="danger"
       />
 
       {/* 삭제 에러 모달창 */}
