@@ -127,7 +127,17 @@ export default function CategoryPage() {
           <div className="mt-8">
             <h3 className="mb-4 text-lg font-semibold text-text-100">{selectedSub} 공동구매</h3>
             {loading && <div className="text-sm text-text-200">로딩 중...</div>}
-            {error && <div className="text-sm text-red-400">{error}</div>}
+            {error && error.includes('해당 공동구매를 찾을 수 없습니다.') ? (
+              <div className="flex flex-col items-center justify-center py-8 md:py-12">
+                <div className="mb-4 text-6xl">💄</div>
+                <h2 className="mb-2 text-xl font-semibold text-text-100">
+                  해당 카테고리의 공동구매가 없습니다
+                </h2>
+                <p className="text-text-200">다른 카테고리를 선택해보세요!</p>
+              </div>
+            ) : (
+              error && <div className="text-sm text-red-400">{error}</div>
+            )}
             {!loading && !error && products.length === 0 && (
               <div className="text-sm text-text-200">공동구매 상품이 없습니다.</div>
             )}
