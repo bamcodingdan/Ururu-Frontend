@@ -18,3 +18,8 @@ export async function fetchGroupBuyRankingTop100(categoryId: number) {
   // API 응답이 { data: { items: [...] } } 구조이므로, items만 반환
   return { ...res.data, data: res.data.data.items };
 }
+
+export async function fetchGroupBuyAllRankingTop100() {
+  const res = await api.get<GroupBuyRankingTop100Response>(`/groupbuys?limit=100&sort=deadline`);
+  return { ...res.data, data: res.data.data.items };
+}

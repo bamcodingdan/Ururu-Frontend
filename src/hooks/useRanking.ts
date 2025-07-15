@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { rankingCategories } from '@/data/ranking';
-import { fetchGroupBuyRankingTop100 } from '@/services/groupbuyService';
+import {
+  fetchGroupBuyAllRankingTop100,
+  fetchGroupBuyRankingTop100,
+} from '@/services/groupbuyService';
 import type { GroupBuyTop3 } from '@/types/groupbuy';
 import type { Product } from '@/types/product';
 
@@ -48,9 +51,20 @@ export const useRanking = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 전체(all)는 API 연동하지 않음
     if (selectedCategory === 'all') {
-      setRankingProducts([]);
+      setLoading(true);
+      setError(null);
+      fetchGroupBuyAllRankingTop100()
+        .then((res) => {
+          setRankingProducts(
+            res.data.map((item, idx) => ({ product: convertToProduct(item), rank: idx + 1 })),
+          );
+        })
+        .catch(() => {
+          setError('랭킹 데이터를 불러오지 못했습니다.');
+          setRankingProducts([]);
+        })
+        .finally(() => setLoading(false));
       return;
     }
     const categoryId = CATEGORY_ID_MAP[selectedCategory];
