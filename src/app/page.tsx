@@ -83,7 +83,7 @@ export default function Home() {
           <PersonalizedSection products={personalizedProducts} />
 
           {/* 카테고리 랭킹 */}
-          <CategoryRankingSection categories={categoryRankings} />
+          <CategoryRankingSection />
 
           {/* 숏구(숏폼) 섹션 */}
           <ShortFormSection />
