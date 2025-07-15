@@ -59,7 +59,7 @@ function OrdersPageContent() {
               {summary.inProgress}
             </span>
             <span className="mt-2 whitespace-nowrap text-center text-sm font-medium text-text-200 md:text-lg">
-              공구 진행중
+              공구 등록
             </span>
           </div>
           <div className="flex flex-col items-center">

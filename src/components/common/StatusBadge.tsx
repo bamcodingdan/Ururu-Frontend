@@ -10,7 +10,7 @@ export function StatusBadge({ status, className = '' }: StatusBadgeProps) {
     switch (status) {
       case 'in_progress':
         return {
-          label: '공구 진행중',
+          label: '공구 등록',
           className: 'bg-primary-100 text-primary-300',
         };
       case 'confirmed':

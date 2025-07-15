@@ -121,7 +121,7 @@ export function ProductManagement() {
       case 'INACTIVE':
         return (
           <span className="inline-flex items-center rounded-lg bg-bg-200 px-3 py-1.5 text-xs font-medium text-text-200">
-            공구 대기중
+            공구 등록 대기
           </span>
         );
       case 'DELETED':

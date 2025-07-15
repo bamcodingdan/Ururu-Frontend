@@ -21,7 +21,7 @@ export function OrderStatusTabs({ summary, activeFilter, onFilterChange }: Order
       label: '전체',
       count: summary.inProgress + summary.confirmed + summary.refundPending, // failed 제외
     },
-    { value: 'in_progress' as const, label: '공구 진행중', count: summary.inProgress },
+    { value: 'in_progress' as const, label: '공구 등록', count: summary.inProgress },
     { value: 'confirmed' as const, label: '공구 확정', count: summary.confirmed },
     { value: 'refund_pending' as const, label: '환불 대기중', count: summary.refundPending },
   ];
