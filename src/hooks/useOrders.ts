@@ -75,13 +75,14 @@ export function useOrders(statusFilter: OrderStatusFilter = 'all') {
         setHasMore(false);
       }
 
-      // 기존 데이터에 새 데이터 추가
-      const newAllOrders = [...allOrders, ...data.orders];
-      setAllOrders(newAllOrders);
-
-      // 변환하여 UI 데이터 업데이트
-      const newConvertedOrders = newAllOrders.map(convertOrder);
-      setOrders(newConvertedOrders);
+      // 기존 데이터에 새 데이터 추가 (함수형 업데이트)
+      setAllOrders((prev) => {
+        const newAllOrders = [...prev, ...data.orders];
+        // 변환하여 UI 데이터 업데이트
+        const newConvertedOrders = newAllOrders.map(convertOrder);
+        setOrders(newConvertedOrders);
+        return newAllOrders;
+      });
 
       setPage((prev) => prev + 1);
     } catch (err) {
@@ -91,7 +92,7 @@ export function useOrders(statusFilter: OrderStatusFilter = 'all') {
     } finally {
       setLoadingMore(false);
     }
-  }, [page, loadingMore, hasMore, allOrders, statusFilter]);
+  }, [page, loadingMore, hasMore, statusFilter]);
 
   // statusFilter가 변경되면 데이터 다시 로드
   useEffect(() => {

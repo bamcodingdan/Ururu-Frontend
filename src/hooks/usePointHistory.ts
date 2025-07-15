@@ -52,13 +52,14 @@ export function usePointHistory() {
         return;
       }
 
-      // 기존 데이터에 새 데이터 추가
-      const newAllTransactions = [...allTransactions, ...data.transactions];
-      setAllTransactions(newAllTransactions);
-
-      // 전체 데이터를 다시 그룹핑
-      const newGroupedHistory = groupPointHistoryByDate(newAllTransactions);
-      setHistory(newGroupedHistory);
+      // 기존 데이터에 새 데이터 추가 (함수형 업데이트)
+      setAllTransactions((prev) => {
+        const newAllTransactions = [...prev, ...data.transactions];
+        // 전체 데이터를 다시 그룹핑
+        const newGroupedHistory = groupPointHistoryByDate(newAllTransactions);
+        setHistory(newGroupedHistory);
+        return newAllTransactions;
+      });
 
       setPage((prev) => prev + 1);
       setHasMore(data.transactions.length === 10);
@@ -67,7 +68,7 @@ export function usePointHistory() {
     } finally {
       setLoadingMore(false);
     }
-  }, [page, loadingMore, hasMore, allTransactions]);
+  }, [page, loadingMore, hasMore]);
 
   useEffect(() => {
     loadInitialData();
