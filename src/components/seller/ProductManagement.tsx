@@ -189,13 +189,13 @@ export function ProductManagement() {
         <div className="flex flex-1 flex-col items-center">
           <span className="text-2xl font-bold text-text-100 md:text-4xl">{activeCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            공구 중
+            공구 등록
           </span>
         </div>
         <div className="flex flex-1 flex-col items-center">
           <span className="text-2xl font-bold text-text-100 md:text-4xl">{inactiveCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            공구 대기
+            공구 등록 대기
           </span>
         </div>
       </div>
