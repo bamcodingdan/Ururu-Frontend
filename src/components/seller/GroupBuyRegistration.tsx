@@ -127,7 +127,11 @@ function OptionSelector({
                         type="text"
                         inputMode="numeric"
                         placeholder="0"
-                        value={optionData[option.optionId]?.priceOverride || ''}
+                        value={
+                          optionData[option.optionId]?.priceOverride
+                            ? optionData[option.optionId].priceOverride.toLocaleString()
+                            : ''
+                        }
                         className={`${FORM_STYLES.input.base} pr-8 ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
                         disabled={!isSelected}
                         onClick={(e) => e.stopPropagation()}
