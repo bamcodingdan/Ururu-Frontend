@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,11 +13,15 @@ import {
 } from '@/components/ui/select';
 import { FormField } from '@/components/form/FormField';
 import { FORM_STYLES } from '@/constants/form-styles';
-import { MOCK_PRODUCTS } from '@/data/seller';
 import Image from 'next/image';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { ImageUploadField, DatePickerField, DiscountTierCard } from './common';
 import { useImageValidation } from '@/hooks/seller/useImageValidation';
+import { fetchGroupBuyCreateData } from '@/services/groupbuyService';
+import type {
+  GroupBuyProduct as ApiGroupBuyProduct,
+  GroupBuyProductOption,
+} from '@/types/groupbuy';
 
 interface DiscountTier {
   id: string;
@@ -25,7 +29,7 @@ interface DiscountTier {
   discountRate: number;
 }
 
-interface GroupBuyProduct {
+interface GroupBuyFormProduct {
   id: string;
   productId: string;
   selectedOptions: string[];
@@ -33,7 +37,7 @@ interface GroupBuyProduct {
 }
 
 interface GroupBuyFormData {
-  products: GroupBuyProduct[];
+  products: GroupBuyFormProduct[];
   title: string;
   description: string;
   mainImage: File | null;
@@ -49,21 +53,21 @@ function OptionSelector({
   selectedOptions,
   onToggle,
 }: {
-  options: readonly string[];
+  options: GroupBuyProductOption[];
   selectedOptions: string[];
   onToggle: (option: string) => void;
 }) {
   return (
     <div className="space-y-2">
       {options.map((option) => (
-        <label key={option} className="flex items-center gap-2">
+        <label key={option.id} className="flex items-center gap-2">
           <input
             type="checkbox"
-            checked={selectedOptions.includes(option)}
-            onChange={() => onToggle(option)}
+            checked={selectedOptions.includes(option.name)}
+            onChange={() => onToggle(option.name)}
             className={FORM_STYLES.checkbox.base}
           />
-          <span className="text-sm text-text-100">{option}</span>
+          <span className="text-sm text-text-100">{option.name}</span>
         </label>
       ))}
     </div>
@@ -71,6 +75,11 @@ function OptionSelector({
 }
 
 export function GroupBuyRegistration() {
+  // API 데이터 상태
+  const [products, setProducts] = useState<ApiGroupBuyProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // 상품 1개만 선택
   const [selectedProductId, setSelectedProductId] = useState('');
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
@@ -85,8 +94,29 @@ export function GroupBuyRegistration() {
   });
   const [discountTiers, setDiscountTiers] = useState<DiscountTier[]>([]);
 
-  const selectedProduct = MOCK_PRODUCTS.find((p) => p.id === selectedProductId);
+  const selectedProduct = products.find((p) => p.productId.toString() === selectedProductId);
   const { validateImageFile, validateMultipleFiles } = useImageValidation();
+
+  // API 데이터 로드
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        console.log('공구 등록 데이터 로드 시작');
+        const response = await fetchGroupBuyCreateData();
+        console.log('공구 등록 데이터 로드 성공:', response);
+        setProducts(response.data.products);
+      } catch (err: any) {
+        console.error('공구 등록 데이터 로드 실패:', err);
+        setError(err.message || '상품 데이터를 불러오지 못했습니다.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const handleOptionToggle = (option: string) => {
     setSelectedOptions((prev) =>
@@ -166,6 +196,22 @@ export function GroupBuyRegistration() {
     // TODO: API 호출
   };
 
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+        <div className="text-center">상품 데이터를 불러오는 중...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+        <div className="text-center text-red-500">오류: {error}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
       {/* 타이틀 */}
@@ -204,13 +250,13 @@ export function GroupBuyRegistration() {
                   <SelectValue placeholder="상품을 선택해주세요" />
                 </SelectTrigger>
                 <SelectContent className="z-[80] max-h-60 bg-bg-100">
-                  {MOCK_PRODUCTS.map((mockProduct) => (
+                  {products.map((product) => (
                     <SelectItem
-                      key={mockProduct.id}
-                      value={mockProduct.id}
+                      key={product.productId}
+                      value={product.productId.toString()}
                       className="cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300"
                     >
-                      {mockProduct.name}
+                      {product.productName}
                     </SelectItem>
                   ))}
                 </SelectContent>

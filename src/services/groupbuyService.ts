@@ -1,5 +1,5 @@
 import api from '@/lib/axios';
-import type { GroupBuyTop3Response } from '@/types/groupbuy';
+import type { GroupBuyTop3Response, GroupBuyCreateResponse } from '@/types/groupbuy';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
   const res = await api.get<GroupBuyTop3Response>('/groupbuys/top3');
@@ -8,5 +8,10 @@ export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
 
 export async function fetchGroupBuyCategoryTop6(categoryId: number): Promise<GroupBuyTop3Response> {
   const res = await api.get<GroupBuyTop3Response>(`/groupbuys/${categoryId}/top6`);
+  return res.data;
+}
+
+export async function fetchGroupBuyCreateData(): Promise<GroupBuyCreateResponse> {
+  const res = await api.get<GroupBuyCreateResponse>('/groupbuys/create');
   return res.data;
 }
