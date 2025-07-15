@@ -118,21 +118,53 @@ function OptionSelector({
                       공동구매 시작가 *
                     </label>
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="0"
                       value={optionData[option.optionId]?.priceOverride || ''}
                       className={`${FORM_STYLES.input.base} ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
-                      min="0"
                       disabled={!isSelected}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => {
+                      onCompositionStart={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        // 숫자, 백스페이스, 삭제, 화살표 키만 허용
+                        const allowedKeys = [
+                          'Backspace',
+                          'Delete',
+                          'ArrowLeft',
+                          'ArrowRight',
+                          'Tab',
+                          'Enter',
+                        ];
+                        const isNumber = /^[0-9]$/.test(e.key);
+                        const isAllowedKey = allowedKeys.includes(e.key);
+
+                        if (!isNumber && !isAllowedKey) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onPaste={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        // 붙여넣기된 텍스트에서 숫자만 추출
+                        const pastedText = e.clipboardData.getData('text');
+                        const numbersOnly = pastedText.replace(/[^0-9]/g, '');
+                        if (numbersOnly && isSelected) {
+                          const numValue = Math.max(0, parseInt(numbersOnly, 10));
+                          onOptionDataChange(option.optionId, 'priceOverride', numValue);
+                        }
+                      }}
+                      onInput={(e) => {
                         e.stopPropagation();
                         if (isSelected) {
-                          onOptionDataChange(
-                            option.optionId,
-                            'priceOverride',
-                            Number(e.target.value),
-                          );
+                          // 숫자만 허용하고 음수 방지
+                          const value = e.currentTarget.value.replace(/[^0-9]/g, '');
+                          const numValue = value === '' ? 0 : Math.max(0, parseInt(value, 10));
+                          onOptionDataChange(option.optionId, 'priceOverride', numValue);
                         }
                       }}
                     />
@@ -142,17 +174,53 @@ function OptionSelector({
                       재고 *
                     </label>
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="0"
                       value={optionData[option.optionId]?.stock || ''}
                       className={`${FORM_STYLES.input.base} ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
-                      min="0"
                       disabled={!isSelected}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => {
+                      onCompositionStart={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        // 숫자, 백스페이스, 삭제, 화살표 키만 허용
+                        const allowedKeys = [
+                          'Backspace',
+                          'Delete',
+                          'ArrowLeft',
+                          'ArrowRight',
+                          'Tab',
+                          'Enter',
+                        ];
+                        const isNumber = /^[0-9]$/.test(e.key);
+                        const isAllowedKey = allowedKeys.includes(e.key);
+
+                        if (!isNumber && !isAllowedKey) {
+                          e.preventDefault();
+                        }
+                      }}
+                      onPaste={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        // 붙여넣기된 텍스트에서 숫자만 추출
+                        const pastedText = e.clipboardData.getData('text');
+                        const numbersOnly = pastedText.replace(/[^0-9]/g, '');
+                        if (numbersOnly && isSelected) {
+                          const numValue = Math.max(0, parseInt(numbersOnly, 10));
+                          onOptionDataChange(option.optionId, 'stock', numValue);
+                        }
+                      }}
+                      onInput={(e) => {
                         e.stopPropagation();
                         if (isSelected) {
-                          onOptionDataChange(option.optionId, 'stock', Number(e.target.value));
+                          // 숫자만 허용하고 음수 방지
+                          const value = e.currentTarget.value.replace(/[^0-9]/g, '');
+                          const numValue = value === '' ? 0 : Math.max(0, parseInt(value, 10));
+                          onOptionDataChange(option.optionId, 'stock', numValue);
                         }
                       }}
                     />
