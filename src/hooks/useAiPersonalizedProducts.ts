@@ -49,39 +49,17 @@ interface GroupBuyResponse {
 interface AiRecommendationResponse {
   data: {
     recommendedGroupBuys: Array<{
-      id: string;
-      name: string;
-      mainImage: string;
-      thumbnails: string[];
-      detailImages: string[];
-      price: number;
+      groupBuyId: string;
+      groupBuyTitle: string;
+      productName: string;
+      imageUrl: string;
+      discountedPrice: number;
       originalPrice: number;
-      discountRate: number;
-      point: number;
-      participants: number;
-      targetParticipants: number;
-      remainingDays: number;
-      category: {
-        main: string;
-        sub?: string;
-      };
-      shippingInfo: {
-        type: string;
-        description: string;
-        shippingFee: string;
-      };
-      rewardTiers: Array<{
-        participants: number;
-        discount: string;
-        achieved: boolean;
-      }>;
-      options: Array<{
-        id: string;
-        name: string;
-        price: number;
-        image: File | null;
-        fullIngredients: string;
-      }>;
+      currentParticipants: number;
+      minParticipants: number;
+      endDate: string;
+      category: string;
+      // ... 실제 응답 필드에 맞게 추가
     }>;
     recommendationReason?: string;
   };
@@ -94,7 +72,7 @@ const getAbsoluteImageUrl = (imageUrl: string): string => {
 
   // 환경에 따른 API 기본 URL 결정
   const isProd = process.env.NODE_ENV === 'production';
-  const baseUrl = isProd ? 'https://api.ururu.shop' : 'http://localhost:8080';
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
 
   return `${baseUrl}${imageUrl}`;
 };
@@ -120,10 +98,11 @@ export function useAiPersonalizedProducts() {
             const res = await api.get('/ai/groupbuy-recommendations/by-profile', {
               params: { topK: 40 },
             });
+            const apiResponse = res.data as AiRecommendationResponse;
 
             if (!ignore) {
-              const recommended = Array.isArray(res.data.data.recommendedGroupBuys)
-                ? res.data.data.recommendedGroupBuys.map((item: any) => ({
+              const recommended: Product[] = Array.isArray(apiResponse.data.recommendedGroupBuys)
+                ? apiResponse.data.recommendedGroupBuys.map((item) => ({
                     id: String(item.groupBuyId),
                     name: item.groupBuyTitle || item.productName,
                     mainImage: getAbsoluteImageUrl(item.imageUrl),
@@ -158,8 +137,8 @@ export function useAiPersonalizedProducts() {
 
               // id 기준으로 중복 제거
               const uniqueProducts = recommended.filter(
-                (item: any, idx: number, arr: any[]) =>
-                  arr.findIndex((p: any) => p.id === item.id) === idx,
+                (item: Product, idx: number, arr: Product[]) =>
+                  arr.findIndex((p: Product) => p.id === item.id) === idx,
               );
               setProducts(uniqueProducts);
             }
@@ -172,7 +151,7 @@ export function useAiPersonalizedProducts() {
         const res = await api.get('/groupbuys', { params: { limit: 8, sort: 'order_count' } });
 
         if (!ignore) {
-          const mappedProducts = Array.isArray(res.data.data.items)
+          const mappedProducts: Product[] = Array.isArray(res.data.data.items)
             ? res.data.data.items.map((item: any) => ({
                 id: String(item.id),
                 name: item.title,
@@ -207,8 +186,8 @@ export function useAiPersonalizedProducts() {
 
           // id 기준으로 중복 제거
           const uniqueProducts = mappedProducts.filter(
-            (item: any, idx: number, arr: any[]) =>
-              arr.findIndex((p: any) => p.id === item.id) === idx,
+            (item: Product, idx: number, arr: Product[]) =>
+              arr.findIndex((p: Product) => p.id === item.id) === idx,
           );
           setProducts(uniqueProducts);
         }
