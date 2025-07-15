@@ -220,53 +220,62 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         </CardContent>
       </Card>
 
-      {/* 상품 옵션 정보 카드 */}
+      {/* 상품 옵션 카드 */}
       <Card className={FORM_STYLES.card.seller + ' mb-12'}>
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-text-100">상품 옵션 정보</CardTitle>
+          <CardTitle className="text-xl font-semibold text-text-100">상품 옵션</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {product.productOptions.map((option, index) => (
-            <div key={index} className="rounded-lg border border-bg-300 p-4">
-              <div className="mb-4">
-                <div className="mb-1 text-sm font-medium text-text-200">옵션명</div>
-                <div className="text-base text-text-100">{option.name}</div>
-              </div>
-              <div className="mb-4">
-                <div className="mb-1 text-sm font-medium text-text-200">가격</div>
-                <div className="text-base text-text-100">{option.price.toLocaleString()}원</div>
-              </div>
-              <div>
-                <div className="mb-1 text-sm font-medium text-text-200">전성분</div>
-                <div className="whitespace-pre-line text-base text-text-100">
-                  {option.fullIngredients}
+        <CardContent className="space-y-4">
+          {product.productOptions.map((option) => (
+            <div
+              key={option.id}
+              className="flex items-center gap-6 border-b border-bg-200 pb-4 last:border-b-0 last:pb-0"
+            >
+              <img
+                src={
+                  option.imageUrl === '/images/default-product-option.jpg'
+                    ? 'https://ururu-bucket.s3.ap-northeast-2.amazonaws.com/groupbuy/thumbnail/default_thumbnail.png'
+                    : option.imageUrl
+                }
+                alt={option.name}
+                className="h-20 w-20 rounded-lg object-cover"
+              />
+              <div className="flex-1">
+                <div className="flex items-center gap-4">
+                  <span className="text-base font-semibold text-text-100">{option.name}</span>
+                  <span className="text-2xl font-bold text-primary-300">
+                    {option.price.toLocaleString()}원
+                  </span>
                 </div>
+                <div className="mt-2 text-sm text-text-200">{option.fullIngredients}</div>
               </div>
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* 상품 공시 정보 카드 */}
+      {/* 화장품 정보제공고시 카드 */}
       <Card className={FORM_STYLES.card.seller + ' mb-12'}>
         <CardHeader className="pb-4">
-          <CardTitle className="text-xl font-semibold text-text-100">상품 공시 정보</CardTitle>
+          <CardTitle className="text-xl font-semibold text-text-100">화장품 정보제공고시</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* 용량 */}
+        <CardContent>
+          <div className="flex flex-col gap-6">
+            {/* 내용물의 용량 또는 중량 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">용량</div>
+              <div className="mb-1 text-sm font-medium text-text-200">내용물의 용량 또는 중량</div>
               <div className="text-base text-text-100">{product.productNotice.capacity}</div>
             </div>
-            {/* 규격 */}
+            {/* 제품 주요 사양 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">규격</div>
+              <div className="mb-1 text-sm font-medium text-text-200">제품 주요 사양</div>
               <div className="text-base text-text-100">{product.productNotice.spec}</div>
             </div>
-            {/* 유통기한 */}
+            {/* 사용기한 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">유통기한</div>
+              <div className="mb-1 text-sm font-medium text-text-200">
+                사용기한(또는 개봉 후 사용기간)
+              </div>
               <div className="text-base text-text-100">{product.productNotice.expiry}</div>
             </div>
             {/* 사용법 */}
@@ -274,9 +283,9 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               <div className="mb-1 text-sm font-medium text-text-200">사용법</div>
               <div className="text-base text-text-100">{product.productNotice.usage}</div>
             </div>
-            {/* 제조사 */}
+            {/* 화장품제조업자 */}
             <div>
-              <div className="mb-1 text-sm font-medium text-text-200">제조사</div>
+              <div className="mb-1 text-sm font-medium text-text-200">화장품제조업자</div>
               <div className="text-base text-text-100">{product.productNotice.manufacturer}</div>
             </div>
             {/* 화장품책임판매업자 */}
