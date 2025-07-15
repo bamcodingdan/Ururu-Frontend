@@ -306,6 +306,18 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
     }));
   };
 
+  const reorderDetailImages = (fromIndex: number, toIndex: number) => {
+    setFormData((prev) => {
+      const newImages = [...prev.detailImages];
+      const [movedImage] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, movedImage);
+      return {
+        ...prev,
+        detailImages: newImages,
+      };
+    });
+  };
+
   const addDiscountTier = () => {
     const newTier: DiscountTier = {
       id: Date.now().toString(),
@@ -518,6 +530,7 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
               uploadedFiles={formData.detailImages}
               onUpload={handleDetailImageUpload}
               onRemove={removeDetailImage}
+              onReorder={reorderDetailImages}
               id="detail-images-upload"
             />
           </div>
