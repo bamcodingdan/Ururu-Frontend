@@ -109,7 +109,11 @@ export function CategoryRankingSection({ className = '' }: { className?: string 
         {loading && <div className="text-center text-sm text-text-200">로딩 중...</div>}
         {error && <div className="text-center text-sm text-red-400">{error}</div>}
         {!loading && !error && activeProducts.length === 0 && (
-          <div className="text-center text-sm text-text-200">랭킹 데이터가 없습니다.</div>
+          <div className="flex flex-col items-center justify-center py-8 md:py-12">
+            <div className="mb-4 text-6xl">🏆</div>
+            <h2 className="mb-2 text-xl font-semibold text-text-100">랭킹 데이터가 없습니다</h2>
+            <p className="text-text-200">다른 카테고리를 선택해보세요!</p>
+          </div>
         )}
         {!loading && !error && activeProducts.length > 0 && (
           <>
