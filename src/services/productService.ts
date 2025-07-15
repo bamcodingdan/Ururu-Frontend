@@ -158,7 +158,7 @@ export class ProductService {
     optionImages.forEach((file) => {
       formData.append('optionImages', file);
     });
-    const response = await api.put(`/products/${productId}`, formData);
+    const response = await api.patch(`/products/${productId}`, formData);
     if (!response.data.success) {
       throw new Error(response.data.message || '상품 수정에 실패했습니다.');
     }

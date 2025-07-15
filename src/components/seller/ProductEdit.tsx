@@ -23,6 +23,7 @@ import type {
   UpdateProductRequest,
   ProductFormData,
   ProductOption,
+  ProductEditOption,
 } from '@/types/product';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
@@ -42,7 +43,6 @@ export function ProductEdit({ productId }: { productId: string }) {
     categoryMain: '',
     categoryMiddle: '',
     categorySub: '',
-    options: [],
     capacity: '',
     capacityUnit: 'ml',
     specification: '',
@@ -63,7 +63,7 @@ export function ProductEdit({ productId }: { productId: string }) {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   // 옵션 관리 로직을 useFormArray로 대체
-  const optionArray = useFormArray<ProductOption>([]);
+  const optionArray = useFormArray<ProductEditOption>([]);
 
   // 상품 데이터 및 메타데이터 로딩
   useEffect(() => {
@@ -83,14 +83,6 @@ export function ProductEdit({ productId }: { productId: string }) {
           categoryMain: product.categories?.[0]?.name || '',
           categoryMiddle: product.categories?.[1]?.name || '',
           categorySub: product.categories?.[2]?.name || '',
-          options:
-            product.productOptions?.map((opt: any) => ({
-              id: opt.id.toString(),
-              name: opt.name,
-              price: opt.price,
-              image: null,
-              fullIngredients: opt.fullIngredients,
-            })) || [],
           capacity: product.productNotice?.capacity?.replace(/[^0-9]/g, '') || '',
           capacityUnit: product.productNotice?.capacity?.replace(/[0-9]/g, '') || 'ml',
           specification: product.productNotice?.spec || '',
@@ -106,12 +98,15 @@ export function ProductEdit({ productId }: { productId: string }) {
         });
         // 옵션 초기화
         if (product.productOptions) {
+          const activeOptions = product.productOptions.filter((opt: any) => !opt.is_deleted);
+
           optionArray.set(
-            product.productOptions.map((opt: any) => ({
-              id: opt.id.toString(),
+            activeOptions.map((opt: any) => ({
+              id: opt.id, // 숫자 id 그대로 유지
               name: opt.name,
               price: opt.price,
-              image: null,
+              image: null, // 새로 업로드된 이미지
+              imageUrl: opt.imageUrl, // 기존 이미지 URL
               fullIngredients: opt.fullIngredients,
             })),
           );
@@ -144,22 +139,19 @@ export function ProductEdit({ productId }: { productId: string }) {
   // 옵션 관리 로직을 useFormArray로 대체
   // (중복 선언 제거)
 
-  // formData.options가 변경될 때 optionArray 업데이트
-  useEffect(() => {
-    if (formData.options.length > 0) {
-      optionArray.set(formData.options);
-    }
-  }, [formData.options]);
-
   // 기존 addOption, removeOption, updateOption, handleImageUpload 대체
-  const handleOptionChange = (id: string, field: keyof ProductOption, value: any) => {
+  const handleOptionChange = (id: string, field: keyof ProductEditOption, value: any) => {
     optionArray.update(
-      (opt) => opt.id === id,
+      (opt) => String(opt.id) === id,
       (opt) => ({ ...opt, [field]: value }),
     );
   };
   const handleOptionRemove = (id: string) => {
-    optionArray.remove((opt) => opt.id === id);
+    if (optionArray.items.length <= 1) {
+      alert('최소 1개 옵션은 필요합니다');
+      return;
+    }
+    optionArray.remove((opt) => String(opt.id) === id);
   };
   const handleOptionImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -167,7 +159,7 @@ export function ProductEdit({ productId }: { productId: string }) {
   };
   const handleAddOption = () => {
     optionArray.add({
-      id: Date.now().toString(),
+      id: null, // 새 옵션은 null로 설정
       name: '',
       price: 0,
       image: null,
@@ -231,14 +223,23 @@ export function ProductEdit({ productId }: { productId: string }) {
       const tagCategoryIds = selectedTags.map((tag) => tag.value);
       // 옵션
       const productOptions = optionArray.items.map((opt) => ({
+        id: opt.id, // 기존 옵션은 숫자 id, 새 옵션은 null
         name: opt.name,
         price: opt.price,
         fullIngredients: opt.fullIngredients,
       }));
-      // 옵션 이미지
-      const optionImages = optionArray.items
-        .map((opt) => opt.image)
-        .filter((img): img is File => !!img);
+
+      // 옵션 이미지 (모든 옵션에 대해 이미지 필요)
+      const optionImages = optionArray.items.map((opt) => {
+        if (opt.image) {
+          // 새로 업로드된 이미지가 있으면 그것을 사용
+          return opt.image;
+        } else {
+          // 기존 이미지가 있거나 새 옵션이면 빈 파일 생성
+          return new File([], 'empty.jpg', { type: 'image/jpeg' });
+        }
+      });
+
       // 상품 공시
       const productNotice = {
         capacity: formData.capacity + (formData.capacityUnit ? formData.capacityUnit : ''),

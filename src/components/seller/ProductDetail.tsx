@@ -32,19 +32,8 @@ export function ProductDetail({ productId }: ProductDetailProps) {
       setError(null);
       try {
         const data = await ProductService.getSellerProductDetail(productId);
-        console.log('ProductDetail: 상품 데이터 로드 완료:', data);
         setProduct(data);
         setCurrentProduct(data); // 스토어에 상품 데이터 저장
-        console.log('ProductDetail: 스토어에 상품 데이터 저장 완료');
-
-        // 스토어 상태 확인
-        setTimeout(() => {
-          const store = useProductStore.getState();
-          console.log('ProductDetail: 스토어 상태 확인:', {
-            currentProduct: !!store.currentProduct,
-            currentProductTags: store.currentProductTags,
-          });
-        }, 100);
 
         // 상품의 태그 정보를 Tag 형태로 변환하여 스토어에 저장
         if (data.productTags) {
@@ -53,7 +42,6 @@ export function ProductDetail({ productId }: ProductDetailProps) {
             label: tag.tagCategoryName,
           }));
           setCurrentProductTags(productTags);
-          console.log('ProductDetail: 스토어에 태그 데이터 저장 완료:', productTags);
         }
       } catch (err: any) {
         setError(err.message || '상품 상세 정보를 불러오는데 실패했습니다.');
@@ -68,12 +56,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
     router.push('/seller/products');
   };
   const handleEdit = () => {
-    console.log('ProductDetail: 수정하기 버튼 클릭, 상품 ID:', productId);
     router.push(`/seller/products/${productId}/edit`);
   };
   const handleDelete = () => {
     // TODO: 삭제 확인 다이얼로그 및 삭제 로직 구현
-    console.log('Delete product:', productId);
   };
 
   const getStatusBadge = (status: string) => {
