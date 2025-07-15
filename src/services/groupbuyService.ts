@@ -4,6 +4,7 @@ import type {
   GroupBuyRankingTop100Response,
   GroupBuyCreateResponse,
   GroupBuyCreateRequest,
+  GroupBuyCreateApiResponse,
 } from '@/types/groupbuy';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
@@ -43,14 +44,12 @@ export async function createGroupBuy({
   request: GroupBuyCreateRequest;
   thumbnail: File;
   detailImages: File[];
-}): Promise<any> {
+}): Promise<GroupBuyCreateApiResponse> {
   const formData = new FormData();
   formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
   formData.append('thumbnail', thumbnail);
   detailImages.forEach((file) => formData.append('detailImages', file));
 
-  const res = await api.post('/groupbuys', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const res = await api.post('/groupbuys', formData);
   return res.data;
 }

@@ -77,3 +77,14 @@ export interface GroupBuyCreateRequest {
   options: GroupBuyOptionRequest[];
   images: GroupBuyImageRequest[];
 }
+
+// 공동구매 등록 API 응답 타입
+export interface GroupBuyCreateApiResponse {
+  success: boolean;
+  message: string;
+  data: {
+    groupBuyId: number;
+    title: string;
+    createdAt: string;
+  };
+}
