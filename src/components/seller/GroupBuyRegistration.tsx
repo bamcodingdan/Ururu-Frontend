@@ -228,8 +228,8 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
   const [optionData, setOptionData] = useState<
     Record<number, { stock: number; priceOverride: number }>
   >(initialData?.optionData || {});
-  const [maxQuantityPerPerson, setMaxQuantityPerPerson] = useState(
-    initialData?.maxQuantityPerPerson || 1,
+  const [maxQuantityPerPerson, setMaxQuantityPerPerson] = useState<number | null>(
+    initialData?.maxQuantityPerPerson || null,
   );
   const [formData, setFormData] = useState<Omit<GroupBuyFormData, 'products' | 'discountTiers'>>({
     title: initialData?.title || '',
@@ -606,15 +606,15 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
               <Input
                 type="text"
                 inputMode="numeric"
-                value={maxQuantityPerPerson || ''}
+                value={maxQuantityPerPerson?.toString() || ''}
                 onChange={(e) => {
                   const value = e.target.value;
-                  // 빈 값이면 빈 문자열로 설정, 아니면 숫자로 변환
+                  // 빈 값이면 null로 설정, 아니면 숫자로 변환
                   if (value === '') {
-                    setMaxQuantityPerPerson(0);
+                    setMaxQuantityPerPerson(null);
                   } else {
                     const numValue = parseInt(value.replace(/[^0-9]/g, ''), 10);
-                    setMaxQuantityPerPerson(isNaN(numValue) ? 0 : numValue);
+                    setMaxQuantityPerPerson(isNaN(numValue) ? null : numValue);
                   }
                 }}
                 placeholder="1"
