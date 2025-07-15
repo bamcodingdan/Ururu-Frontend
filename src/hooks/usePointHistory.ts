@@ -3,6 +3,8 @@ import { getPointTransactions } from '@/services/pointService';
 import { groupPointHistoryByDate } from '@/lib/utils';
 import { GroupedPointHistory, PointTransactionResponse } from '@/types/point';
 
+const PAGE_SIZE = 10;
+
 export function usePointHistory() {
   const [allTransactions, setAllTransactions] = useState<PointTransactionResponse[]>([]);
   const [history, setHistory] = useState<GroupedPointHistory[]>([]);
@@ -27,7 +29,7 @@ export function usePointHistory() {
       setHistory(groupedHistory);
 
       setPage(2);
-      setHasMore(data.transactions.length === 10);
+      setHasMore(data.transactions.length === PAGE_SIZE);
     } catch (err) {
       console.error('포인트 내역 조회 실패:', err);
       setError(`에러: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
@@ -62,7 +64,7 @@ export function usePointHistory() {
       });
 
       setPage((prev) => prev + 1);
-      setHasMore(data.transactions.length === 10);
+      setHasMore(data.transactions.length === PAGE_SIZE);
     } catch (err) {
       console.error('추가 데이터 로드 실패:', err);
     } finally {

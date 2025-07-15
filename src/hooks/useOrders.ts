@@ -3,6 +3,8 @@ import { getOrders } from '@/services/orderService';
 import { convertOrder } from '@/lib/utils';
 import { Order, OrderStatusSummary, OrderStatusFilter, ApiOrder } from '@/types/order';
 
+const PAGE_SIZE = 5;
+
 export function useOrders(statusFilter: OrderStatusFilter = 'all') {
   const [allOrders, setAllOrders] = useState<ApiOrder[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -26,7 +28,7 @@ export function useOrders(statusFilter: OrderStatusFilter = 'all') {
       const apiParams = {
         status: statusFilter as 'all' | 'in_progress' | 'confirmed' | 'refund_pending',
         page: 1,
-        size: 5,
+        size: PAGE_SIZE,
       };
 
       const data = await getOrders(apiParams);
@@ -41,7 +43,7 @@ export function useOrders(statusFilter: OrderStatusFilter = 'all') {
       });
 
       setPage(2);
-      setHasMore(data.orders.length === 5); // 정확히 5개면 더 있을 수 있음
+      setHasMore(data.orders.length === PAGE_SIZE); // 정확히 PAGE_SIZE개면 더 있을 수 있음
     } catch (err) {
       console.error('주문 내역 조회 실패:', err);
       setError(`에러: ${err instanceof Error ? err.message : '알 수 없는 오류'}`);
@@ -62,7 +64,7 @@ export function useOrders(statusFilter: OrderStatusFilter = 'all') {
       const data = await getOrders({
         status: statusFilter as 'all' | 'in_progress' | 'confirmed' | 'refund_pending',
         page,
-        size: 5,
+        size: PAGE_SIZE,
       });
 
       // 데이터가 없거나 5개 미만이면 더 이상 없음
@@ -71,7 +73,7 @@ export function useOrders(statusFilter: OrderStatusFilter = 'all') {
         return;
       }
 
-      if (data.orders.length < 5) {
+      if (data.orders.length < PAGE_SIZE) {
         setHasMore(false);
       }
 
