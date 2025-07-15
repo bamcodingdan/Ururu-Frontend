@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import { FullLayout } from '@/components/layout';
 import {
   HeroCarousel,
@@ -14,6 +15,7 @@ import {
   categoryRankings,
   historyBasedProducts,
 } from '@/data/home';
+import { WithdrawnMemberAlert } from '@/components/common/WithdrawnMemberAlert';
 
 export const metadata: Metadata = {
   title: '우르르 - 뷰티 공동구매 커머스',
@@ -83,6 +85,11 @@ export default function Home() {
           <ShortFormSection />
         </main>
       </div>
+
+      {/* 탈퇴한 회원 알림 */}
+      <Suspense fallback={null}>
+        <WithdrawnMemberAlert />
+      </Suspense>
     </FullLayout>
   );
 }
