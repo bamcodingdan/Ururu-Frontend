@@ -148,7 +148,7 @@ export function ProductEdit({ productId }: { productId: string }) {
   };
   const handleOptionRemove = (id: string) => {
     if (optionArray.items.length <= 1) {
-      alert('최소 1개 옵션은 필요합니다');
+      setOptionError('최소 1개 옵션은 필요합니다');
       return;
     }
     optionArray.remove((opt) => String(opt.id) === id);
@@ -170,11 +170,13 @@ export function ProductEdit({ productId }: { productId: string }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [optionError, setOptionError] = useState<string | null>(null);
   const handleSuccessDialogClose = () => {
     setSubmitSuccess(false);
-    router.push('/seller/products');
+    router.push(`/seller/products/${productId}`);
   };
   const handleErrorDialogClose = () => setSubmitError(null);
+  const handleOptionErrorDialogClose = () => setOptionError(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -567,13 +569,20 @@ export function ProductEdit({ productId }: { productId: string }) {
               <FormField label="내용물의 용량 또는 중량" required className="flex-1">
                 <Input
                   value={formData.capacity}
-                  onChange={(e) =>
-                    handleInputChange('capacity', e.target.value.replace(/[^0-9]/g, ''))
-                  }
-                  placeholder="예: 50, 100, 200 등 숫자만 입력"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // 숫자와 소수점만 허용
+                    const filteredValue = value.replace(/[^0-9.]/g, '');
+                    // 소수점이 2개 이상이면 첫 번째 것만 유지
+                    const parts = filteredValue.split('.');
+                    const processedValue =
+                      parts.length > 2 ? parts[0] + '.' + parts.slice(1).join('') : filteredValue;
+                    handleInputChange('capacity', processedValue);
+                  }}
+                  placeholder="예: 50, 100.5, 200 등 숫자 입력"
                   className={FORM_STYLES.input.base}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
+                  inputMode="decimal"
+                  pattern="[0-9.]*"
                 />
               </FormField>
               <FormField label="단위" required className="w-32">
@@ -726,6 +735,12 @@ export function ProductEdit({ productId }: { productId: string }) {
             onClose={handleErrorDialogClose}
             title="상품 수정 실패"
             message={submitError || ''}
+          />
+          <ErrorDialog
+            isOpen={!!optionError}
+            onClose={handleOptionErrorDialogClose}
+            title="옵션 수정 실패"
+            message={optionError || ''}
           />
           <SuccessDialog
             isOpen={submitSuccess}
