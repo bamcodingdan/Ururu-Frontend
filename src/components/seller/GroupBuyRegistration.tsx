@@ -431,7 +431,10 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
             stock: optionData[opt.optionId]?.stock ?? 0,
           })) || [],
     };
-    const thumbnail = formData.mainImage!;
+    const thumbnail = formData.mainImage;
+    if (!thumbnail) {
+      throw new Error('Main image is required');
+    }
     const detailImages = formData.detailImages;
 
     if (onSubmit) {
