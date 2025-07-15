@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
-import { ScrollToTopButton, ErrorDialog } from '@/components/common';
+import { ScrollToTopButton, ErrorDialog, ConfirmDialog } from '@/components/common';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { PRODUCT_CONSTANTS } from '@/constants/product-constants';
 import { ProductService } from '@/services/productService';
@@ -93,9 +93,8 @@ export function ProductManagement() {
     if (!deleteConfirm.productId) return;
 
     try {
-      // TODO: 실제 삭제 API 호출
-      console.log('Deleting product:', deleteConfirm.productId);
-      // await ProductService.deleteProduct(deleteConfirm.productId);
+      // 실제 삭제 API 호출
+      await ProductService.deleteProduct(deleteConfirm.productId);
 
       // 삭제 후 목록 새로고침
       await fetchProducts(currentPage);
@@ -314,11 +313,15 @@ export function ProductManagement() {
       <ScrollToTopButton />
 
       {/* 삭제 확인 모달창 */}
-      <ErrorDialog
+      <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
         onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
         title="상품 삭제 확인"
-        message={`"${deleteConfirm.productName}" 상품을 삭제하시겠습니까?\n\n삭제된 상품은 복구할 수 없습니다.`}
+        message={`"${deleteConfirm.productName}"\n\n상품을 삭제하시겠습니까? 삭제하면 복구가 불가능합니다.`}
+        confirmText="삭제하기"
+        cancelText="취소"
+        variant="danger"
       />
 
       {/* 삭제 에러 모달창 */}

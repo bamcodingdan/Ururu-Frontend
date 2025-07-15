@@ -106,7 +106,7 @@ export function ProductEdit({ productId }: { productId: string }) {
               name: opt.name,
               price: opt.price,
               image: null, // 새로 업로드된 이미지
-              imageUrl: opt.imageUrl, // 기존 이미지 URL
+              imageUrl: opt.imageUrl, // 원본 URL 그대로 유지 (ImageUploadField에서 처리)
               fullIngredients: opt.fullIngredients,
             })),
           );
@@ -163,6 +163,8 @@ export function ProductEdit({ productId }: { productId: string }) {
       name: '',
       price: 0,
       image: null,
+      imageUrl:
+        'https://ururu-bucket.s3.ap-northeast-2.amazonaws.com/groupbuy/thumbnail/default_thumbnail.png', // 기본 이미지 URL
       fullIngredients: '',
     });
   };

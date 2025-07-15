@@ -232,13 +232,15 @@ export function ProductDetail({ productId }: ProductDetailProps) {
               key={option.id}
               className="flex items-center gap-6 border-b border-bg-200 pb-4 last:border-b-0 last:pb-0"
             >
-              {option.imageUrl && (
-                <img
-                  src={option.imageUrl}
-                  alt={option.name}
-                  className="h-20 w-20 rounded-lg object-cover"
-                />
-              )}
+              <img
+                src={
+                  option.imageUrl === '/images/default-product-option.jpg'
+                    ? 'https://ururu-bucket.s3.ap-northeast-2.amazonaws.com/groupbuy/thumbnail/default_thumbnail.png'
+                    : option.imageUrl
+                }
+                alt={option.name}
+                className="h-20 w-20 rounded-lg object-cover"
+              />
               <div className="flex-1">
                 <div className="flex items-center gap-4">
                   <span className="text-base font-semibold text-text-100">{option.name}</span>

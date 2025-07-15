@@ -78,29 +78,44 @@ export function ImageUploadField({
         )}
 
         {/* 기존 이미지 표시 (새 이미지가 업로드되지 않았을 때만) */}
-        {!multiple && existingImageUrl && uploadedFiles.length === 0 && (
+        {!multiple && uploadedFiles.length === 0 && (
           <div className="mt-4 flex flex-col items-center">
-            <div
-              className="relative"
-              style={{
-                maxWidth: isOptionVariant ? 120 : 240,
-                maxHeight: isOptionVariant ? 90 : 180,
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={existingImageUrl}
-                alt="기존 이미지"
-                className="rounded-lg object-contain"
+            {existingImageUrl === '/images/default-product-option.jpg' ? (
+              // 기존 이미지가 없는 경우
+              <div className="flex flex-col items-center">
+                <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-bg-200">
+                  <span className="text-xs text-text-300">이미지 없음</span>
+                </div>
+                <span className="mt-2 text-xs text-text-200">
+                  기존 이미지가 없으면 기본 이미지로 대체됩니다
+                </span>
+              </div>
+            ) : (
+              // 기존 이미지가 있는 경우
+              <div
+                className="relative"
                 style={{
                   maxWidth: isOptionVariant ? 120 : 240,
                   maxHeight: isOptionVariant ? 90 : 180,
-                  width: 'auto',
-                  height: 'auto',
                 }}
-              />
-            </div>
-            <span className="mt-2 text-xs text-text-200">기존 이미지</span>
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={existingImageUrl}
+                  alt="기존 이미지"
+                  className="rounded-lg object-contain"
+                  style={{
+                    maxWidth: isOptionVariant ? 120 : 240,
+                    maxHeight: isOptionVariant ? 90 : 180,
+                    width: 'auto',
+                    height: 'auto',
+                  }}
+                />
+              </div>
+            )}
+            {existingImageUrl && existingImageUrl !== '/images/default-product-option.jpg' && (
+              <span className="mt-2 text-xs text-text-200">기존 이미지</span>
+            )}
           </div>
         )}
         {/* 파일명/개수 표시 */}

@@ -164,4 +164,17 @@ export class ProductService {
     }
     return response.data.data;
   }
+
+  /**
+   * 상품 삭제
+   * @param productId 상품 ID
+   * @returns {Promise<any>}
+   */
+  static async deleteProduct(productId: number): Promise<any> {
+    const response = await api.delete(`/products/${productId}`);
+    if (!response.data.success) {
+      throw new Error(response.data.message || '상품 삭제에 실패했습니다.');
+    }
+    return response.data.data;
+  }
 }
