@@ -56,13 +56,30 @@ export const useRanking = () => {
       setError(null);
       fetchGroupBuyAllRankingTop100()
         .then((res) => {
-          setRankingProducts(
-            res.data.map((item, idx) => ({ product: convertToProduct(item), rank: idx + 1 })),
-          );
+          if (res.success === false) {
+            setError(res.message || '랭킹 데이터를 불러오지 못했습니다.');
+            setRankingProducts([]);
+            return;
+          }
+          if (Array.isArray(res.data) && res.data.length === 0) {
+            setRankingProducts([]);
+            setError(null);
+          } else {
+            setRankingProducts(
+              res.data.map((item, idx) => ({ product: convertToProduct(item), rank: idx + 1 })),
+            );
+            setError(null);
+          }
         })
-        .catch(() => {
-          setError('랭킹 데이터를 불러오지 못했습니다.');
-          setRankingProducts([]);
+        .catch((err) => {
+          // 404 + 특정 메시지면 빈 안내, 그 외는 에러
+          if (err.status === 404 && err.message === '해당 공동구매를 찾을 수 없습니다.') {
+            setRankingProducts([]);
+            setError(null);
+          } else {
+            setError('랭킹 데이터를 불러오지 못했습니다.');
+            setRankingProducts([]);
+          }
         })
         .finally(() => setLoading(false));
       return;
@@ -70,19 +87,36 @@ export const useRanking = () => {
     const categoryId = CATEGORY_ID_MAP[selectedCategory];
     if (!categoryId) {
       setRankingProducts([]);
+      setError(null);
       return;
     }
     setLoading(true);
     setError(null);
     fetchGroupBuyRankingTop100(categoryId)
       .then((res) => {
-        setRankingProducts(
-          res.data.map((item, idx) => ({ product: convertToProduct(item), rank: idx + 1 })),
-        );
+        if (res.success === false) {
+          setError(res.message || '랭킹 데이터를 불러오지 못했습니다.');
+          setRankingProducts([]);
+          return;
+        }
+        if (Array.isArray(res.data) && res.data.length === 0) {
+          setRankingProducts([]);
+          setError(null);
+        } else {
+          setRankingProducts(
+            res.data.map((item, idx) => ({ product: convertToProduct(item), rank: idx + 1 })),
+          );
+          setError(null);
+        }
       })
-      .catch(() => {
-        setError('랭킹 데이터를 불러오지 못했습니다.');
-        setRankingProducts([]);
+      .catch((err) => {
+        if (err.status === 404 && err.message === '해당 공동구매를 찾을 수 없습니다.') {
+          setRankingProducts([]);
+          setError(null);
+        } else {
+          setError('랭킹 데이터를 불러오지 못했습니다.');
+          setRankingProducts([]);
+        }
       })
       .finally(() => setLoading(false));
   }, [selectedCategory]);
