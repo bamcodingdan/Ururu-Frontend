@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,6 +26,8 @@ import type {
 } from '@/types/groupbuy';
 import { ErrorDialog } from '@/components/common/ErrorDialog';
 import { SuccessDialog } from '@/components/common/SuccessDialog';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Plus } from 'lucide-react';
 
 interface DiscountTier {
   id: string;
@@ -200,6 +203,8 @@ interface GroupBuyFormProps {
 }
 
 export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps) {
+  const router = useRouter();
+
   // API 데이터 상태
   const [products, setProducts] = useState<ApiGroupBuyProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -246,7 +251,16 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
         const response = await fetchGroupBuyCreateData();
         setProducts(response.data.products);
       } catch (err: any) {
-        setError(err.message || '상품 데이터를 불러오지 못했습니다.');
+        // 409 에러나 상품이 없다는 에러는 EmptyState로 처리
+        if (
+          err.message?.includes('공동구매 등록 가능한 상품 없습니다') ||
+          err.message?.includes('상품이 없습니다') ||
+          err.status === 409
+        ) {
+          setProducts([]); // 빈 배열로 설정하여 EmptyState 표시
+        } else {
+          setError(err.message || '상품 데이터를 불러오지 못했습니다.');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -431,6 +445,10 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
     }
   };
 
+  const handleRegisterProduct = () => {
+    router.push('/seller/products/new');
+  };
+
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
@@ -443,6 +461,56 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
         <div className="text-center text-red-500">오류: {error}</div>
+      </div>
+    );
+  }
+
+  // 상품이 없을 때 EmptyState 표시
+  if (products.length === 0) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+        {/* 타이틀 */}
+        <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">
+          공구 {mode === 'create' ? '등록' : '수정'}
+        </h1>
+
+        {/* 알림 배너 */}
+        <div className="mb-8 flex items-start gap-3 rounded-lg bg-bg-100 p-6 shadow-sm">
+          <Image
+            src="/ururu-gradient.svg"
+            alt="우르르"
+            width={24}
+            height={24}
+            className="h-6 w-6 flex-shrink-0"
+          />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-text-200">
+              {mode === 'create'
+                ? '새로운 상품을 등록하여 공동구매를 시작하세요!'
+                : '공동구매 정보를 수정하세요!'}
+            </p>
+          </div>
+        </div>
+
+        {/* 상품 목록 섹션 */}
+        <section>
+          <SectionHeader title="등록된 상품" />
+          <div className="mt-4">
+            <div className="space-y-6">
+              <EmptyState
+                icon="📦"
+                title="등록된 상품이 없습니다"
+                description="첫 번째 상품을 등록해보세요"
+              />
+              <div className="text-center">
+                <Button onClick={handleRegisterProduct} className={FORM_STYLES.button.submit}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  상품 등록하기
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     );
   }
