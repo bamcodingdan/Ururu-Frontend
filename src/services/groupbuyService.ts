@@ -3,6 +3,7 @@ import type {
   GroupBuyTop3Response,
   GroupBuyRankingTop100Response,
   GroupBuyCreateResponse,
+  GroupBuyCreateRequest,
 } from '@/types/groupbuy';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
@@ -39,7 +40,7 @@ export async function createGroupBuy({
   thumbnail,
   detailImages,
 }: {
-  request: any; // 실제 타입은 GroupBuyCreateRequest
+  request: GroupBuyCreateRequest;
   thumbnail: File;
   detailImages: File[];
 }): Promise<any> {
