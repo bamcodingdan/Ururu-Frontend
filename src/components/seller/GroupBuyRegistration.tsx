@@ -59,8 +59,8 @@ function OptionSelector({
 }) {
   return (
     <div className="space-y-2">
-      {options.map((option) => (
-        <label key={option.id} className="flex items-center gap-2">
+      {options.map((option, index) => (
+        <label key={`${option.id}-${option.name}-${index}`} className="flex items-center gap-2">
           <input
             type="checkbox"
             checked={selectedOptions.includes(option.name)}
