@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import { FullLayout } from '@/components/layout';
 import {
   HeroCarousel,
@@ -14,6 +15,11 @@ import {
   categoryRankings,
   historyBasedProducts,
 } from '@/data/home';
+import { WithdrawnMemberAlert } from '@/components/common/WithdrawnMemberAlert';
+import { useEffect, useState } from 'react';
+import { fetchGroupBuyTop3 } from '@/services/groupbuyService';
+import type { GroupBuyTop3 } from '@/types/groupbuy';
+import RealtimeBestFetcher from '@/components/home/RealtimeBestFetcher';
 
 export const metadata: Metadata = {
   title: '우르르 - 뷰티 공동구매 커머스',
@@ -61,7 +67,7 @@ export default function Home() {
             </div>
             {/* 실시간 베스트: 더 넓게 */}
             <div className="h-[360px] w-[480px] flex-shrink-0">
-              <RealtimeBestSection products={realtimeBestProducts} className="h-full" />
+              <RealtimeBestFetcher className="h-full" />
             </div>
           </div>
         </section>
@@ -70,19 +76,24 @@ export default function Home() {
         <main className="space-y-20">
           {/* 실시간 베스트 (모바일/태블릿만) */}
           <section className="lg:hidden">
-            <RealtimeBestSection products={realtimeBestProducts} />
+            <RealtimeBestFetcher />
           </section>
 
           {/* 개인화 추천 */}
           <PersonalizedSection products={personalizedProducts} />
 
           {/* 카테고리 랭킹 */}
-          <CategoryRankingSection categories={categoryRankings} />
+          <CategoryRankingSection />
 
           {/* 숏구(숏폼) 섹션 */}
           <ShortFormSection />
         </main>
       </div>
+
+      {/* 탈퇴한 회원 알림 */}
+      <Suspense fallback={null}>
+        <WithdrawnMemberAlert />
+      </Suspense>
     </FullLayout>
   );
 }
