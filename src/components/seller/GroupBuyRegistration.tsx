@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
 import { FormField } from '@/components/form/FormField';
 import { FORM_STYLES } from '@/constants/form-styles';
 import Image from 'next/image';
@@ -52,24 +53,116 @@ function OptionSelector({
   options,
   selectedOptions,
   onToggle,
+  onOptionDataChange,
+  optionData,
 }: {
   options: GroupBuyProductOption[];
   selectedOptions: string[];
   onToggle: (option: string) => void;
+  onOptionDataChange: (optionId: number, field: 'stock' | 'priceOverride', value: number) => void;
+  optionData: Record<number, { stock: number; priceOverride: number }>;
 }) {
   return (
-    <div className="space-y-2">
-      {options.map((option, index) => (
-        <label key={`${option.id}-${option.name}-${index}`} className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={selectedOptions.includes(option.name)}
-            onChange={() => onToggle(option.name)}
-            className={FORM_STYLES.checkbox.base}
-          />
-          <span className="text-sm text-text-100">{option.name}</span>
-        </label>
-      ))}
+    <div className="space-y-4">
+      {options.map((option, index) => {
+        const isSelected = selectedOptions.includes(option.optionName);
+
+        return (
+          <Card
+            key={`${option.optionId}-${option.optionName}-${index}`}
+            className={`flex w-full cursor-pointer transition-all hover:shadow-md ${
+              isSelected ? 'bg-primary-50 border-primary-300' : 'border-bg-300 bg-bg-100'
+            }`}
+            onClick={() => onToggle(option.optionName)}
+          >
+            <CardContent className="flex w-full gap-4 p-4">
+              {/* 체크박스 */}
+              <div className="flex items-start pt-1">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => onToggle(option.optionName)}
+                  className={FORM_STYLES.checkbox.base}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+
+              {/* 옵션 이미지 */}
+              <div className="relative h-[108px] w-[108px] flex-shrink-0 overflow-hidden rounded-lg">
+                <Image
+                  src={
+                    option.optionUrl !== '/images/default-product-option.jpg'
+                      ? option.optionUrl
+                      : '/placeholder-product.jpg'
+                  }
+                  alt={option.optionName}
+                  fill
+                  className="object-cover"
+                  sizes="108px"
+                />
+              </div>
+
+              {/* 옵션 정보 */}
+              <div className="flex flex-1 flex-col gap-2">
+                {/* 옵션명 */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-medium text-text-100 md:text-base">
+                    {option.optionName}
+                  </span>
+                </div>
+
+                {/* 재고와 공동구매 시작가 입력 - 항상 표시하되 선택되지 않은 경우 비활성화 */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className={`text-xs ${isSelected ? 'text-text-200' : 'text-text-300'}`}>
+                      공동구매 시작가 *
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={optionData[option.optionId]?.priceOverride || ''}
+                      className={`${FORM_STYLES.input.base} ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
+                      min="0"
+                      disabled={!isSelected}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        if (isSelected) {
+                          onOptionDataChange(
+                            option.optionId,
+                            'priceOverride',
+                            Number(e.target.value),
+                          );
+                        }
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label className={`text-xs ${isSelected ? 'text-text-200' : 'text-text-300'}`}>
+                      재고 *
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={optionData[option.optionId]?.stock || ''}
+                      className={`${FORM_STYLES.input.base} ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
+                      min="0"
+                      disabled={!isSelected}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        if (isSelected) {
+                          onOptionDataChange(option.optionId, 'stock', Number(e.target.value));
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
@@ -83,6 +176,9 @@ export function GroupBuyRegistration() {
   // 상품 1개만 선택
   const [selectedProductId, setSelectedProductId] = useState('');
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [optionData, setOptionData] = useState<
+    Record<number, { stock: number; priceOverride: number }>
+  >({});
   const [maxQuantityPerPerson, setMaxQuantityPerPerson] = useState(1);
   const [formData, setFormData] = useState<Omit<GroupBuyFormData, 'products' | 'discountTiers'>>({
     title: '',
@@ -103,12 +199,9 @@ export function GroupBuyRegistration() {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('공구 등록 데이터 로드 시작');
         const response = await fetchGroupBuyCreateData();
-        console.log('공구 등록 데이터 로드 성공:', response);
         setProducts(response.data.products);
       } catch (err: any) {
-        console.error('공구 등록 데이터 로드 실패:', err);
         setError(err.message || '상품 데이터를 불러오지 못했습니다.');
       } finally {
         setIsLoading(false);
@@ -122,6 +215,20 @@ export function GroupBuyRegistration() {
     setSelectedOptions((prev) =>
       prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option],
     );
+  };
+
+  const handleOptionDataChange = (
+    optionId: number,
+    field: 'stock' | 'priceOverride',
+    value: number,
+  ) => {
+    setOptionData((prev) => ({
+      ...prev,
+      [optionId]: {
+        ...prev[optionId],
+        [field]: value,
+      },
+    }));
   };
 
   const handleMainImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -269,6 +376,8 @@ export function GroupBuyRegistration() {
                   options={selectedProduct.options}
                   selectedOptions={selectedOptions}
                   onToggle={handleOptionToggle}
+                  onOptionDataChange={handleOptionDataChange}
+                  optionData={optionData}
                 />
               </FormField>
             )}

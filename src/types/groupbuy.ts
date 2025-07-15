@@ -20,13 +20,9 @@ export interface GroupBuyTop3Response {
 
 // 공구 등록 API 관련 타입
 export interface GroupBuyProductOption {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
-  fullIngredients: string;
-  createdAt: string;
-  updatedAt: string;
+  optionId: number;
+  optionName: string;
+  optionUrl: string;
 }
 
 export interface GroupBuyProduct {
@@ -41,4 +37,34 @@ export interface GroupBuyCreateResponse {
   data: {
     products: GroupBuyProduct[];
   };
+}
+
+// 공동구매 등록 API 요청 타입
+export interface GroupBuyOptionRequest {
+  id: number;
+  productOptionId: number;
+  stock: number;
+  priceOverride: number;
+}
+
+export interface GroupBuyDiscountStage {
+  minQuantity: number;
+  discountRate: number;
+}
+
+export interface GroupBuyImageRequest {
+  id: number;
+  displayOrder: number;
+  detailImageUrl: string;
+}
+
+export interface GroupBuyCreateRequest {
+  title: string;
+  description: string;
+  productId: number;
+  discountStages: GroupBuyDiscountStage[];
+  limitQuantityPerMember: number;
+  endsAt: string;
+  options: GroupBuyOptionRequest[];
+  images: GroupBuyImageRequest[];
 }
