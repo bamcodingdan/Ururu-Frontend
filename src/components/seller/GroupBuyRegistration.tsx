@@ -414,7 +414,7 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
     const request = {
       title: formData.title,
       description: formData.description,
-      endsAt: formData.endDate?.toISOString(),
+      endsAt: new Date(formData.endDate!.getTime() + 24 * 60 * 60 * 1000 - 1000).toISOString(),
       limitQuantityPerMember: maxQuantityPerPerson,
       productId: Number(selectedProductId),
       discountStages: discountTiers.map((tier) => ({
