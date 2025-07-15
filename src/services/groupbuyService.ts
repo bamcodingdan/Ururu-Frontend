@@ -15,3 +15,24 @@ export async function fetchGroupBuyCreateData(): Promise<GroupBuyCreateResponse>
   const res = await api.get<GroupBuyCreateResponse>('/groupbuys/create');
   return res.data;
 }
+
+// 공동구매 등록 API (multipart/form-data)
+export async function createGroupBuy({
+  request,
+  thumbnail,
+  detailImages,
+}: {
+  request: any; // 실제 타입은 GroupBuyCreateRequest
+  thumbnail: File;
+  detailImages: File[];
+}): Promise<any> {
+  const formData = new FormData();
+  formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+  formData.append('thumbnail', thumbnail);
+  detailImages.forEach((file) => formData.append('detailImages', file));
+
+  const res = await api.post('/groupbuys', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data;
+}

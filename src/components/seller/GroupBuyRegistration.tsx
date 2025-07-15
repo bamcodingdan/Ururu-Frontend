@@ -18,7 +18,7 @@ import Image from 'next/image';
 import { SectionHeader } from '@/components/common/SectionHeader';
 import { ImageUploadField, DatePickerField, DiscountTierCard } from './common';
 import { useImageValidation } from '@/hooks/seller/useImageValidation';
-import { fetchGroupBuyCreateData } from '@/services/groupbuyService';
+import { fetchGroupBuyCreateData, createGroupBuy } from '@/services/groupbuyService';
 import type {
   GroupBuyProduct as ApiGroupBuyProduct,
   GroupBuyProductOption,
@@ -202,6 +202,8 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
   const [products, setProducts] = useState<ApiGroupBuyProduct[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // 상품 1개만 선택
   const [selectedProductId, setSelectedProductId] = useState(initialData?.selectedProductId || '');
@@ -337,24 +339,56 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // 필수값 누락 체크
+    const missingFields: string[] = [];
+    if (!selectedProductId) missingFields.push('상품을 선택해주세요.');
+    if (!formData.title) missingFields.push('공구 제목을 입력해주세요.');
+    if (!formData.description) missingFields.push('공구 설명을 입력해주세요.');
+    if (!formData.mainImage) missingFields.push('대표 이미지를 업로드해주세요.');
+    if (!formData.endDate) missingFields.push('종료일을 선택해주세요.');
+    if (missingFields.length > 0) {
+      setSubmitError(missingFields.join('\n'));
+      return;
+    }
+
     // 실제 등록/수정 데이터 구조 예시
-    const submitData = {
-      ...formData,
-      productId: selectedProductId,
-      selectedOptions,
-      maxQuantityPerPerson,
-      discountTiers,
-      optionData,
-      ...(mode === 'edit' && { groupBuyId: initialData?.groupBuyId }),
+    const request = {
+      title: formData.title,
+      description: formData.description,
+      endsAt: formData.endDate?.toISOString(),
+      limitQuantityPerMember: maxQuantityPerPerson,
+      productId: Number(selectedProductId),
+      discountStages: discountTiers.map((tier) => ({
+        minQuantity: tier.minParticipants,
+        discountRate: tier.discountRate,
+      })),
+      options:
+        selectedProduct?.options
+          .filter((opt) => selectedOptions.includes(opt.optionName))
+          .map((opt) => ({
+            productOptionId: opt.optionId,
+            priceOverride: optionData[opt.optionId]?.priceOverride ?? 0,
+            stock: optionData[opt.optionId]?.stock ?? 0,
+          })) || [],
     };
+    const thumbnail = formData.mainImage!;
+    const detailImages = formData.detailImages;
 
     if (onSubmit) {
-      onSubmit(submitData);
+      onSubmit({ request, thumbnail, detailImages });
     } else {
-      console.log(`공구 ${mode === 'create' ? '등록' : '수정'}:`, submitData);
-      // TODO: API 호출
+      setIsSubmitting(true);
+      try {
+        await createGroupBuy({ request, thumbnail, detailImages });
+        alert('공동구매가 성공적으로 등록되었습니다!');
+        // TODO: 등록 후 이동 (예: 라우터 push)
+      } catch (err: any) {
+        setSubmitError(err?.message || '공동구매 등록에 실패했습니다.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -567,8 +601,9 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
           <Button
             type="submit"
             className="h-12 w-full rounded-lg bg-primary-300 text-sm font-medium text-text-on transition hover:opacity-80 focus:ring-primary-300 active:opacity-90"
+            disabled={isSubmitting}
           >
-            {mode === 'create' ? '등록하기' : '수정하기'}
+            {isSubmitting ? '등록 중...' : mode === 'create' ? '등록하기' : '수정하기'}
           </Button>
         </div>
       </form>
