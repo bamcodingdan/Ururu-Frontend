@@ -108,7 +108,7 @@ export interface ProductFormData {
   categoryMain: string;
   categoryMiddle: string;
   categorySub: string;
-  options?: ProductOption[];
+  options?: ProductEditOption[];
   capacity: string;
   capacityUnit: string;
   specification: string;

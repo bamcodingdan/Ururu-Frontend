@@ -23,7 +23,7 @@ import type {
   Tag,
   CreateProductRequest,
   ProductFormData,
-  ProductOption,
+  ProductEditOption,
   ProductRegistrationProps,
 } from '@/types/product';
 import { Badge } from '@/components/ui/badge';
@@ -66,17 +66,17 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
   };
 
   // 옵션 관리 로직을 useFormArray로 대체
-  const optionArray = useFormArray<ProductOption>(formData.options);
+  const optionArray = useFormArray<ProductEditOption>(formData.options);
 
   // 기존 addOption, removeOption, updateOption, handleImageUpload 대체
-  const handleOptionChange = (id: string, field: keyof ProductOption, value: any) => {
+  const handleOptionChange = (id: string, field: keyof ProductEditOption, value: any) => {
     optionArray.update(
-      (opt) => opt.id === id,
+      (opt) => String(opt.id) === id,
       (opt) => ({ ...opt, [field]: value }),
     );
   };
   const handleOptionRemove = (id: string) => {
-    optionArray.remove((opt) => opt.id === id);
+    optionArray.remove((opt) => String(opt.id) === id);
   };
   const handleOptionImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,7 +84,7 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
   };
   const handleAddOption = () => {
     optionArray.add({
-      id: Date.now().toString(),
+      id: null,
       name: '',
       price: 0,
       image: null,
