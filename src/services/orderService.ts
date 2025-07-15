@@ -25,13 +25,22 @@ export async function getOrders(params: ApiOrdersParams = {}) {
     size,
   };
 
-  const response = await api.get<{
-    success: boolean;
-    message: string;
-    data: ApiOrdersResponse;
-  }>('/orders/my', {
-    params: requestParams,
-  });
+  try {
+    const response = await api.get<{
+      success: boolean;
+      message: string;
+      data: ApiOrdersResponse;
+    }>('/orders/my', {
+      params: requestParams,
+    });
 
-  return response.data.data;
+    if (!response.data.success) {
+      throw new Error(response.data.message || 'API 요청 실패');
+    }
+
+    return response.data.data;
+  } catch (error) {
+    console.error('주문 내역 조회 중 오류:', error);
+    throw error;
+  }
 }
