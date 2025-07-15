@@ -15,3 +15,5 @@ export interface GroupBuyTop3Response {
   message: string;
   data: GroupBuyTop3[];
 }
+
+// 카테고리별 랭킹 API 응답도 GroupBuyTop3Response와 동일하게 사용 가능
