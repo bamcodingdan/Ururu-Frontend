@@ -159,7 +159,7 @@ function OptionSelector({
                         type="text"
                         inputMode="numeric"
                         placeholder="0"
-                        value={optionData[option.optionId]?.stock || ''}
+                        value={optionData[option.optionId]?.stock ?? ''}
                         className={`${FORM_STYLES.input.base} pr-8 ${!isSelected ? 'cursor-not-allowed bg-bg-200 text-text-300' : ''}`}
                         disabled={!isSelected}
                         onClick={(e) => e.stopPropagation()}
@@ -424,7 +424,8 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
       options:
         selectedProduct?.options
           .filter((opt) => selectedOptions.includes(opt.optionName))
-          .map((opt) => ({
+          .map((opt, idx) => ({
+            id: idx,
             productOptionId: opt.optionId,
             priceOverride: optionData[opt.optionId]?.priceOverride ?? 0,
             stock: optionData[opt.optionId]?.stock ?? 0,

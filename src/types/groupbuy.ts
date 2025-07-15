@@ -75,7 +75,7 @@ export interface GroupBuyCreateRequest {
   limitQuantityPerMember: number;
   endsAt: string;
   options: GroupBuyOptionRequest[];
-  images: GroupBuyImageRequest[];
+  images?: GroupBuyImageRequest[];
 }
 
 // 공동구매 등록 API 응답 타입
