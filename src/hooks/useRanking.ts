@@ -45,7 +45,7 @@ function convertToProduct(item: GroupBuyTop3): Product {
 }
 
 export const useRanking = () => {
-  const [selectedCategory, setSelectedCategory] = useState('skincare');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [rankingProducts, setRankingProducts] = useState<{ product: Product; rank: number }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
