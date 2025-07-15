@@ -27,7 +27,7 @@ function OptionCard({
   onRemove: (id: string) => void;
   onImageUpload: (id: string, e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
-  const optionId = String(option.id);
+  const optionId = option.id !== null ? String(option.id) : `new-${index}`;
 
   return (
     <Card className={FORM_STYLES.card.option + ' mb-8'}>
@@ -116,7 +116,7 @@ export function OptionList({ options, onChange, onRemove, onImageUpload }: Optio
     <div>
       {options.map((option, idx) => (
         <OptionCard
-          key={String(option.id)}
+          key={option.id !== null ? String(option.id) : `new-${idx}`}
           option={option}
           index={idx}
           onChange={onChange}

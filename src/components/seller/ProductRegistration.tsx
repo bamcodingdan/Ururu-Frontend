@@ -70,13 +70,37 @@ export function ProductRegistration({ categories, tags }: ProductRegistrationPro
 
   // 기존 addOption, removeOption, updateOption, handleImageUpload 대체
   const handleOptionChange = (id: string, field: keyof ProductEditOption, value: any) => {
-    optionArray.update(
-      (opt) => String(opt.id) === id,
-      (opt) => ({ ...opt, [field]: value }),
-    );
+    // id가 "new-{index}" 형태인지 확인
+    const newOptionMatch = id.match(/^new-(\d+)$/);
+    if (newOptionMatch) {
+      // 새 옵션인 경우 인덱스로 찾기
+      const index = parseInt(newOptionMatch[1], 10);
+      const currentItems = optionArray.items;
+      const updatedItems = currentItems.map((opt, idx) =>
+        idx === index ? { ...opt, [field]: value } : opt,
+      );
+      optionArray.set(updatedItems);
+    } else {
+      // 기존 옵션인 경우 id로 찾기
+      optionArray.update(
+        (opt) => String(opt.id) === id,
+        (opt) => ({ ...opt, [field]: value }),
+      );
+    }
   };
   const handleOptionRemove = (id: string) => {
-    optionArray.remove((opt) => String(opt.id) === id);
+    // id가 "new-{index}" 형태인지 확인
+    const newOptionMatch = id.match(/^new-(\d+)$/);
+    if (newOptionMatch) {
+      // 새 옵션인 경우 인덱스로 찾기
+      const index = parseInt(newOptionMatch[1], 10);
+      const currentItems = optionArray.items;
+      const updatedItems = currentItems.filter((_, idx) => idx !== index);
+      optionArray.set(updatedItems);
+    } else {
+      // 기존 옵션인 경우 id로 찾기
+      optionArray.remove((opt) => String(opt.id) === id);
+    }
   };
   const handleOptionImageUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
