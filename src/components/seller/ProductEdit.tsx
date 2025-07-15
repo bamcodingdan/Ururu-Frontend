@@ -356,12 +356,6 @@ export function ProductEdit({ productId }: { productId: number }) {
   // 태그 비동기 로딩/에러/선택 상태 관리
   // (중복 선언 제거)
 
-  useEffect(() => {
-    // 태그 데이터 설정
-    // setTagList(tags); // 이 줄은 이제 필요 없음
-    // setTagLoading(false); // 이 줄은 이제 필요 없음
-  }, [tags]);
-
   // 태그 토글 로직을 ProductRegistration과 동일하게 수정
   const handleTagToggle = (tag: Tag) => {
     setSelectedTags((prev) => {
