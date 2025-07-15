@@ -6,18 +6,27 @@ import { ProductCard } from '@/components/product';
 import type { Product } from '@/types/product';
 import { FORM_STYLES } from '@/constants/form-styles';
 import { CenteredSectionHeader } from '@/components/common/CenteredSectionHeader';
+import { useAiPersonalizedProducts } from '@/hooks/useAiPersonalizedProducts';
+import { ProductGridSkeleton } from '@/components/common/LoadingSkeleton';
 
 interface PersonalizedSectionProps {
-  products: Product[];
+  products?: Product[];
   className?: string;
   loading?: boolean;
 }
 
 export function PersonalizedSection({
-  products,
+  products: propProducts,
   className = '',
-  loading = false,
+  loading: propLoading = false,
 }: PersonalizedSectionProps) {
+  // API 호출을 직접 수행
+  const { products: apiProducts, loading: apiLoading, error } = useAiPersonalizedProducts();
+
+  // API 로딩 중이면 스켈레톤을 보여주고, API 결과가 있으면 API 결과를 사용
+  // API 결과가 없고 로딩이 끝났을 때만 fallback 데이터 사용
+  const products = apiLoading ? [] : apiProducts.length > 0 ? apiProducts : propProducts || [];
+  const loading = propLoading || apiLoading;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // 페이지네이션 상태
@@ -42,8 +51,8 @@ export function PersonalizedSection({
     }
   };
 
-  // 로딩 중이거나 products가 없으면 로딩 상태 표시
-  if (loading) {
+  // 에러가 있으면 에러 메시지 표시
+  if (error) {
     return (
       <section className={`w-full ${className}`}>
         <CenteredSectionHeader
@@ -52,8 +61,22 @@ export function PersonalizedSection({
           className="mb-6"
         />
         <div className="py-8 text-center">
-          <p>AI 추천 상품을 불러오는 중...</p>
+          <p className="text-gray-500">{error}</p>
         </div>
+      </section>
+    );
+  }
+
+  // 로딩 중이거나 products가 없으면 스켈레톤 표시
+  if (loading && !products.length) {
+    return (
+      <section className={`w-full ${className}`}>
+        <CenteredSectionHeader
+          title="취향 맞춤"
+          description="회원님만을 위한 맞춤 상품을 추천해드려요"
+          className="mb-6"
+        />
+        <ProductGridSkeleton count={8} />
       </section>
     );
   }

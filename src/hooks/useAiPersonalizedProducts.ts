@@ -110,14 +110,17 @@ export function useAiPersonalizedProducts() {
     async function fetchData() {
       setLoading(true);
       setError(null);
+
       try {
         if (isAuthenticated) {
           const profile = await getBeautyProfile();
+
           if (profile) {
             // AI 추천 호출
             const res = await api.get('/ai/groupbuy-recommendations/by-profile', {
               params: { topK: 40 },
             });
+
             if (!ignore) {
               const recommended = Array.isArray(res.data.data.recommendedGroupBuys)
                 ? res.data.data.recommendedGroupBuys.map((item: any) => ({
@@ -152,6 +155,7 @@ export function useAiPersonalizedProducts() {
                     options: [],
                   }))
                 : [];
+
               // id 기준으로 중복 제거
               const uniqueProducts = recommended.filter(
                 (item: any, idx: number, arr: any[]) =>
@@ -163,8 +167,10 @@ export function useAiPersonalizedProducts() {
             return;
           }
         }
+
         // groupbuys 호출
         const res = await api.get('/groupbuys', { params: { limit: 8, sort: 'order_count' } });
+
         if (!ignore) {
           const mappedProducts = Array.isArray(res.data.data.items)
             ? res.data.data.items.map((item: any) => ({
@@ -198,6 +204,7 @@ export function useAiPersonalizedProducts() {
                 options: [],
               }))
             : [];
+
           // id 기준으로 중복 제거
           const uniqueProducts = mappedProducts.filter(
             (item: any, idx: number, arr: any[]) =>
@@ -206,6 +213,7 @@ export function useAiPersonalizedProducts() {
           setProducts(uniqueProducts);
         }
       } catch (e) {
+        console.error('API 호출 에러:', e);
         setError('상품을 불러오는데 실패했습니다.');
         setProducts([]);
       } finally {
