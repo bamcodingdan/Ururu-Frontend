@@ -163,8 +163,6 @@ export function ProductEdit({ productId }: { productId: string }) {
       name: '',
       price: 0,
       image: null,
-      imageUrl:
-        'https://ururu-bucket.s3.ap-northeast-2.amazonaws.com/groupbuy/thumbnail/default_thumbnail.png', // 기본 이미지 URL
       fullIngredients: '',
     });
   };

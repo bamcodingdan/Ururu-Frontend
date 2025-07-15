@@ -78,20 +78,11 @@ export function ImageUploadField({
         )}
 
         {/* 기존 이미지 표시 (새 이미지가 업로드되지 않았을 때만) */}
-        {!multiple && uploadedFiles.length === 0 && (
-          <div className="mt-4 flex flex-col items-center">
-            {existingImageUrl === '/images/default-product-option.jpg' ? (
-              // 기존 이미지가 없는 경우
-              <div className="flex flex-col items-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-bg-200">
-                  <span className="text-xs text-text-300">이미지 없음</span>
-                </div>
-                <span className="mt-2 text-xs text-text-200">
-                  기존 이미지가 없으면 기본 이미지로 대체됩니다
-                </span>
-              </div>
-            ) : (
-              // 기존 이미지가 있는 경우
+        {!multiple &&
+          uploadedFiles.length === 0 &&
+          existingImageUrl &&
+          existingImageUrl !== '/images/default-product-option.jpg' && (
+            <div className="mt-4 flex flex-col items-center">
               <div
                 className="relative"
                 style={{
@@ -112,12 +103,8 @@ export function ImageUploadField({
                   }}
                 />
               </div>
-            )}
-            {existingImageUrl && existingImageUrl !== '/images/default-product-option.jpg' && (
-              <span className="mt-2 text-xs text-text-200">기존 이미지</span>
-            )}
-          </div>
-        )}
+            </div>
+          )}
         {/* 파일명/개수 표시 */}
         {uploadedFiles.length > 0 && (
           <div className="mt-2 flex items-center justify-center gap-2">
