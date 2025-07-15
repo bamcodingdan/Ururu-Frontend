@@ -23,6 +23,8 @@ import type {
   GroupBuyProduct as ApiGroupBuyProduct,
   GroupBuyProductOption,
 } from '@/types/groupbuy';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
+import { SuccessDialog } from '@/components/common/SuccessDialog';
 
 interface DiscountTier {
   id: string;
@@ -204,6 +206,10 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+
+  const handleErrorDialogClose = () => setSubmitError(null);
+  const handleSuccessDialogClose = () => setSubmitSuccess(null);
 
   // 상품 1개만 선택
   const [selectedProductId, setSelectedProductId] = useState(initialData?.selectedProductId || '');
@@ -341,16 +347,49 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 필수값 누락 체크
-    const missingFields: string[] = [];
-    if (!selectedProductId) missingFields.push('상품을 선택해주세요.');
-    if (!formData.title) missingFields.push('공구 제목을 입력해주세요.');
-    if (!formData.description) missingFields.push('공구 설명을 입력해주세요.');
-    if (!formData.mainImage) missingFields.push('대표 이미지를 업로드해주세요.');
-    if (!formData.endDate) missingFields.push('종료일을 선택해주세요.');
-    if (missingFields.length > 0) {
-      setSubmitError(missingFields.join('\n'));
+    // 필수값 누락 체크 - 위에서부터 순서대로 첫 번째 누락된 필드만 표시
+    if (!selectedProductId) {
+      setSubmitError('상품을 선택해주세요.');
       return;
+    }
+    if (!formData.title) {
+      setSubmitError('공구 제목을 입력해주세요.');
+      return;
+    }
+    if (!formData.description) {
+      setSubmitError('공구 설명을 입력해주세요.');
+      return;
+    }
+    if (!formData.mainImage) {
+      setSubmitError('대표 이미지를 업로드해주세요.');
+      return;
+    }
+    if (!formData.endDate) {
+      setSubmitError('종료일을 선택해주세요.');
+      return;
+    }
+    if (selectedOptions.length === 0) {
+      setSubmitError('상품 옵션을 선택해주세요.');
+      return;
+    }
+    if (!maxQuantityPerPerson || maxQuantityPerPerson <= 0) {
+      setSubmitError('1인당 최대 구매 수량을 입력해주세요.');
+      return;
+    }
+
+    // 선택된 옵션의 재고/가격 입력 검증 - 위에서부터 순서대로
+    for (const opt of selectedProduct?.options.filter((opt) =>
+      selectedOptions.includes(opt.optionName),
+    ) || []) {
+      const optionDataState = optionData[opt.optionId];
+      if (!optionDataState?.stock || optionDataState.stock <= 0) {
+        setSubmitError(`${opt.optionName}의 재고를 입력해주세요.`);
+        return;
+      }
+      if (!optionDataState?.priceOverride || optionDataState.priceOverride <= 0) {
+        setSubmitError(`${opt.optionName}의 공동구매 시작가를 입력해주세요.`);
+        return;
+      }
     }
 
     // 실제 등록/수정 데이터 구조 예시
@@ -382,7 +421,7 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
       setIsSubmitting(true);
       try {
         await createGroupBuy({ request, thumbnail, detailImages });
-        alert('공동구매가 성공적으로 등록되었습니다!');
+        setSubmitSuccess('공동구매가 성공적으로 등록되었습니다!');
         // TODO: 등록 후 이동 (예: 라우터 push)
       } catch (err: any) {
         setSubmitError(err?.message || '공동구매 등록에 실패했습니다.');
@@ -410,6 +449,18 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+      <ErrorDialog
+        isOpen={!!submitError}
+        onClose={handleErrorDialogClose}
+        title="공구 등록 실패"
+        message={submitError || ''}
+      />
+      <SuccessDialog
+        isOpen={!!submitSuccess}
+        onClose={handleSuccessDialogClose}
+        title="공구 등록 성공"
+        message={submitSuccess || ''}
+      />
       {/* 타이틀 */}
       <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">
         공구 {mode === 'create' ? '등록' : '수정'}
@@ -492,7 +543,6 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
                 }}
                 placeholder="1"
                 className={FORM_STYLES.input.base}
-                required
               />
             </FormField>
           </div>
@@ -513,7 +563,6 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
                 placeholder="EX) 수분 진정 토너 공동구매"
                 className={FORM_STYLES.input.base}
                 maxLength={100}
-                required
               />
             </FormField>
 
@@ -529,7 +578,6 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
                 className={FORM_STYLES.textarea.base}
                 rows={4}
                 maxLength={1000}
-                required
               />
             </FormField>
 
