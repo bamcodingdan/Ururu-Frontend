@@ -1,7 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getRefunds } from '@/services/refundService';
 import { convertRefund } from '@/lib/utils';
-import { Refund, RefundStatusSummary, RefundStatusFilter, ApiRefund } from '@/types/refund';
+import {
+  Refund,
+  RefundStatusSummary,
+  RefundStatusFilter,
+  ApiRefund,
+  ApiRefundsParams,
+} from '@/types/refund';
 
 export function useRefunds(statusFilter: RefundStatusFilter = 'all') {
   const [allRefunds, setAllRefunds] = useState<ApiRefund[]>([]);
@@ -25,8 +31,8 @@ export function useRefunds(statusFilter: RefundStatusFilter = 'all') {
       setError(null);
 
       const apiStatus = statusFilter;
-      const apiParams = {
-        status: apiStatus as 'all' | 'APPROVED' | 'COMPLETED' | 'REJECTED' | 'FAILED',
+      const apiParams: ApiRefundsParams = {
+        status: apiStatus,
         page: 1,
         size: 5,
       };
@@ -62,7 +68,7 @@ export function useRefunds(statusFilter: RefundStatusFilter = 'all') {
       const apiStatus = statusFilter;
 
       const data = await getRefunds({
-        status: apiStatus as 'all' | 'APPROVED' | 'COMPLETED' | 'REJECTED' | 'FAILED',
+        status: apiStatus,
         page,
         size: 5,
       });
