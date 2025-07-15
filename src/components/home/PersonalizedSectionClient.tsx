@@ -4,7 +4,7 @@ import { PersonalizedSection } from './PersonalizedSection';
 import { useAiPersonalizedProducts } from '@/hooks/useAiPersonalizedProducts';
 
 export default function PersonalizedSectionClient() {
-  const { products, loading, error } = useAiPersonalizedProducts();
+  const { products = [], loading, error } = useAiPersonalizedProducts();
 
   // 에러가 있으면 에러 메시지 표시
   if (error) {
