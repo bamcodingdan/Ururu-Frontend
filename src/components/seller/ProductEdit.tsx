@@ -24,6 +24,8 @@ import type {
   ProductFormData,
   ProductOption,
   ProductEditOption,
+  SellerProductOption,
+  SellerProductTag,
 } from '@/types/product';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
@@ -98,10 +100,8 @@ export function ProductEdit({ productId }: { productId: number }) {
         });
         // 옵션 초기화
         if (product.productOptions) {
-          const activeOptions = product.productOptions.filter((opt: any) => !opt.is_deleted);
-
           optionArray.set(
-            activeOptions.map((opt: any) => ({
+            product.productOptions.map((opt: SellerProductOption) => ({
               id: opt.id, // 숫자 id 그대로 유지
               name: opt.name,
               price: opt.price,
@@ -115,7 +115,7 @@ export function ProductEdit({ productId }: { productId: number }) {
         if (product.productTags) {
           // 태그 이름으로 매칭
           const matchedTags = metadata.tags.filter((tag: Tag) =>
-            product.productTags.some((pt: any) => pt.tagCategoryName === tag.label),
+            product.productTags.some((pt: SellerProductTag) => pt.tagCategoryName === tag.label),
           );
           setSelectedTags(matchedTags);
         }
