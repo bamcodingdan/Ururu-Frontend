@@ -23,3 +23,14 @@ export async function fetchGroupBuyAllRankingTop100() {
   const res = await api.get<GroupBuyRankingTop100Response>(`/groupbuys?limit=100&sort=deadline`);
   return { ...res.data, data: res.data.data.items };
 }
+
+export async function fetchGroupBuyByCategoryId(categoryId: number) {
+  const res = await api.get<GroupBuyRankingTop100Response>(
+    `/groupbuys?categoryId=${categoryId}&limit=100`,
+  );
+  if (res.data.success === false) {
+    throw new Error(res.data.message || '공동구매 데이터를 불러오지 못했습니다.');
+  }
+  const items = res.data.data?.items || [];
+  return { ...res.data, data: items };
+}

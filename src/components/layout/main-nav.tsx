@@ -11,9 +11,11 @@ import { categoryItems } from '@/data/categories';
 import { DESKTOP_NAV_ITEMS } from '@/constants/navigation';
 import { NavigationLink } from './navigation-link';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
+import { useRouter } from 'next/navigation';
 
 export function MainNav() {
   const { isActive } = useSafeNavigation();
+  const router = useRouter();
 
   return (
     <div className="hidden bg-bg-100 desktop:block">
@@ -37,6 +39,9 @@ export function MainNav() {
                             <div
                               key={subItem.title}
                               className="font-pretendard block cursor-pointer rounded px-3 py-1 text-xs font-normal text-text-200 transition-all hover:bg-bg-200 hover:font-medium hover:text-text-100"
+                              onClick={() =>
+                                router.push(`/category?sub=${encodeURIComponent(subItem.title)}`)
+                              }
                             >
                               {subItem.title}
                             </div>

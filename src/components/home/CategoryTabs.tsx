@@ -14,6 +14,7 @@ export function CategoryTabs({
   onMobilePageReset,
 }: CategoryTabsProps) {
   const handleCategoryChange = (index: number) => {
+    console.log('CategoryTabs: 카테고리 버튼 클릭됨, index:', index);
     onCategoryChange(index);
     onMobilePageReset?.();
   };

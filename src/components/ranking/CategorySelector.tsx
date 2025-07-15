@@ -29,7 +29,10 @@ export const CategorySelector = ({
           key={category.value}
           variant={selectedCategory === category.value ? 'default' : 'outline'}
           size="sm"
-          onClick={() => onCategoryChange(category.value)}
+          onClick={() => {
+            console.log('CategorySelector: 카테고리 버튼 클릭됨, value:', category.value);
+            onCategoryChange(category.value);
+          }}
           className={cn(
             'h-8 px-3 text-xs font-medium transition-colors',
             selectedCategory === category.value
