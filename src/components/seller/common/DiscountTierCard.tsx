@@ -44,11 +44,11 @@ export function DiscountTierCard({ tier, index, onRemove, onUpdate }: DiscountTi
                 // 숫자만 허용하고 앞의 0 제거
                 const value = e.target.value.replace(/[^0-9]/g, '');
                 const numValue = value === '' ? 0 : parseInt(value, 10);
-                // 10000 제한 적용
-                const limitedValue = Math.min(numValue, 10000);
+                // 9,999,999 제한 적용
+                const limitedValue = Math.min(numValue, 9999999);
                 onUpdate(tier.id, 'minParticipants', limitedValue);
               }}
-              placeholder="최대 10,000"
+              placeholder="100"
               className={FORM_STYLES.input.base + ' pr-12'}
               required
             />
