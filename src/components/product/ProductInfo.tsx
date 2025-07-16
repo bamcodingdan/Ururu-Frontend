@@ -41,6 +41,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
     remainingForNextReward,
     progressTarget,
     progressValue,
+    hasDiscount,
   } = useMemo(() => {
     // 현재 달성된 할인률 계산
     const currentDiscountRate = calculateCurrentDiscountRate(
@@ -52,6 +53,9 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
     const currentLowestPrice = Math.round(
       (product.originalPrice * (100 - currentDiscountRate)) / 100,
     );
+
+    // 할인 여부 확인
+    const hasDiscount = currentDiscountRate > 0;
 
     // 다음 리워드 단계 찾기
     const nextStage = product.rewardTiers.find((tier) => product.participants < tier.participants);
@@ -71,6 +75,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
       remainingForNextReward,
       progressTarget,
       progressValue,
+      hasDiscount,
     };
   }, [
     product.participants,
@@ -90,30 +95,49 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
         {product.name}
       </div>
 
-      {/* 가격 정보 - 현재 달성된 할인률 기준 */}
+      {/* 가격 정보 - 조건부 렌더링 */}
       <div className={`mb-6 flex items-center gap-3 ${isDesktop ? 'gap-3.5' : 'gap-3'}`}>
-        <span
-          className={`font-bold text-primary-300 ${
-            isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
-          }`}
-        >
-          {currentDiscountRate}%
-        </span>
-        <span
-          className={`font-normal text-text-300 line-through ${
-            isDesktop ? 'text-xl' : 'text-lg md:text-xl'
-          }`}
-        >
-          {product.originalPrice.toLocaleString()}원
-        </span>
-        <span
-          className={`font-bold text-primary-300 ${
-            isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
-          }`}
-        >
-          {currentLowestPrice.toLocaleString()}원
-        </span>
+        {hasDiscount ? (
+          // 할인이 있는 경우
+          <>
+            <span
+              className={`font-bold text-primary-300 ${
+                isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
+              }`}
+            >
+              {currentDiscountRate}%
+            </span>
+            <span
+              className={`font-normal text-text-300 line-through ${
+                isDesktop ? 'text-xl' : 'text-lg md:text-xl'
+              }`}
+            >
+              {product.originalPrice.toLocaleString()}원
+            </span>
+            <span
+              className={`font-bold text-primary-300 ${
+                isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
+              }`}
+            >
+              {currentLowestPrice.toLocaleString()}원
+            </span>
+          </>
+        ) : (
+          // 할인이 없는 경우
+          <span
+            className={`font-bold text-primary-300 ${isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'}`}
+          >
+            {product.originalPrice.toLocaleString()}원
+          </span>
+        )}
       </div>
+
+      {/* 할인 안내 메시지 (할인이 없을 때만 표시) */}
+      {!hasDiscount && (
+        <div className={`mb-4 text-text-200 ${isDesktop ? 'text-sm' : 'text-xs md:text-sm'}`}>
+          더 많은 참여자가 모이면 할인 혜택을 받을 수 있어요!
+        </div>
+      )}
 
       {/* 공동구매 정보 */}
       <Card
