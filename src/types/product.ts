@@ -14,6 +14,7 @@ export interface ProductOption {
   image: File | null;
   imageUrl?: string; // 옵션 이미지 URL
   fullIngredients: string;
+  maxQuantity?: number; // 회원당 최대 구매 수량 제한
 }
 
 // 상품 수정용 옵션 타입 (기존 옵션은 숫자 id, 새 옵션은 null)

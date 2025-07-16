@@ -21,9 +21,15 @@ export const useProductOptions = (product: Product) => {
   // 수량 변경
   const handleChangeQuantity = (value: string, delta: number) => {
     setSelectedOptions((prev) =>
-      prev.map((o) =>
-        o.value === value ? { ...o, quantity: Math.max(1, o.quantity + delta) } : o,
-      ),
+      prev.map((o) => {
+        if (o.value === value) {
+          const option = product.options.find((opt) => opt.id === value);
+          const maxQuantity = option?.maxQuantity || 999; // 기본값 999
+          const newQuantity = Math.max(1, Math.min(maxQuantity, o.quantity + delta));
+          return { ...o, quantity: newQuantity };
+        }
+        return o;
+      }),
     );
   };
 

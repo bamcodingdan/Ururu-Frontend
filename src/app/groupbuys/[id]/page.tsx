@@ -39,6 +39,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       image: null, // API에서 이미지 URL을 받지만 File 형태가 필요하므로 null
       imageUrl: option.optionImageUrl, // 옵션 이미지 URL 추가
       fullIngredients: option.fullIngredients || '',
+      maxQuantity: groupBuy.limitQuantityPerMember, // 회원당 최대 구매 수량 제한
     }));
 
     console.log('Original API options:', groupBuy.options);
