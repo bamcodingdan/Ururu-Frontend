@@ -27,6 +27,22 @@ export const OptionSelect = ({
   const allOptionsSelected = selectedOptions.length === product.options.length;
   const currentPlaceholder = allOptionsSelected ? '모든 옵션이 선택되었습니다' : placeholder;
 
+  // 디버깅을 위한 로그
+  console.log('OptionSelect - Product options:', product.options);
+  console.log('OptionSelect - Selected options:', selectedOptions);
+  console.log('OptionSelect - All options selected:', allOptionsSelected);
+
+  // 옵션이 없는 경우 처리
+  if (!product.options || product.options.length === 0) {
+    return (
+      <div className={className}>
+        <div className={`${FORM_STYLES.input.base} cursor-not-allowed px-6 text-left opacity-60`}>
+          <span className="text-text-300">옵션이 없습니다</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
       <Select onValueChange={onSelect} disabled={allOptionsSelected}>
@@ -51,7 +67,10 @@ export const OptionSelect = ({
                     : 'cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300'
                 }`}
               >
-                {option.name}
+                <div className="flex flex-col">
+                  <span>{option.name}</span>
+                  <span className="text-xs text-text-300">{option.price.toLocaleString()}원</span>
+                </div>
               </SelectItem>
             );
           })}

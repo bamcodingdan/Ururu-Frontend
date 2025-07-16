@@ -14,11 +14,24 @@ interface ProductInfoProps {
 export const ProductInfo = ({ product, className = '', variant = 'mobile' }: ProductInfoProps) => {
   const isDesktop = variant === 'desktop';
 
-  // 진행률 계산 (0으로 나누기 방지)
-  const progressValue = calculateProgress(product.participants, product.targetParticipants);
+  // 현재 할인율 계산 (API 데이터 기반)
+  const currentDiscountRate = product.discountRate;
 
-  // 다음 리워드까지 남은 인원 계산
-  const remainingForNextReward = Math.max(0, product.targetParticipants - product.participants);
+  // 다음 리워드 단계 찾기
+  const nextStage = product.rewardTiers.find((tier) => product.participants < tier.participants);
+  const remainingForNextReward = nextStage ? nextStage.participants - product.participants : 0;
+
+  // 현재 달성된 최고 단계 찾기
+  const currentAchievedStage = product.rewardTiers
+    .filter((tier) => tier.achieved)
+    .sort((a, b) => b.participants - a.participants)[0];
+
+  // 진행률 계산 (다음 목표 기준)
+  const progressTarget = nextStage
+    ? nextStage.participants
+    : product.rewardTiers[product.rewardTiers.length - 1]?.participants ||
+      product.targetParticipants;
+  const progressValue = Math.min(100, (product.participants / progressTarget) * 100);
 
   return (
     <div className={className}>
@@ -38,7 +51,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
           }`}
         >
-          {product.discountRate}%
+          {currentDiscountRate}%
         </span>
         <span
           className={`font-normal text-text-300 line-through ${
@@ -52,7 +65,9 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
           }`}
         >
-          {product.price.toLocaleString()}원
+          {/* 현재 할인율 적용된 최저가 표시 */}
+          {Math.round((product.originalPrice * (100 - currentDiscountRate)) / 100).toLocaleString()}
+          원
         </span>
       </div>
 
@@ -86,9 +101,11 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
           <span className={`text-text-100 ${isDesktop ? 'text-base' : 'text-sm md:text-base'}`}>
             명 참여중
           </span>
-          <span className={`text-text-100 ${isDesktop ? 'text-sm' : 'text-xs md:text-sm'}`}>
-            다음 리워드까지 {remainingForNextReward}명 남았어요!
-          </span>
+          {nextStage && (
+            <span className={`text-text-100 ${isDesktop ? 'text-sm' : 'text-xs md:text-sm'}`}>
+              다음 리워드까지 {remainingForNextReward}명 남았어요!
+            </span>
+          )}
         </div>
         {/* 진행률 바 */}
         <div className={`flex w-full flex-col gap-2 ${isDesktop ? 'gap-3' : 'gap-2'}`}>
@@ -98,32 +115,41 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
               isDesktop ? 'text-xs' : 'text-xs md:text-sm'
             }`}
           >
-            {product.participants} / {product.targetParticipants}명
+            {product.participants} / {progressTarget}명
           </div>
         </div>
         {/* 리워드 단계 */}
         <div className="flex w-full flex-col gap-2">
-          {product.rewardTiers.map((tier, index) => (
-            <Card
-              key={index}
-              className={`flex w-full items-center justify-between rounded-lg border-none ${
-                isDesktop ? 'px-6 py-3' : 'px-4 py-3 md:px-6 md:py-4'
-              } ${
-                tier.achieved
-                  ? 'bg-gradient-to-r from-primary-200 to-primary-300 text-text-on'
-                  : 'bg-primary-100 text-text-100'
-              }`}
-            >
-              <CardContent className="flex w-full items-center justify-between bg-transparent p-0">
-                <span className={`font-normal ${isDesktop ? 'text-sm' : 'text-xs md:text-sm'}`}>
-                  {tier.participants}명 달성 시
-                </span>
-                <span className={`font-bold ${isDesktop ? 'text-base' : 'text-sm md:text-base'}`}>
-                  {tier.discount}
-                </span>
-              </CardContent>
-            </Card>
-          ))}
+          {product.rewardTiers.map((tier, index) => {
+            // 현재 단계가 달성되었는지 확인 (실시간)
+            const isAchieved = product.participants >= tier.participants;
+            // 다음 목표 단계인지 확인 (달성되지 않았고, 다음 단계인 경우)
+            const isNext = !isAchieved && nextStage?.participants === tier.participants;
+
+            return (
+              <Card
+                key={index}
+                className={`flex w-full items-center justify-between rounded-lg border-none ${
+                  isDesktop ? 'px-6 py-3' : 'px-4 py-3 md:px-6 md:py-4'
+                } ${
+                  isAchieved
+                    ? 'bg-gradient-to-r from-primary-200 to-primary-300 text-text-on'
+                    : isNext
+                      ? 'bg-gradient-to-r from-primary-200 to-primary-300 text-text-on shadow-lg'
+                      : 'bg-primary-100 text-text-100'
+                }`}
+              >
+                <CardContent className="flex w-full items-center justify-between bg-transparent p-0">
+                  <span className={`font-normal ${isDesktop ? 'text-sm' : 'text-xs md:text-sm'}`}>
+                    {tier.participants}명 달성 시
+                  </span>
+                  <span className={`font-bold ${isDesktop ? 'text-base' : 'text-sm md:text-base'}`}>
+                    {tier.discount}
+                  </span>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
 

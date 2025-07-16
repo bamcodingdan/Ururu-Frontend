@@ -43,7 +43,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
     console.log('Original API options:', groupBuy.options);
     console.log('Converted options:', options);
 
-    // 할인 단계를 rewardTiers로 변환
+    // 할인 단계를 rewardTiers로 변환 (실제 달성 여부만 반영)
     const rewardTiers = groupBuy.discountStages.map((stage) => ({
       participants: stage.minQuantity,
       discount: `${stage.discountRate}% 할인`,

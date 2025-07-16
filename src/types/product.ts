@@ -12,6 +12,7 @@ export interface ProductOption {
   name: string;
   price: number;
   image: File | null;
+  imageUrl?: string; // 옵션 이미지 URL
   fullIngredients: string;
 }
 

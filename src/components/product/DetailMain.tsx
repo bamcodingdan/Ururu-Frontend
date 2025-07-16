@@ -6,7 +6,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { MobileOrderSection } from './OrderBox';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useImageCarousel, useProductTabs } from '@/hooks';
+import { useImageCarousel, useProductTabs, useProductOptions } from '@/hooks';
 import { ProductTabs } from './ProductTabs';
 import { ProductDetailImages } from './ProductDetailImages';
 import { PRODUCT_DETAIL_TABS } from '@/constants/product-detail';
@@ -20,7 +20,16 @@ interface DetailMainProps {
 
 export const DetailMain = ({ product }: DetailMainProps) => {
   const { activeTab, handleTabChange } = useProductTabs();
+  const { selectedOptions, handleSelectOption } = useProductOptions(product);
   const router = useRouter();
+
+  // 옵션 이미지와 상품 썸네일을 모두 포함
+  const allThumbnails = [
+    ...product.thumbnails, // 상품 썸네일 이미지들
+    ...product.options
+      .filter((option) => option.imageUrl) // 이미지가 있는 옵션만
+      .map((option) => option.imageUrl!),
+  ];
 
   const {
     mainImage,
@@ -32,12 +41,26 @@ export const DetailMain = ({ product }: DetailMainProps) => {
     scrollThumbnails,
     images: safeImages,
   } = useImageCarousel({
-    images: product.thumbnails,
+    images: allThumbnails,
     initialImage: product.mainImage,
   });
 
   const handleGoBack = () => {
     router.back();
+  };
+
+  // 썸네일 클릭 핸들러
+  const handleThumbnailClick = (imageUrl: string, index: number) => {
+    setMainImage(imageUrl);
+
+    // 옵션 이미지인 경우 해당 옵션 선택
+    const optionIndex = index - product.thumbnails.length;
+    if (optionIndex >= 0 && optionIndex < product.options.length) {
+      const option = product.options[optionIndex];
+      if (option && !selectedOptions.some((selected) => selected.value === option.id)) {
+        handleSelectOption(option.id);
+      }
+    }
   };
 
   return (
@@ -79,22 +102,41 @@ export const DetailMain = ({ product }: DetailMainProps) => {
             }}
             onScroll={checkScrollButtons}
           >
-            {safeImages.map((thumb, idx) => (
-              <button
-                key={thumb}
-                onClick={() => setMainImage(thumb)}
-                className="min-h-[64px] min-w-[64px] rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px]"
-                aria-label={`썸네일 ${idx + 1}`}
-              >
-                <Image
-                  src={thumb}
-                  alt={`썸네일 ${idx + 1}`}
-                  width={PRODUCT_CONSTANTS.IMAGE.THUMBNAIL_WIDTH}
-                  height={PRODUCT_CONSTANTS.IMAGE.THUMBNAIL_HEIGHT}
-                  className={PRODUCT_STYLES.image.thumbnail}
-                />
-              </button>
-            ))}
+            {safeImages.map((thumb, idx) => {
+              const isOptionThumbnail = idx >= product.thumbnails.length;
+              const optionIndex = idx - product.thumbnails.length;
+              const option = isOptionThumbnail ? product.options[optionIndex] : null;
+              const isSelected = option
+                ? selectedOptions.some((selected) => selected.value === option.id)
+                : false;
+
+              return (
+                <button
+                  key={thumb}
+                  onClick={() => handleThumbnailClick(thumb, idx)}
+                  className={`min-h-[64px] min-w-[64px] rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px] ${
+                    isSelected ? 'ring-2 ring-primary-300' : ''
+                  }`}
+                  aria-label={isOptionThumbnail ? `${option?.name} 옵션` : `상품 이미지 ${idx + 1}`}
+                >
+                  <Image
+                    src={thumb}
+                    alt={isOptionThumbnail ? `${option?.name} 옵션` : `상품 이미지 ${idx + 1}`}
+                    width={PRODUCT_CONSTANTS.IMAGE.THUMBNAIL_WIDTH}
+                    height={PRODUCT_CONSTANTS.IMAGE.THUMBNAIL_HEIGHT}
+                    className={PRODUCT_STYLES.image.thumbnail}
+                  />
+                  {/* 옵션 썸네일인 경우 선택 표시 */}
+                  {isSelected && (
+                    <div className="bg-primary-300/20 absolute inset-0 flex items-center justify-center rounded-xl">
+                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-300">
+                        <span className="text-xs text-white">✓</span>
+                      </div>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
           {/* 좌우 스크롤 버튼 (데스크탑만) */}
