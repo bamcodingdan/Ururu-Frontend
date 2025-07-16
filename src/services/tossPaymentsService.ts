@@ -13,7 +13,7 @@ export class TossPaymentsService {
     const response = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}`, {
       method: 'GET',
       headers: {
-        Authorization: this.getAuthHeader(),
+        Authorization: TossPaymentsService.getAuthHeader(),
         'Content-Type': 'application/json',
       },
     });
@@ -31,7 +31,7 @@ export class TossPaymentsService {
     const response = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
       method: 'POST',
       headers: {
-        Authorization: this.getAuthHeader(),
+        Authorization: TossPaymentsService.getAuthHeader(),
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
