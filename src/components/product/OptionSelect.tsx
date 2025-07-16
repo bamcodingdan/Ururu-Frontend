@@ -101,11 +101,9 @@ export const OptionSelect = ({
                   <div className="flex flex-col">
                     <span>{option.name}</span>
                     <span className="text-xs text-text-300">{option.price.toLocaleString()}원</span>
-                    {/* 판매량 정보 표시 */}
-                    {option.currentOrderCount !== undefined && (
-                      <span className="text-xs text-text-300">
-                        판매: {option.currentOrderCount}개
-                      </span>
+                    {/* 재고 정보 표시 */}
+                    {option.currentStock !== undefined && (
+                      <span className="text-xs text-text-300">재고: {option.currentStock}개</span>
                     )}
                     {/* 품절 상태 표시 */}
                     {option.isOutOfStock && <span className="text-xs text-red-500">품절</span>}
