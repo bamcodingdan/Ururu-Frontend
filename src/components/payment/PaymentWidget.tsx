@@ -48,6 +48,7 @@ export function PaymentWidget({
   const paymentMethodsRef = useRef<unknown>(null);
 
   useEffect(() => {
+    let isMounted = true;
     const initializeWidget = async () => {
       try {
         if (process.env.NODE_ENV === 'development') {
@@ -102,25 +103,37 @@ export function PaymentWidget({
         }
         widgetRef.current = widgets;
         paymentMethodsRef.current = paymentMethodsWidget;
-        setIsReady(true);
-        setInitError(null);
+        if (isMounted) {
+          setIsReady(true);
+          setInitError(null);
+        }
       } catch (error) {
         console.error('결제위젯 초기화 실패:', error);
         const errorMessage =
           error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
-        setInitError(errorMessage);
-        toast.error('결제위젯을 불러오는 중 오류가 발생했습니다.');
+        if (isMounted) {
+          setInitError(errorMessage);
+          toast.error('결제위젯을 불러오는 중 오류가 발생했습니다.');
+        }
       } finally {
-        setIsInitializing(false);
+        if (isMounted) {
+          setIsInitializing(false);
+        }
       }
     };
 
     if (amount > 0) {
       initializeWidget();
     } else {
-      setIsInitializing(false);
-      setInitError('결제 금액이 설정되지 않았습니다.');
+      if (isMounted) {
+        setIsInitializing(false);
+        setInitError('결제 금액이 설정되지 않았습니다.');
+      }
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [amount]);
 
   const handlePayment = async () => {
