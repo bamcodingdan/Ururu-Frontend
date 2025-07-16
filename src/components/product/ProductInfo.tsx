@@ -49,10 +49,14 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
       product.rewardTiers,
     );
 
-    // 현재 할인 적용된 최저가 계산
-    const currentLowestPrice = Math.round(
-      (product.originalPrice * (100 - currentDiscountRate)) / 100,
-    );
+    // priceOverride 중 최저가 찾기 (공동구매 시작가 기준)
+    const minPriceOverride =
+      product.options.length > 0
+        ? Math.min(...product.options.map((option) => option.priceOverride || option.price))
+        : product.originalPrice;
+
+    // priceOverride 최저가 기준으로 할인 적용된 최저가 계산
+    const currentLowestPrice = Math.round((minPriceOverride * (100 - currentDiscountRate)) / 100);
 
     // 할인 여부 확인
     const hasDiscount = currentDiscountRate > 0;
@@ -82,6 +86,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
     product.rewardTiers,
     product.originalPrice,
     product.targetParticipants,
+    product.options,
   ]);
 
   return (
@@ -123,11 +128,14 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             </span>
           </>
         ) : (
-          // 할인이 없는 경우
+          // 할인이 없는 경우 - priceOverride 최저가 표시
           <span
             className={`font-bold text-primary-300 ${isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'}`}
           >
-            {product.originalPrice.toLocaleString()}원
+            {Math.min(
+              ...product.options.map((option) => option.priceOverride || option.price),
+            ).toLocaleString()}
+            원
           </span>
         )}
       </div>

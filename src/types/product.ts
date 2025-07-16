@@ -17,6 +17,7 @@ export interface ProductOption {
   maxQuantity?: number; // 회원당 최대 구매 수량 제한
   initialStock?: number; // 초기 재고
   currentStock?: number; // 현재 재고
+  priceOverride?: number; // 공동구매 시작가
 }
 
 // 상품 수정용 옵션 타입 (기존 옵션은 숫자 id, 새 옵션은 null)

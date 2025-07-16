@@ -44,6 +44,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       maxQuantity: groupBuy.limitQuantityPerMember, // 회원당 최대 구매 수량 제한
       initialStock: option.initialStock, // 초기 재고
       currentStock: option.currentStock, // 현재 재고
+      priceOverride: option.priceOverride, // 공동구매 시작가
     }));
 
     console.log('Original API options:', groupBuy.options);
