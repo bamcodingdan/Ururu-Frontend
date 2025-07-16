@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store';
 import { calculateCartSummary } from '@/data/cart';
 import { AuthGuard } from '@/components/auth/AuthGuard';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
+import { ErrorDialog } from '@/components/common/ErrorDialog';
 import type { CartItem } from '@/types/cart';
 
 // 빈 장바구니 컴포넌트
@@ -25,11 +26,13 @@ function EmptyCart() {
 // 장바구니 목록 컴포넌트
 function CartList({
   cartItems,
+  updatingItems,
   onToggleSelect,
   onUpdateQuantity,
   onRemove,
 }: {
   cartItems: CartItem[];
+  updatingItems: Set<string>;
   onToggleSelect: (itemId: string) => void;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
@@ -40,6 +43,7 @@ function CartList({
         <CartItemComponent
           key={item.id}
           item={item}
+          isUpdating={updatingItems.has(item.id)}
           onToggleSelect={onToggleSelect}
           onUpdateQuantity={onUpdateQuantity}
           onRemove={onRemove}
@@ -55,6 +59,7 @@ function CartPageContent() {
     cartItems,
     isLoading,
     error,
+    updatingItems,
     loadCartItems,
     toggleSelectAll,
     toggleSelectItem,
@@ -62,6 +67,8 @@ function CartPageContent() {
     removeItem,
     isAllSelected,
     isPartiallySelected,
+    errorDialog,
+    closeErrorDialog,
   } = useCart();
 
   const summary = calculateCartSummary(cartItems);
@@ -144,6 +151,7 @@ function CartPageContent() {
           {/* 상품 리스트 */}
           <CartList
             cartItems={cartItems}
+            updatingItems={updatingItems}
             onToggleSelect={toggleSelectItem}
             onUpdateQuantity={updateQuantity}
             onRemove={removeItem}
@@ -159,6 +167,14 @@ function CartPageContent() {
           />
         </div>
       </div>
+
+      {/* 에러 다이얼로그 */}
+      <ErrorDialog
+        isOpen={errorDialog.isOpen}
+        onClose={closeErrorDialog}
+        title={errorDialog.title}
+        message={errorDialog.message}
+      />
     </NoFooterLayout>
   );
 }

@@ -62,6 +62,16 @@ export interface ApiCartResponse {
   cartItems: ApiCartItem[];
 }
 
+// 장바구니 수량 변경 관련 타입
+export interface ApiUpdateCartQuantityRequest {
+  quantityChange: number;
+}
+
+export interface ApiUpdateCartQuantityResponse {
+  cartItemId: number;
+  quantity: number;
+}
+
 // 배송지 관련 타입
 export interface ShippingAddress {
   id: number;

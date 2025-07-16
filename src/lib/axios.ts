@@ -18,7 +18,6 @@ api.interceptors.response.use(
       return Promise.reject({
         message: '네트워크 연결을 확인해주세요.',
         status: 0,
-        code: 'NETWORK_ERROR',
       });
     }
 
@@ -33,19 +32,16 @@ api.interceptors.response.use(
     // 서버 에러 처리
     const errorMessage = error.response?.data?.message || '서버 오류가 발생했습니다.';
     const errorStatus = error.response?.status || 500;
-    const errorCode = error.response?.data?.code || 'UNKNOWN_ERROR';
 
     console.error('API Error:', {
       message: errorMessage,
       status: errorStatus,
-      code: errorCode,
       url: error.config?.url,
     });
 
     return Promise.reject({
       message: errorMessage,
       status: errorStatus,
-      code: errorCode,
     });
   },
 );
