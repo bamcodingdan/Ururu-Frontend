@@ -57,58 +57,44 @@ const getMinPriceOverride = (options: ProductOption[], fallbackPrice: number): n
 export const ProductInfo = ({ product, className = '', variant = 'mobile' }: ProductInfoProps) => {
   const isDesktop = variant === 'desktop';
 
-  // 🎯 메모이제이션된 실시간 계산
-  const {
-    currentDiscountRate,
-    currentLowestPrice,
-    nextStage,
-    remainingForNextReward,
-    progressTarget,
-    progressValue,
-    hasDiscount,
-  } = useMemo(() => {
-    // 현재 달성된 할인률 계산
-    const currentDiscountRate = calculateCurrentDiscountRate(
-      product.participants,
-      product.rewardTiers,
-    );
+  // 🎯 현재 할인률 계산
+  const currentDiscountRate = useMemo(
+    () => calculateCurrentDiscountRate(product.participants, product.rewardTiers),
+    [product.participants, product.rewardTiers],
+  );
 
-    // priceOverride 중 최저가 찾기 (공동구매 시작가 기준)
+  // 🎯 최저가 계산
+  const currentLowestPrice = useMemo(() => {
     const minPriceOverride = getMinPriceOverride(product.options, product.originalPrice);
+    return Math.round((minPriceOverride * (100 - currentDiscountRate)) / 100);
+  }, [product.options, product.originalPrice, currentDiscountRate]);
 
-    // priceOverride 최저가 기준으로 할인 적용된 최저가 계산
-    const currentLowestPrice = Math.round((minPriceOverride * (100 - currentDiscountRate)) / 100);
+  // 🎯 할인 여부 확인
+  const hasDiscount = useMemo(() => currentDiscountRate > 0, [currentDiscountRate]);
 
-    // 할인 여부 확인
-    const hasDiscount = currentDiscountRate > 0;
+  // 🎯 다음 리워드 단계 찾기
+  const nextStage = useMemo(
+    () => product.rewardTiers.find((tier) => product.participants < tier.participants),
+    [product.participants, product.rewardTiers],
+  );
 
-    // 다음 리워드 단계 찾기
-    const nextStage = product.rewardTiers.find((tier) => product.participants < tier.participants);
-    const remainingForNextReward = nextStage ? nextStage.participants - product.participants : 0;
+  // 🎯 다음 리워드까지 남은 인원
+  const remainingForNextReward = useMemo(
+    () => (nextStage ? nextStage.participants - product.participants : 0),
+    [nextStage, product.participants],
+  );
 
-    // 진행률 계산 (다음 목표 기준)
+  // 🎯 진행률 데이터 계산
+  const progressData = useMemo(() => {
     const progressTarget = nextStage
       ? nextStage.participants
       : product.rewardTiers[product.rewardTiers.length - 1]?.participants ||
         product.targetParticipants;
     const progressValue = Math.min(100, (product.participants / progressTarget) * 100);
+    return { progressTarget, progressValue };
+  }, [nextStage, product.participants, product.rewardTiers, product.targetParticipants]);
 
-    return {
-      currentDiscountRate,
-      currentLowestPrice,
-      nextStage,
-      remainingForNextReward,
-      progressTarget,
-      progressValue,
-      hasDiscount,
-    };
-  }, [
-    product.participants,
-    product.rewardTiers,
-    product.originalPrice,
-    product.targetParticipants,
-    product.options,
-  ]);
+  const { progressTarget, progressValue } = progressData;
 
   return (
     <div className={className}>
