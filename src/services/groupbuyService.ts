@@ -5,6 +5,8 @@ import type {
   GroupBuyCreateResponse,
   GroupBuyCreateRequest,
   GroupBuyCreateApiResponse,
+  GroupBuyDetailResponse,
+  GroupBuyDetail,
 } from '@/types/groupbuy';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
@@ -52,4 +54,17 @@ export async function createGroupBuy({
 
   const res = await api.post('/groupbuys', formData);
   return res.data;
+}
+
+// 공동구매 상세 조회 API
+export async function getGroupBuyDetail(groupBuyId: number): Promise<GroupBuyDetailResponse> {
+  console.log('Requesting groupbuy detail for ID:', groupBuyId);
+  console.log(
+    'Full URL:',
+    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/groupbuys/${groupBuyId}`,
+  );
+
+  const response = await api.get<GroupBuyDetailResponse>(`/groupbuys/${groupBuyId}`);
+  console.log('Raw API Response:', response);
+  return response.data;
 }
