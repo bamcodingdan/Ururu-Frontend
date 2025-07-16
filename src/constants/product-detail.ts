@@ -78,7 +78,7 @@ export const generateBreadcrumbFromCategoryIds = (categoryIds: string[]): Breadc
         // URL 경로 생성 (이전 카테고리들을 포함한 경로)
         const pathSegments = categoriesToShow
           .slice(0, index + 1)
-          .map((cat) => cat.toLowerCase().replace(/\s+/g, '-'));
+          .map((cat) => encodeURIComponent(cat.toLowerCase().replace(/\s+/g, '-')));
         const href = `/category/${pathSegments.join('/')}`;
 
         breadcrumb.push({
