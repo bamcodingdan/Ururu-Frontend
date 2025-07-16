@@ -75,7 +75,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       customerService: groupBuy.product.productNotice?.customerServiceNumber,
     };
 
-    return {
+    const convertedProduct = {
       id: String(groupBuy.id),
       name: groupBuy.title,
       mainImage: groupBuy.thumbnailUrl,
@@ -92,6 +92,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
         main: groupBuy.product.categoryIds[0] || 'general',
         sub: groupBuy.product.categoryIds[1] || '',
       },
+      categoryIds: groupBuy.product.categoryIds, // 카테고리 ID 배열 추가
       shippingInfo: {
         type: '우르르 배송 상품',
         description: '공구 마감 후 평균 4일 이내 배송',
@@ -99,8 +100,11 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       },
       rewardTiers,
       options,
+      tags: groupBuy.product.tags || [], // 상품 태그 추가
       ...productNoticeMapping,
     };
+
+    return convertedProduct;
   };
 
   useEffect(() => {

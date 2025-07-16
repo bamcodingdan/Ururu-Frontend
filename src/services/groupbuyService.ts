@@ -1,4 +1,5 @@
 import api from '@/lib/axios';
+import axios from 'axios';
 import type {
   GroupBuyTop3Response,
   GroupBuyRankingTop100Response,
@@ -9,6 +10,13 @@ import type {
   GroupBuyDetail,
 } from '@/types/groupbuy';
 import { Suspense } from 'react';
+
+// 인증이 필요하지 않은 API 호출을 위한 별도 인스턴스
+const publicApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api',
+  withCredentials: false, // 쿠키 전송하지 않음
+  timeout: 10000,
+});
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
   const res = await api.get<GroupBuyTop3Response>('/groupbuys/top3');
@@ -68,7 +76,7 @@ export async function createGroupBuy({
   return res.data;
 }
 
-// 공동구매 상세 조회 API
+// 공동구매 상세 조회 API (인증 불필요)
 export async function getGroupBuyDetail(groupBuyId: number): Promise<GroupBuyDetailResponse> {
   console.log('Requesting groupbuy detail for ID:', groupBuyId);
   console.log(
@@ -76,7 +84,7 @@ export async function getGroupBuyDetail(groupBuyId: number): Promise<GroupBuyDet
     `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/groupbuys/${groupBuyId}`,
   );
 
-  const response = await api.get<GroupBuyDetailResponse>(`/groupbuys/${groupBuyId}`);
+  const response = await publicApi.get<GroupBuyDetailResponse>(`/groupbuys/${groupBuyId}`);
   console.log('Raw API Response:', response);
   return response.data;
 }

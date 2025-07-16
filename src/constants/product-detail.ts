@@ -54,3 +54,43 @@ export const generateBreadcrumb = (category: ProductCategory): BreadcrumbItem[] 
   // 서브 카테고리가 있으면 반환, 없으면 메인 카테고리 반환
   return subCategory || mainCategory;
 };
+
+// 카테고리 ID 배열로부터 브레드크럼 생성 함수
+export const generateBreadcrumbFromCategoryIds = (categoryIds: string[]): BreadcrumbItem[] => {
+  if (!categoryIds || categoryIds.length === 0) {
+    return DEFAULT_PRODUCT_BREADCRUMB;
+  }
+
+  // 카테고리가 이미 이름인지 ID인지 확인
+  const firstCategory = categoryIds[0];
+  const isAlreadyName = !firstCategory.match(/^\d+$/); // 숫자가 아니면 이미 이름
+
+  if (isAlreadyName) {
+    // 이미 카테고리 이름이 온 경우
+
+    const breadcrumb: BreadcrumbItem[] = [];
+
+    // 첫 번째와 두 번째 카테고리만 표시 (최대 2개)
+    const categoriesToShow = categoryIds.slice(0, 2);
+
+    categoriesToShow.forEach((categoryName, index) => {
+      if (categoryName) {
+        // URL 경로 생성 (이전 카테고리들을 포함한 경로)
+        const pathSegments = categoriesToShow
+          .slice(0, index + 1)
+          .map((cat) => cat.toLowerCase().replace(/\s+/g, '-'));
+        const href = `/category/${pathSegments.join('/')}`;
+
+        breadcrumb.push({
+          label: categoryName,
+          href: href,
+        });
+      }
+    });
+
+    return breadcrumb;
+  }
+
+  // ID인 경우 기본 브레드크럼 반환
+  return DEFAULT_PRODUCT_BREADCRUMB;
+};

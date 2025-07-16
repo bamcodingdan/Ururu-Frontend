@@ -65,9 +65,11 @@ export interface Product {
   targetParticipants: number;
   remainingDays: number;
   category: ProductCategory;
+  categoryIds?: string[]; // 카테고리 ID 배열 추가
   shippingInfo: ShippingInfo;
   rewardTiers: RewardTier[];
   options: ProductOption[];
+  tags?: string[]; // 상품 태그
   capacity?: string; // 내용물의 용량 또는 중량
   specification?: string; // 제품 주요 사양
   expiryDate?: string; // 사용기한(또는 개봉 후 사용기간)
