@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, Minus, Plus } from 'lucide-react';
 import type { SelectedOption, Product } from '@/types/product';
+import Image from 'next/image';
 
 interface OptionCardProps {
   option: SelectedOption;
@@ -30,7 +31,30 @@ export const OptionCard = ({
     >
       <CardContent className="flex w-full flex-1 flex-col gap-2 bg-transparent p-0">
         <div className="flex w-full items-center justify-between">
-          <span className="text-sm text-text-100 md:text-base">{option.label}</span>
+          <div className="flex items-center gap-3">
+            {/* 옵션 이미지 */}
+            {optionData?.imageUrl ? (
+              <div className="flex-shrink-0">
+                <Image
+                  src={optionData.imageUrl}
+                  alt={option.label}
+                  width={40}
+                  height={40}
+                  className="rounded-lg object-cover"
+                  onError={(e) => {
+                    console.error('Image load failed:', optionData.imageUrl);
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200">
+                <span className="text-xs text-gray-500">No Image</span>
+              </div>
+            )}
+            {/* 옵션 이름 */}
+            <span className="text-sm text-text-100 md:text-base">{option.label}</span>
+          </div>
           <Button
             variant="ghost"
             size="icon"

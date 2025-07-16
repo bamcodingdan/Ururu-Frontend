@@ -37,6 +37,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       name: option.optionName,
       price: option.salePrice, // 할인된 가격 사용
       image: null, // API에서 이미지 URL을 받지만 File 형태가 필요하므로 null
+      imageUrl: option.optionImageUrl, // 옵션 이미지 URL 추가
       fullIngredients: option.fullIngredients || '',
     }));
 

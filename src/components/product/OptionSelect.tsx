@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { FORM_STYLES } from '@/constants/form-styles';
+import Image from 'next/image';
 
 interface OptionSelectProps {
   product: Product;
@@ -45,7 +46,11 @@ export const OptionSelect = ({
 
   return (
     <div className={className}>
-      <Select onValueChange={onSelect} disabled={allOptionsSelected}>
+      <Select
+        key={`select-${selectedOptions.length}`} // key 변경으로 컴포넌트 재생성
+        onValueChange={onSelect}
+        disabled={allOptionsSelected}
+      >
         <SelectTrigger
           className={`${FORM_STYLES.input.base} px-6 text-left ${
             allOptionsSelected ? 'cursor-not-allowed opacity-60' : ''
@@ -67,9 +72,32 @@ export const OptionSelect = ({
                     : 'cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300'
                 }`}
               >
-                <div className="flex flex-col">
-                  <span>{option.name}</span>
-                  <span className="text-xs text-text-300">{option.price.toLocaleString()}원</span>
+                <div className="flex items-center gap-3">
+                  {/* 옵션 이미지 */}
+                  {option.imageUrl ? (
+                    <div className="flex-shrink-0">
+                      <Image
+                        src={option.imageUrl}
+                        alt={option.name}
+                        width={40}
+                        height={40}
+                        className="rounded-lg object-cover"
+                        onError={(e) => {
+                          console.error('Image load failed:', option.imageUrl);
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gray-200">
+                      <span className="text-xs text-gray-500">No Image</span>
+                    </div>
+                  )}
+                  {/* 옵션 정보 */}
+                  <div className="flex flex-col">
+                    <span>{option.name}</span>
+                    <span className="text-xs text-text-300">{option.price.toLocaleString()}원</span>
+                  </div>
                 </div>
               </SelectItem>
             );
