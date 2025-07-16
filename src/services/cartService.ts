@@ -14,12 +14,8 @@ import {
  * @returns 장바구니 아이템 목록
  */
 export async function getCart(): Promise<ApiResponseFormat<ApiCartResponse>> {
-  try {
-    const response = await api.get<ApiResponseFormat<ApiCartResponse>>('/cart');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get<ApiResponseFormat<ApiCartResponse>>('/cart');
+  return response.data;
 }
 
 /**
@@ -32,15 +28,11 @@ export async function updateCartQuantity(
   cartItemId: number,
   quantityChange: number,
 ): Promise<ApiResponseFormat<ApiUpdateCartQuantityResponse>> {
-  try {
-    const response = await api.put<ApiResponseFormat<ApiUpdateCartQuantityResponse>>(
-      `/cart/items/${cartItemId}`,
-      { quantityChange },
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.put<ApiResponseFormat<ApiUpdateCartQuantityResponse>>(
+    `/cart/items/${cartItemId}`,
+    { quantityChange },
+  );
+  return response.data;
 }
 
 /**
@@ -51,14 +43,10 @@ export async function updateCartQuantity(
 export async function deleteCartItem(
   cartItemId: number,
 ): Promise<ApiResponseFormat<ApiDeleteCartItemResponse>> {
-  try {
-    const response = await api.delete<ApiResponseFormat<ApiDeleteCartItemResponse>>(
-      `/cart/items/${cartItemId}`,
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.delete<ApiResponseFormat<ApiDeleteCartItemResponse>>(
+    `/cart/items/${cartItemId}`,
+  );
+  return response.data;
 }
 
 /**
@@ -69,12 +57,8 @@ export async function deleteCartItem(
 export async function createOrderFromCart(
   cartItemIds: number[],
 ): Promise<ApiResponseFormat<ApiCreateOrderResponse>> {
-  try {
-    const response = await api.post<ApiResponseFormat<ApiCreateOrderResponse>>('/cart/orders', {
-      cartItemIds,
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post<ApiResponseFormat<ApiCreateOrderResponse>>('/cart/orders', {
+    cartItemIds,
+  });
+  return response.data;
 }

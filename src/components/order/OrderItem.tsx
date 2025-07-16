@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
-import type { ApiOrderItem } from '@/types/api';
+import type { ApiCreateOrderItem } from '@/types/api';
 
 interface OrderItemProps {
-  item: ApiOrderItem;
+  item: ApiCreateOrderItem;
 }
 
 export function OrderItem({ item }: OrderItemProps) {

@@ -83,7 +83,7 @@ export interface ApiCreateOrderRequest {
   cartItemIds: number[];
 }
 
-export interface ApiOrderItem {
+export interface ApiCreateOrderItem {
   groupbuyOptionId: number;
   quantity: number;
   productName: string;
@@ -94,7 +94,7 @@ export interface ApiOrderItem {
 
 export interface ApiCreateOrderResponse {
   orderId: string;
-  orderItems: ApiOrderItem[];
+  orderItems: ApiCreateOrderItem[];
   totalAmount: number;
   availablePoints: number;
   shippingFee: number;
