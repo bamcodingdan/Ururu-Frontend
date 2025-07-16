@@ -297,10 +297,19 @@ export default function CategoryPage() {
         className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12"
         style={{ scrollBehavior: 'auto' }}
       >
+        {/* 페이지 헤더 */}
+        {selectedSub && (
+          <div className="mb-8">
+            <h1 className="mb-6 text-2xl font-semibold text-text-100 md:text-3xl">{selectedSub}</h1>
+            <p className="text-sm text-text-200 md:text-base">
+              공동 구매들을 카테고리별로 확인해보세요!
+            </p>
+          </div>
+        )}
         {/* 공동구매 리스트 */}
         {selectedSub && (
           <div className="mt-8">
-            <h3 className="mb-4 text-lg font-semibold text-text-100">{selectedSub}</h3>
+            {/* 기존 h3, 설명 p 태그는 제거됨 */}
             {loading && products.length === 0 && (
               <div style={{ minHeight: '60vh', background: '#fff' }} />
             )}
