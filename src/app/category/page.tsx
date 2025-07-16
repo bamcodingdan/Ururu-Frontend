@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { MinimalLayout, SearchBar, MainNav } from '@/components/layout';
 import { categoryItems } from '@/data/categories';
 import { fetchGroupBuyByCategoryId } from '@/services/groupbuyService';
@@ -87,46 +87,146 @@ export default function CategoryPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const scrollPositionRef = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [newItemId, setNewItemId] = useState<string | null>(null);
 
-  const handleSubClick = async (subTitle: string) => {
-    setSelectedSub(subTitle);
-    setLoading(true);
+  // 무한 스크롤을 위한 데이터 패칭 함수
+  const fetchGroupBuys = useCallback(async (categoryId: number, cursor: string | null = null) => {
+    if (!cursor) setLoading(true); // 첫 페이지 로딩일 때만
     setError(null);
-    setProducts([]);
-    const categoryId = SUBCATEGORY_ID_MAP[subTitle];
-    if (!categoryId) {
-      setError('카테고리 ID가 없습니다.');
-      setLoading(false);
-      return;
-    }
+
     try {
-      const res = await fetchGroupBuyByCategoryId(categoryId);
-      setProducts(res.data.map(convertToProduct));
+      let url = `/api/groupbuys?limit=20&sort=order_count&categoryId=${categoryId}`;
+      if (cursor) {
+        url += `&cursor=${cursor}`;
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || '데이터를 불러오지 못했습니다.');
+      }
+
+      const newProducts = data.data.items.map(convertToProduct);
+
+      if (cursor) {
+        setProducts((prev) => {
+          const updated = [...prev, ...newProducts];
+          if (newProducts.length > 0) setNewItemId(newProducts[0].id);
+          return updated;
+        });
+        setTimeout(() => {
+          if (scrollPositionRef.current !== null) {
+            window.scrollTo(0, scrollPositionRef.current);
+            scrollPositionRef.current = null;
+          }
+          setIsLoadingMore(false);
+        }, 0);
+      } else {
+        setProducts(newProducts);
+      }
+
+      setNextCursor(data.data.nextCursor);
+      setHasMore(data.data.hasMore);
     } catch (e: any) {
       setError(e?.message || '공동구매 데이터를 불러오지 못했습니다.');
     } finally {
-      setLoading(false);
+      if (!cursor) setLoading(false); // 첫 페이지 로딩일 때만
+      setIsLoadingMore(false);
     }
-  };
+  }, []);
+
+  // 카테고리 변경 시 첫 페이지 로드
+  const handleSubClick = useCallback(
+    async (subTitle: string) => {
+      setSelectedSub(subTitle);
+      setProducts([]);
+      setNextCursor(null);
+      setHasMore(true);
+      setError(null);
+      scrollPositionRef.current = null;
+      setIsLoadingMore(false);
+
+      // 카테고리 변경 시 스크롤 위치 초기화
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      const categoryId = SUBCATEGORY_ID_MAP[subTitle];
+      if (!categoryId) {
+        setError('카테고리 ID가 없습니다.');
+        return;
+      }
+
+      await fetchGroupBuys(categoryId);
+    },
+    [fetchGroupBuys],
+  );
+
+  // 스크롤 이벤트 핸들러
+  const handleScroll = useCallback(() => {
+    if (loading || isLoadingMore || !hasMore || !nextCursor) return;
+
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // 스크롤이 페이지 하단 근처에 도달했는지 확인
+    if (scrollTop + windowHeight >= documentHeight - 100) {
+      // 현재 스크롤 위치 저장
+      scrollPositionRef.current = scrollTop;
+      setIsLoadingMore(true);
+
+      const categoryId = selectedSub ? SUBCATEGORY_ID_MAP[selectedSub] : null;
+      if (categoryId) {
+        fetchGroupBuys(categoryId, nextCursor);
+      }
+    }
+  }, [loading, isLoadingMore, hasMore, nextCursor, selectedSub, fetchGroupBuys]);
+
+  // 스크롤 이벤트 리스너 등록/해제
+  useEffect(() => {
+    if (selectedSub && hasMore && nextCursor) {
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, [selectedSub, hasMore, nextCursor, handleScroll]);
 
   useEffect(() => {
     const sub = searchParams.get('sub');
     if (sub && sub !== selectedSub) {
       handleSubClick(sub);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams, selectedSub, handleSubClick]);
+
+  useEffect(() => {
+    if (newItemId) {
+      const el = document.getElementById(`product-${newItemId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }
+      setNewItemId(null);
+    }
+  }, [newItemId]);
 
   return (
     <MinimalLayout>
       <SearchBar />
       <MainNav />
-      <div className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12">
+      <div
+        className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12"
+        style={{ scrollBehavior: 'auto' }}
+      >
         {/* 공동구매 리스트 */}
         {selectedSub && (
           <div className="mt-8">
             <h3 className="mb-4 text-lg font-semibold text-text-100">{selectedSub} 공동구매</h3>
-            {loading && <div className="text-sm text-text-200">로딩 중...</div>}
+            {loading && products.length === 0 && (
+              <div style={{ minHeight: '60vh', background: '#fff' }} />
+            )}
             {error && error.includes('해당 공동구매를 찾을 수 없습니다.') ? (
               <div className="flex flex-col items-center justify-center py-8 md:py-12">
                 <div className="mb-4 text-6xl">💄</div>
@@ -141,7 +241,17 @@ export default function CategoryPage() {
             {!loading && !error && products.length === 0 && (
               <div className="text-sm text-text-200">공동구매 상품이 없습니다.</div>
             )}
-            {!loading && !error && products.length > 0 && <ProductGrid products={products} />}
+            {!loading && !error && products.length > 0 && (
+              <div>
+                <ProductGrid products={products} />
+                {isLoadingMore && (
+                  <div className="mt-4 text-center text-sm text-text-200">더 불러오는 중...</div>
+                )}
+              </div>
+            )}
+            {loading && products.length === 0 && (
+              <div className="text-sm text-text-200">로딩 중...</div>
+            )}
           </div>
         )}
       </div>

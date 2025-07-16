@@ -30,7 +30,6 @@ export const CategorySelector = ({
           variant={selectedCategory === category.value ? 'default' : 'outline'}
           size="sm"
           onClick={() => {
-            console.log('CategorySelector: 카테고리 버튼 클릭됨, value:', category.value);
             onCategoryChange(category.value);
           }}
           className={cn(
