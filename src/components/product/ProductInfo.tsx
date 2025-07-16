@@ -96,6 +96,9 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
 
   const { progressTarget, progressValue } = progressData;
 
+  // 🎯 다음 단계 참가자 수 미리 계산 (성능 최적화)
+  const nextStageParticipants = nextStage?.participants;
+
   return (
     <div className={className}>
       {/* 상품 제목 */}
@@ -205,7 +208,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
           {product.rewardTiers.map((tier, index) => {
             // 🎯 실시간 달성 여부 확인
             const isAchieved = product.participants >= tier.participants;
-            const isNext = !isAchieved && nextStage?.participants === tier.participants;
+            const isNext = !isAchieved && nextStageParticipants === tier.participants;
 
             return (
               <Card
