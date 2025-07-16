@@ -246,7 +246,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             </span>
           </div>
           <span className={`text-text-200 ${isDesktop ? 'text-xs' : 'text-xs md:text-sm'}`}>
-            {product.shippingInfo.shippingFee}
+            무료 배송
           </span>
         </div>
       </div>
