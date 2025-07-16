@@ -39,16 +39,13 @@ export class PaymentService {
   }
 
   // 결제 승인
-  static async confirmPayment(
-    paymentKey: string,
-    data: {
-      paymentKey: string;
-      orderId: string;
-      amount: number;
-      tossResult: any;
-    },
-  ) {
-    const response = await api.post(`/payments/${paymentKey}/confirm`, data);
+  static async confirmPayment(data: {
+    paymentKey: string;
+    orderId: string;
+    amount: number;
+    tossResult: any;
+  }) {
+    const response = await api.post(`/payments/${data.paymentKey}/confirm`, data);
     return response.data;
   }
 

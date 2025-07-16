@@ -91,7 +91,7 @@ export const usePaymentConfirm = () => {
       setError(null);
 
       console.log('결제 승인:', data);
-      const response = await PaymentService.confirmPayment(paymentKey, data);
+      const response = await PaymentService.confirmPayment(data);
       console.log('결제 승인 완료:', response);
 
       return response;
