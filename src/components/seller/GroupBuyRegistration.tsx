@@ -75,7 +75,7 @@ function OptionSelector({
         return (
           <Card
             key={`${option.optionId}-${option.optionName}-${index}`}
-            className={`flex w-full cursor-pointer transition-all hover:shadow-md ${
+            className={`flex w-full cursor-pointer transition-all ${
               isSelected ? 'bg-primary-50 border-primary-300' : 'border-bg-300 bg-bg-100'
             }`}
             onClick={() => onToggle(option.optionName)}
