@@ -1,5 +1,11 @@
 import api from '@/lib/axios';
-import type { GroupBuyTop3Response, GroupBuyRankingTop100Response } from '@/types/groupbuy';
+import type {
+  GroupBuyTop3Response,
+  GroupBuyRankingTop100Response,
+  GroupBuyCreateResponse,
+  GroupBuyCreateRequest,
+  GroupBuyCreateApiResponse,
+} from '@/types/groupbuy';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
   const res = await api.get<GroupBuyTop3Response>('/groupbuys/top3');
@@ -33,4 +39,28 @@ export async function fetchGroupBuyByCategoryId(categoryId: number) {
   }
   const items = res.data.data?.items || [];
   return { ...res.data, data: items };
+}
+
+export async function fetchGroupBuyCreateData(): Promise<GroupBuyCreateResponse> {
+  const res = await api.get<GroupBuyCreateResponse>('/groupbuys/create');
+  return res.data;
+}
+
+// 공동구매 등록 API (multipart/form-data)
+export async function createGroupBuy({
+  request,
+  thumbnail,
+  detailImages,
+}: {
+  request: GroupBuyCreateRequest;
+  thumbnail: File;
+  detailImages: File[];
+}): Promise<GroupBuyCreateApiResponse> {
+  const formData = new FormData();
+  formData.append('request', new Blob([JSON.stringify(request)], { type: 'application/json' }));
+  formData.append('thumbnail', thumbnail);
+  detailImages.forEach((file) => formData.append('detailImages', file));
+
+  const res = await api.post('/groupbuys', formData);
+  return res.data;
 }
