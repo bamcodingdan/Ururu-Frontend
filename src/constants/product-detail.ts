@@ -61,9 +61,33 @@ export const generateBreadcrumbFromCategoryIds = (categoryIds: string[]): Breadc
     return DEFAULT_PRODUCT_BREADCRUMB;
   }
 
-  // 카테고리가 이미 이름인지 ID인지 확인
-  const firstCategory = categoryIds[0];
-  const isAlreadyName = !firstCategory.match(/^\d+$/); // 숫자가 아니면 이미 이름
+  // 🎯 카테고리가 이미 이름인지 ID인지 확인 (더 안전한 방식)
+  const isAlreadyName = (() => {
+    // 1. 알려진 카테고리 이름 패턴과 비교
+    const knownCategories = Object.keys(CATEGORY_BREADCRUMB_MAP);
+    const hasKnownCategory = knownCategories.some((key) =>
+      categoryIds.some((id) => id.toLowerCase().includes(key.toLowerCase())),
+    );
+
+    if (hasKnownCategory) return true;
+
+    // 2. 한글이 포함되어 있으면 이름으로 간주
+    const hasKorean = categoryIds.some((id) => /[가-힣]/.test(id));
+    if (hasKorean) return true;
+
+    // 3. 공백이나 특수문자가 포함되어 있으면 이름으로 간주
+    const hasSpacesOrSpecialChars = categoryIds.some((id) => /[\s\-_\/&]/.test(id));
+    if (hasSpacesOrSpecialChars) return true;
+
+    // 4. 순수 숫자나 UUID 패턴이면 ID로 간주
+    const isPureId = categoryIds.every(
+      (id) =>
+        /^[\da-f-]+$/i.test(id) &&
+        (id.length <= 10 || /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)),
+    );
+
+    return !isPureId;
+  })();
 
   if (isAlreadyName) {
     // 이미 카테고리 이름이 온 경우
