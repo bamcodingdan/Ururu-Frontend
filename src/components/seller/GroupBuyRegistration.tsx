@@ -698,7 +698,7 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
         <section>
           <SectionHeader
             title="할인 단계 설정"
-            description="참여 인원에 따른 할인 단계를 설정해주세요"
+            description="참여 인원에 따른 할인 단계를 설정해주세요 (최대 3개)"
           />
           <div className="mt-8 space-y-6">
             {discountTiers.map((tier, index) => (
@@ -713,6 +713,7 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
             <Button
               type="button"
               onClick={addDiscountTier}
+              disabled={discountTiers.length >= 3}
               className={FORM_STYLES.button.pinkOutline + ' mt-2 h-12 w-full'}
             >
               할인 단계 추가하기
