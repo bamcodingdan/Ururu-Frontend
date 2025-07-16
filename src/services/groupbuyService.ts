@@ -8,6 +8,7 @@ import type {
   GroupBuyDetailResponse,
   GroupBuyDetail,
 } from '@/types/groupbuy';
+import { Suspense } from 'react';
 
 export async function fetchGroupBuyTop3(): Promise<GroupBuyTop3Response> {
   const res = await api.get<GroupBuyTop3Response>('/groupbuys/top3');
@@ -30,6 +31,17 @@ export async function fetchGroupBuyRankingTop100(categoryId: number) {
 export async function fetchGroupBuyAllRankingTop100() {
   const res = await api.get<GroupBuyRankingTop100Response>(`/groupbuys?limit=100&sort=deadline`);
   return { ...res.data, data: res.data.data.items };
+}
+
+export async function fetchGroupBuyByCategoryId(categoryId: number) {
+  const res = await api.get<GroupBuyRankingTop100Response>(
+    `/groupbuys?categoryId=${categoryId}&limit=100`,
+  );
+  if (res.data.success === false) {
+    throw new Error(res.data.message || '공동구매 데이터를 불러오지 못했습니다.');
+  }
+  const items = res.data.data?.items || [];
+  return { ...res.data, data: items };
 }
 
 export async function fetchGroupBuyCreateData(): Promise<GroupBuyCreateResponse> {
