@@ -183,7 +183,7 @@ export const DetailMain = ({ product }: DetailMainProps) => {
       {activeTab === 0 && <ProductDetailImages product={product} className="mt-6" />}
 
       {/* 구매정보 탭: 상품정보 제공고시/교환환불 안내 */}
-      {activeTab === 1 && <ProductPurchaseInfoSection />}
+      {activeTab === 1 && <ProductPurchaseInfoSection product={product} />}
     </div>
   );
 };

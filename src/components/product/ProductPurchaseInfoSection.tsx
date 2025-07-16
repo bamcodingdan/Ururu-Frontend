@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Product } from '@/types/product';
 import { productInfoNoticeRows, exchangeRefundNoticeRows } from '@/data/product-info-notice';
 
 interface InfoTableProps {
@@ -26,13 +27,35 @@ function InfoTable({ rows }: InfoTableProps) {
   );
 }
 
-function ProductInfoNoticeSection() {
+function ProductInfoNoticeSection({ product }: { product: Product }) {
+  // 공동구매 옵션의 fullIngredients를 순서대로 결합
+  const allIngredients = product.options
+    .map((option, index) => {
+      if (!option.fullIngredients || option.fullIngredients.trim() === '') {
+        return null;
+      }
+      return `${index + 1}. ${option.name}\n${option.fullIngredients}`;
+    })
+    .filter(Boolean)
+    .join('\n\n');
+
+  // 기본 productInfoNoticeRows에서 성분 정보만 동적으로 교체
+  const dynamicProductInfoRows = productInfoNoticeRows.map((row) => {
+    if (row.label === '화장품법에 따라 기재해야 하는 모든 성분') {
+      return {
+        ...row,
+        value: allIngredients || '성분 정보가 없습니다.',
+      };
+    }
+    return row;
+  });
+
   return (
     <section className="mb-10 rounded-xl bg-bg-100 p-0 shadow-none">
       <h2 className="border-b border-bg-200 px-6 pb-4 pt-6 text-lg font-bold text-text-100">
         상품정보 제공고시
       </h2>
-      <InfoTable rows={productInfoNoticeRows} />
+      <InfoTable rows={dynamicProductInfoRows} />
     </section>
   );
 }
@@ -48,10 +71,14 @@ function ProductExchangeRefundSection() {
   );
 }
 
-export function ProductPurchaseInfoSection() {
+interface ProductPurchaseInfoSectionProps {
+  product: Product;
+}
+
+export function ProductPurchaseInfoSection({ product }: ProductPurchaseInfoSectionProps) {
   return (
     <div className="mt-8 flex flex-col gap-8">
-      <ProductInfoNoticeSection />
+      <ProductInfoNoticeSection product={product} />
       <ProductExchangeRefundSection />
     </div>
   );
