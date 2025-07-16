@@ -194,7 +194,25 @@ export function GroupBuyManagement() {
   const totalCount = allGroupBuys.length;
 
   if (error) {
-    return <div className="py-20 text-center text-red-500">서버 오류가 발생했습니다.</div>;
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
+        <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">공구 관리</h1>
+        <div className="space-y-6">
+          <EmptyState
+            icon="🤝"
+            title="등록된 공구가 없습니다"
+            description="첫 번째 공구를 등록해보세요"
+          />
+          <div className="text-center">
+            <Button onClick={handleRegisterGroupBuy} className={FORM_STYLES.button.submit}>
+              <Plus className="mr-2 h-4 w-4" />
+              공구 등록하기
+            </Button>
+          </div>
+        </div>
+        <ScrollToTopButton />
+      </div>
+    );
   }
   if (isLoading) {
     return (
