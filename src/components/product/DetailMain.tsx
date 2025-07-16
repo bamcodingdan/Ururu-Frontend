@@ -125,9 +125,7 @@ export const DetailMain = ({ product }: DetailMainProps) => {
                 <button
                   key={thumb}
                   onClick={() => handleThumbnailClick(thumb, idx)}
-                  className={`min-h-[64px] min-w-[64px] overflow-hidden rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px] ${
-                    isCurrentImage ? 'ring-2 ring-primary-300' : ''
-                  }`}
+                  className="min-h-[64px] min-w-[64px] overflow-hidden rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px]"
                   style={{ aspectRatio: '1 / 1' }}
                   aria-label={isOptionThumbnail ? `${option?.name} 옵션` : `상품 이미지 ${idx + 1}`}
                 >
