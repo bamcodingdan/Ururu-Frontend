@@ -10,42 +10,56 @@ export class TossPaymentsService {
 
   // 결제 상태 확인
   static async getPaymentStatus(paymentKey: string) {
-    const response = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}`, {
-      method: 'GET',
-      headers: {
-        Authorization: TossPaymentsService.getAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20초 타임아웃
+    try {
+      const response = await fetch(`https://api.tosspayments.com/v1/payments/${paymentKey}`, {
+        method: 'GET',
+        headers: {
+          Authorization: TossPaymentsService.getAuthHeader(),
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+      });
 
-    if (!response.ok) {
-      const errorResult = await response.json();
-      throw new Error(errorResult.message || '결제 정보를 조회할 수 없습니다.');
+      if (!response.ok) {
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || '결제 정보를 조회할 수 없습니다.');
+      }
+
+      return response.json();
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    return response.json();
   }
 
   // 결제 승인
   static async confirmPayment(paymentKey: string, orderId: string, amount: number) {
-    const response = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
-      method: 'POST',
-      headers: {
-        Authorization: TossPaymentsService.getAuthHeader(),
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        paymentKey,
-        orderId,
-        amount,
-      }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20초 타임아웃
+    try {
+      const response = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
+        method: 'POST',
+        headers: {
+          Authorization: TossPaymentsService.getAuthHeader(),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentKey,
+          orderId,
+          amount,
+        }),
+        signal: controller.signal,
+      });
 
-    if (!response.ok) {
-      const errorResult = await response.json();
-      throw new Error(errorResult.message || '결제 승인에 실패했습니다.');
+      if (!response.ok) {
+        const errorResult = await response.json();
+        throw new Error(errorResult.message || '결제 승인에 실패했습니다.');
+      }
+
+      return response.json();
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    return response.json();
   }
 }
