@@ -166,6 +166,9 @@ export const useCart = () => {
       try {
         // API 호출 - cartItemId는 itemId와 동일하다고 가정
         const cartItemId = parseInt(itemId);
+        if (isNaN(cartItemId)) {
+          throw new Error(`Invalid cart item ID: ${itemId}`);
+        }
         const response = await deleteCartItem(cartItemId);
 
         if (response.success) {
@@ -233,7 +236,13 @@ export const useCart = () => {
     }
 
     // 선택된 아이템들의 ID 추출 (문자열 ID를 숫자로 변환)
-    const cartItemIds = selectedItems.map((item) => parseInt(item.id));
+    const cartItemIds = selectedItems.map((item) => {
+      const id = parseInt(item.id);
+      if (isNaN(id)) {
+        throw new Error(`Invalid cart item ID: ${item.id}`);
+      }
+      return id;
+    });
 
     // 주문 생성 로딩 상태 시작
     setIsCreatingOrder(true);
