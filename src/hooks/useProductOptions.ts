@@ -27,8 +27,12 @@ export const useProductOptions = (product: Product) => {
     );
   };
 
-  // 총 금액 계산
-  const totalPrice = selectedOptions.reduce((sum, o) => sum + product.price * o.quantity, 0);
+  // 총 금액 계산 - 각 옵션의 개별 가격 사용
+  const totalPrice = selectedOptions.reduce((sum, o) => {
+    const option = product.options.find((opt) => opt.id === o.value);
+    const optionPrice = option ? option.price : product.price;
+    return sum + optionPrice * o.quantity;
+  }, 0);
 
   // 총 수량 계산
   const totalCount = selectedOptions.reduce((sum, o) => sum + o.quantity, 0);

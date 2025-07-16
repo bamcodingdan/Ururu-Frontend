@@ -7,13 +7,13 @@ import { getGroupBuyDetail } from '@/services/groupbuyService';
 import type { GroupBuyDetail } from '@/types/groupbuy';
 import type { Product } from '@/types/product';
 
-interface ProductDetailPageProps {
+interface GroupBuyDetailPageProps {
   params: {
     id: string;
   };
 }
 
-export default function ProductDetailPage({ params }: ProductDetailPageProps) {
+export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) {
   const [groupBuyData, setGroupBuyData] = useState<GroupBuyDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,14 +31,17 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     const thumbnails = sortedImages.map((img) => img.imageUrl);
     const detailImages = sortedImages.map((img) => img.imageUrl);
 
-    // 옵션 변환
+    // 옵션 변환 - API 데이터의 모든 필드를 활용
     const options = groupBuy.options.map((option) => ({
       id: String(option.id),
       name: option.optionName,
-      price: option.salePrice,
+      price: option.salePrice, // 할인된 가격 사용
       image: null, // API에서 이미지 URL을 받지만 File 형태가 필요하므로 null
-      fullIngredients: option.fullIngredients,
+      fullIngredients: option.fullIngredients || '',
     }));
+
+    console.log('Original API options:', groupBuy.options);
+    console.log('Converted options:', options);
 
     // 할인 단계를 rewardTiers로 변환
     const rewardTiers = groupBuy.discountStages.map((stage) => ({

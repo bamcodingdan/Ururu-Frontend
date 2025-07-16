@@ -2,11 +2,12 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { X, Minus, Plus } from 'lucide-react';
-import type { SelectedOption } from '@/types/product';
+import type { SelectedOption, Product } from '@/types/product';
 
 interface OptionCardProps {
   option: SelectedOption;
   price: number;
+  product: Product; // Product 전체를 받아서 옵션별 가격 계산
   onRemove: (value: string) => void;
   onQuantityChange: (value: string, delta: number) => void;
   className?: string;
@@ -15,10 +16,14 @@ interface OptionCardProps {
 export const OptionCard = ({
   option,
   price,
+  product,
   onRemove,
   onQuantityChange,
   className = '',
 }: OptionCardProps) => {
+  // 옵션별 가격 계산
+  const optionData = product.options.find((opt) => opt.id === option.value);
+  const optionPrice = optionData ? optionData.price : price;
   return (
     <Card
       className={`flex w-full items-center justify-between gap-2 rounded-lg border-none bg-bg-200 p-3 md:p-4 ${className}`}
@@ -59,7 +64,7 @@ export const OptionCard = ({
             </Button>
           </div>
           <span className="text-sm font-semibold text-text-100 md:text-base">
-            {(price * option.quantity).toLocaleString()}원
+            {(optionPrice * option.quantity).toLocaleString()}원
           </span>
         </div>
       </CardContent>

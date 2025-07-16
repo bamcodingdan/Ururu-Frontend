@@ -61,6 +61,7 @@ export const OrderBox = ({ product }: OrderBoxProps) => {
                 key={opt.value}
                 option={opt}
                 price={product.price}
+                product={product}
                 onRemove={handleRemoveOption}
                 onQuantityChange={handleChangeQuantity}
               />
