@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import type { Product } from '@/types/product';
+import type { Product, ProductOption } from '@/types/product';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Truck, Clock } from 'lucide-react';
@@ -47,6 +47,13 @@ const parseDiscountFromString = (discountString: string): number => {
   return discountRate;
 };
 
+// 🎯 최저가 계산 로직을 추출한 유틸리티 함수
+const getMinPriceOverride = (options: ProductOption[], fallbackPrice: number): number => {
+  return options.length > 0
+    ? Math.min(...options.map((option) => option.priceOverride || option.price))
+    : fallbackPrice;
+};
+
 export const ProductInfo = ({ product, className = '', variant = 'mobile' }: ProductInfoProps) => {
   const isDesktop = variant === 'desktop';
 
@@ -67,10 +74,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
     );
 
     // priceOverride 중 최저가 찾기 (공동구매 시작가 기준)
-    const minPriceOverride =
-      product.options.length > 0
-        ? Math.min(...product.options.map((option) => option.priceOverride || option.price))
-        : product.originalPrice;
+    const minPriceOverride = getMinPriceOverride(product.options, product.originalPrice);
 
     // priceOverride 최저가 기준으로 할인 적용된 최저가 계산
     const currentLowestPrice = Math.round((minPriceOverride * (100 - currentDiscountRate)) / 100);
@@ -149,10 +153,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
           <span
             className={`font-bold text-primary-300 ${isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'}`}
           >
-            {Math.min(
-              ...product.options.map((option) => option.priceOverride || option.price),
-            ).toLocaleString()}
-            원
+            {getMinPriceOverride(product.options, product.originalPrice).toLocaleString()}원
           </span>
         )}
       </div>
