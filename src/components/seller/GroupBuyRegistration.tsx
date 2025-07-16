@@ -420,8 +420,8 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
       limitQuantityPerMember: maxQuantityPerPerson,
       productId: Number(selectedProductId),
       discountStages: discountTiers.map((tier) => ({
-        minQuantity: tier.minParticipants,
-        discountRate: tier.discountRate,
+        count: tier.minParticipants,
+        rate: tier.discountRate,
       })),
       options:
         selectedProduct?.options

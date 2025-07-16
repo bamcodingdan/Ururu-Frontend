@@ -52,10 +52,10 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
 
     // 할인 단계를 rewardTiers로 변환 (실제 달성 여부만 반영)
     const rewardTiers = groupBuy.discountStages.map((stage) => ({
-      participants: stage.minQuantity,
-      discount: `${stage.discountRate}% 할인`,
-      discountRate: stage.discountRate, // 숫자형 할인율 추가
-      achieved: groupBuy.currentOrderCount >= stage.minQuantity,
+      participants: stage.count,
+      discount: `${stage.rate}% 할인`,
+      discountRate: stage.rate, // 숫자형 할인율 추가
+      achieved: groupBuy.currentOrderCount >= stage.count,
     }));
 
     // productNotice 정보를 Product 타입 필드로 매핑
@@ -86,7 +86,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       discountRate: groupBuy.maxDiscountRate,
       point: 0, // API에 point 정보가 없으므로 0으로 설정
       participants: groupBuy.currentOrderCount,
-      targetParticipants: groupBuy.discountStages[0]?.minQuantity || 0,
+      targetParticipants: groupBuy.discountStages[0]?.count || 0,
       remainingDays,
       category: {
         main: groupBuy.product.categoryIds[0] || 'general',

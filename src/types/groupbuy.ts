@@ -57,8 +57,8 @@ export interface GroupBuyOptionRequest {
 }
 
 export interface GroupBuyDiscountStage {
-  minQuantity: number;
-  discountRate: number;
+  count: number;
+  rate: number;
 }
 
 export interface GroupBuyImageRequest {
