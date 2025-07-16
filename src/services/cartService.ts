@@ -4,6 +4,7 @@ import {
   ApiResponseFormat,
   ApiUpdateCartQuantityRequest,
   ApiUpdateCartQuantityResponse,
+  ApiDeleteCartItemResponse,
 } from '@/types/api';
 
 /**
@@ -33,6 +34,24 @@ export async function updateCartQuantity(
     const response = await api.put<ApiResponseFormat<ApiUpdateCartQuantityResponse>>(
       `/cart/items/${cartItemId}`,
       { quantityChange },
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * 장바구니 아이템 삭제
+ * @param cartItemId - 삭제할 장바구니 아이템 ID
+ * @returns 삭제 성공 응답
+ */
+export async function deleteCartItem(
+  cartItemId: number,
+): Promise<ApiResponseFormat<ApiDeleteCartItemResponse>> {
+  try {
+    const response = await api.delete<ApiResponseFormat<ApiDeleteCartItemResponse>>(
+      `/cart/items/${cartItemId}`,
     );
     return response.data;
   } catch (error) {

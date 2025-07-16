@@ -72,6 +72,12 @@ export interface ApiUpdateCartQuantityResponse {
   quantity: number;
 }
 
+// 장바구니 아이템 삭제 관련 타입
+export interface ApiDeleteCartItemResponse {
+  success: boolean;
+  message: string;
+}
+
 // 배송지 관련 타입
 export interface ShippingAddress {
   id: number;

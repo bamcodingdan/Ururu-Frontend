@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import type { CartItem } from '@/types/cart';
-import { getCart, updateCartQuantity } from '@/services/cartService';
+import { getCart, updateCartQuantity, deleteCartItem } from '@/services/cartService';
 import { convertApiCartItemsToCartItems } from '@/lib/cart-utils';
 
 export const useCart = () => {
@@ -146,9 +146,60 @@ export const useCart = () => {
   );
 
   // 상품 삭제
-  const removeItem = useCallback((itemId: string) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== itemId));
-  }, []);
+  const removeItem = useCallback(
+    async (itemId: string) => {
+      // 낙관적 업데이트 - 즉시 UI에서 제거
+      const originalItems = cartItems;
+      setCartItems((prev) => prev.filter((item) => item.id !== itemId));
+
+      // 로딩 상태 시작
+      setUpdatingItems((prev) => new Set(prev).add(itemId));
+
+      try {
+        // API 호출 - cartItemId는 itemId와 동일하다고 가정
+        const cartItemId = parseInt(itemId);
+        const response = await deleteCartItem(cartItemId);
+
+        if (response.success) {
+          // 성공 시 특별한 처리 없음 (이미 UI에서 제거됨)
+        } else {
+          throw new Error(response.message || '삭제에 실패했습니다.');
+        }
+      } catch (error: any) {
+        // 에러 발생 시 원래 상태로 복원
+        setCartItems(originalItems);
+
+        // 에러 처리
+        let errorTitle = '삭제 실패';
+        let errorMessage = '알 수 없는 오류가 발생했습니다.';
+
+        if (error?.status === 404) {
+          errorTitle = '아이템을 찾을 수 없음';
+          errorMessage = '이미 삭제된 아이템이거나 존재하지 않는 아이템입니다.';
+        } else if (error?.message) {
+          errorMessage = error.message;
+        }
+
+        // 에러 다이얼로그 표시
+        setErrorDialog({
+          isOpen: true,
+          title: errorTitle,
+          message: errorMessage,
+        });
+
+        // 에러 발생시 전체 장바구니 데이터 다시 로드
+        loadCartItems();
+      } finally {
+        // 로딩 상태 종료
+        setUpdatingItems((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(itemId);
+          return newSet;
+        });
+      }
+    },
+    [cartItems, loadCartItems],
+  );
 
   // 에러 다이얼로그 닫기
   const closeErrorDialog = useCallback(() => {
