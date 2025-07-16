@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { NoFooterLayout } from '@/components/layout/layouts';
 import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { toast } from 'sonner';
+import { getPaymentErrorMessage } from '@/utils/paymentErrorMapping';
 
 function PaymentFailContent() {
   const searchParams = useSearchParams();
@@ -23,25 +24,6 @@ function PaymentFailContent() {
     }
   }, [message]);
 
-  const getErrorMessage = () => {
-    switch (code) {
-      case 'PAY_PROCESS_CANCELED':
-        return '결제가 취소되었습니다.';
-      case 'FORBIDDEN_REQUEST':
-        return '잘못된 요청입니다.';
-      case 'REJECT_CARD_COMPANY':
-        return '카드사에서 결제를 거부했습니다.';
-      case 'NOT_SUPPORTED_CARD_TYPE':
-        return '지원되지 않는 카드입니다.';
-      case 'FAILED_PAYMENT_INTERNAL_SYSTEM_PROCESSING':
-        return '결제 시스템 처리 중 오류가 발생했습니다.';
-      case 'PAY_PROCESS_ABORTED':
-        return '결제 처리가 중단되었습니다.';
-      default:
-        return message || '알 수 없는 오류가 발생했습니다.';
-    }
-  };
-
   return (
     <NoFooterLayout>
       <div className="container mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-12">
@@ -49,7 +31,7 @@ function PaymentFailContent() {
           <CardContent className="px-6 py-8 text-center">
             <div className="mb-4 text-4xl">❌</div>
             <h1 className="mb-4 text-2xl font-semibold text-text-100">결제 실패</h1>
-            <p className="mb-8 text-text-200">{getErrorMessage()}</p>
+            <p className="mb-8 text-text-200">{getPaymentErrorMessage(code, message)}</p>
 
             {orderId && (
               <div className="mb-8 space-y-2 text-left">
