@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { MinimalLayout, SearchBar, MainNav } from '@/components/layout';
 import { categoryItems } from '@/data/categories';
 import { fetchGroupBuyByCategoryId } from '@/services/groupbuyService';
@@ -82,7 +83,9 @@ function convertToProduct(item: GroupBuyTop3): Product {
 }
 
 export default function CategoryPage() {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const sub = searchParams.get('sub');
   const [selectedSub, setSelectedSub] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -196,11 +199,10 @@ export default function CategoryPage() {
   }, [selectedSub, hasMore, nextCursor, handleScroll]);
 
   useEffect(() => {
-    const sub = searchParams.get('sub');
     if (sub && sub !== selectedSub) {
       handleSubClick(sub);
     }
-  }, [searchParams, selectedSub, handleSubClick]);
+  }, [sub, selectedSub, handleSubClick]);
 
   useEffect(() => {
     if (newItemId) {
@@ -214,6 +216,84 @@ export default function CategoryPage() {
 
   return (
     <MinimalLayout>
+      {/* sub가 없을 때만 카테고리 그리드 노출 */}
+      {!sub && (
+        <>
+          {/* 모바일: 세부 카테고리 선택 그리드 */}
+          <div className="container block py-6 md:hidden">
+            {/* 헤더 */}
+            <div className="mb-6">
+              <h1 className="text-2xl font-semibold text-text-100">카테고리</h1>
+              <p className="mt-2 text-sm text-text-200">
+                원하는 카테고리를 선택하여 공구를 찾아보세요
+              </p>
+            </div>
+            {/* 카테고리 그리드 */}
+            <div className="grid grid-cols-1 gap-6">
+              {categoryItems.map((category) => (
+                <div
+                  key={category.title}
+                  className="rounded-xl border border-bg-300 bg-bg-100 p-4 shadow-sm"
+                >
+                  {/* 메인 카테고리 */}
+                  <div className="mb-3">
+                    <h2 className="text-lg font-semibold text-text-100">{category.title}</h2>
+                  </div>
+                  {/* 서브 카테고리 */}
+                  <div className="grid grid-cols-2 gap-2">
+                    {category.subItems.map((subItem) => (
+                      <button
+                        key={subItem.title}
+                        className="rounded-lg bg-bg-200 px-3 py-2 text-sm text-text-200 active:bg-primary-100"
+                        onClick={() =>
+                          router.push(`/category?sub=${encodeURIComponent(subItem.title)}`)
+                        }
+                      >
+                        {subItem.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* 데스크탑: 세부 카테고리 선택 그리드 */}
+          <div className="container hidden py-6 md:block">
+            <div className="mb-6">
+              <h1 className="text-2xl font-semibold text-text-100">카테고리</h1>
+              <p className="mt-2 text-sm text-text-200">
+                원하는 카테고리를 선택하여 공구를 찾아보세요
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
+              {categoryItems.map((category) => (
+                <div
+                  key={category.title}
+                  className="rounded-xl border border-bg-300 bg-bg-100 p-4 shadow-sm"
+                >
+                  <div className="mb-3">
+                    <h2 className="text-lg font-semibold text-text-100">{category.title}</h2>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {category.subItems.map((subItem) => (
+                      <button
+                        key={subItem.title}
+                        className="rounded-lg bg-bg-200 px-3 py-2 text-sm text-text-200 active:bg-primary-100"
+                        onClick={() =>
+                          router.push(`/category?sub=${encodeURIComponent(subItem.title)}`)
+                        }
+                      >
+                        {subItem.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+      {/* 기존 데스크탑/공구 리스트 등은 아래에 그대로 유지 */}
       <SearchBar />
       <MainNav />
       <div
