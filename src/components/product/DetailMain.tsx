@@ -52,6 +52,7 @@ export const DetailMain = ({ product }: DetailMainProps) => {
 
   // 썸네일 클릭 핸들러
   const handleThumbnailClick = (imageUrl: string, index: number) => {
+    // 메인 이미지 변경 (안전장치 제거하여 직접 설정)
     setMainImage(imageUrl);
 
     // 옵션 이미지인 경우 해당 옵션 선택
@@ -112,7 +113,11 @@ export const DetailMain = ({ product }: DetailMainProps) => {
               const isOptionThumbnail = idx >= thumbnailCount;
               const optionIndex = idx - thumbnailCount;
               const option = isOptionThumbnail ? product.options[optionIndex] : null;
-              const isSelected = option
+
+              // 현재 선택된 이미지인지 확인 (메인 이미지와 비교)
+              const isCurrentImage = thumb === mainImage;
+              // 옵션 선택 상태 확인
+              const isOptionSelected = option
                 ? selectedOptions.some((selected) => selected.value === option.id)
                 : false;
 
@@ -120,9 +125,10 @@ export const DetailMain = ({ product }: DetailMainProps) => {
                 <button
                   key={thumb}
                   onClick={() => handleThumbnailClick(thumb, idx)}
-                  className={`min-h-[64px] min-w-[64px] rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px] ${
-                    isSelected ? 'ring-2 ring-primary-300' : ''
+                  className={`min-h-[64px] min-w-[64px] overflow-hidden rounded-xl transition-all hover:opacity-80 md:min-h-[80px] md:min-w-[80px] lg:min-h-[120px] lg:min-w-[120px] ${
+                    isCurrentImage ? 'ring-2 ring-primary-300' : ''
                   }`}
+                  style={{ aspectRatio: '1 / 1' }}
                   aria-label={isOptionThumbnail ? `${option?.name} 옵션` : `상품 이미지 ${idx + 1}`}
                 >
                   <Image
@@ -132,14 +138,7 @@ export const DetailMain = ({ product }: DetailMainProps) => {
                     height={PRODUCT_CONSTANTS.IMAGE.THUMBNAIL_HEIGHT}
                     className={PRODUCT_STYLES.image.thumbnail}
                   />
-                  {/* 옵션 썸네일인 경우 선택 표시 */}
-                  {isSelected && (
-                    <div className="bg-primary-300/20 absolute inset-0 flex items-center justify-center rounded-xl">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-300">
-                        <span className="text-xs text-white">✓</span>
-                      </div>
-                    </div>
-                  )}
+                  {/* 옵션 선택 표시 제거 - ring-2 테두리로 충분히 구분됨 */}
                 </button>
               );
             })}

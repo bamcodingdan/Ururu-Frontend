@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { Product } from '@/types/product';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Truck, Clock } from 'lucide-react';
-import { calculateProgress } from '@/types/product';
 
 interface ProductInfoProps {
   product: Product;
@@ -11,27 +10,74 @@ interface ProductInfoProps {
   variant?: 'mobile' | 'desktop';
 }
 
+// 🎯 현재 할인률 계산 함수
+const calculateCurrentDiscountRate = (
+  participants: number,
+  rewardTiers: Array<{ participants: number; discount: string; achieved: boolean }>,
+): number => {
+  // 달성된 단계 중 최고 할인률 찾기
+  const achievedTiers = rewardTiers.filter((tier) => participants >= tier.participants);
+
+  if (achievedTiers.length === 0) return 0;
+
+  // 가장 높은 할인률 반환 (문자열에서 숫자 추출)
+  const highestTier = achievedTiers.reduce((max, tier) => {
+    const discountRate = parseInt(tier.discount.replace(/[^\d]/g, ''));
+    const maxDiscountRate = parseInt(max.discount.replace(/[^\d]/g, ''));
+    return discountRate > maxDiscountRate ? tier : max;
+  });
+
+  return parseInt(highestTier.discount.replace(/[^\d]/g, ''));
+};
+
 export const ProductInfo = ({ product, className = '', variant = 'mobile' }: ProductInfoProps) => {
   const isDesktop = variant === 'desktop';
 
-  // 현재 할인율 계산 (API 데이터 기반)
-  const currentDiscountRate = product.discountRate;
+  // 🎯 메모이제이션된 실시간 계산
+  const {
+    currentDiscountRate,
+    currentLowestPrice,
+    nextStage,
+    remainingForNextReward,
+    progressTarget,
+    progressValue,
+  } = useMemo(() => {
+    // 현재 달성된 할인률 계산
+    const currentDiscountRate = calculateCurrentDiscountRate(
+      product.participants,
+      product.rewardTiers,
+    );
 
-  // 다음 리워드 단계 찾기
-  const nextStage = product.rewardTiers.find((tier) => product.participants < tier.participants);
-  const remainingForNextReward = nextStage ? nextStage.participants - product.participants : 0;
+    // 현재 할인 적용된 최저가 계산
+    const currentLowestPrice = Math.round(
+      (product.originalPrice * (100 - currentDiscountRate)) / 100,
+    );
 
-  // 현재 달성된 최고 단계 찾기
-  const currentAchievedStage = product.rewardTiers
-    .filter((tier) => tier.achieved)
-    .sort((a, b) => b.participants - a.participants)[0];
+    // 다음 리워드 단계 찾기
+    const nextStage = product.rewardTiers.find((tier) => product.participants < tier.participants);
+    const remainingForNextReward = nextStage ? nextStage.participants - product.participants : 0;
 
-  // 진행률 계산 (다음 목표 기준)
-  const progressTarget = nextStage
-    ? nextStage.participants
-    : product.rewardTiers[product.rewardTiers.length - 1]?.participants ||
-      product.targetParticipants;
-  const progressValue = Math.min(100, (product.participants / progressTarget) * 100);
+    // 진행률 계산 (다음 목표 기준)
+    const progressTarget = nextStage
+      ? nextStage.participants
+      : product.rewardTiers[product.rewardTiers.length - 1]?.participants ||
+        product.targetParticipants;
+    const progressValue = Math.min(100, (product.participants / progressTarget) * 100);
+
+    return {
+      currentDiscountRate,
+      currentLowestPrice,
+      nextStage,
+      remainingForNextReward,
+      progressTarget,
+      progressValue,
+    };
+  }, [
+    product.participants,
+    product.rewardTiers,
+    product.originalPrice,
+    product.targetParticipants,
+  ]);
 
   return (
     <div className={className}>
@@ -44,7 +90,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
         {product.name}
       </div>
 
-      {/* 가격 정보 */}
+      {/* 가격 정보 - 현재 달성된 할인률 기준 */}
       <div className={`mb-6 flex items-center gap-3 ${isDesktop ? 'gap-3.5' : 'gap-3'}`}>
         <span
           className={`font-bold text-primary-300 ${
@@ -65,9 +111,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             isDesktop ? 'text-3xl' : 'text-2xl md:text-3xl'
           }`}
         >
-          {/* 현재 할인율 적용된 최저가 표시 */}
-          {Math.round((product.originalPrice * (100 - currentDiscountRate)) / 100).toLocaleString()}
-          원
+          {currentLowestPrice.toLocaleString()}원
         </span>
       </div>
 
@@ -107,6 +151,7 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             </span>
           )}
         </div>
+
         {/* 진행률 바 */}
         <div className={`flex w-full flex-col gap-2 ${isDesktop ? 'gap-3' : 'gap-2'}`}>
           <Progress value={progressValue} className="h-2 bg-primary-100" />
@@ -118,12 +163,12 @@ export const ProductInfo = ({ product, className = '', variant = 'mobile' }: Pro
             {product.participants} / {progressTarget}명
           </div>
         </div>
+
         {/* 리워드 단계 */}
         <div className="flex w-full flex-col gap-2">
           {product.rewardTiers.map((tier, index) => {
-            // 현재 단계가 달성되었는지 확인 (실시간)
+            // 🎯 실시간 달성 여부 확인
             const isAchieved = product.participants >= tier.participants;
-            // 다음 목표 단계인지 확인 (달성되지 않았고, 다음 단계인 경우)
             const isNext = !isAchieved && nextStage?.participants === tier.participants;
 
             return (
