@@ -62,9 +62,8 @@ export const OptionSelect = ({
           {product.options.map((option) => {
             const isSelected = selectedOptions.some((selected) => selected.value === option.id);
             const isOutOfStock =
-              option.initialStock !== undefined &&
-              option.currentStock !== undefined &&
-              option.initialStock - option.currentStock === option.initialStock;
+              option.isOutOfStock ||
+              (option.currentStock !== undefined && option.currentStock === 0);
 
             return (
               <SelectItem
@@ -103,11 +102,7 @@ export const OptionSelect = ({
                     <span>{option.name}</span>
                     <span className="text-xs text-text-300">{option.price.toLocaleString()}원</span>
                     {/* 품절 상태 표시 */}
-                    {option.initialStock !== undefined &&
-                      option.currentStock !== undefined &&
-                      option.initialStock - option.currentStock === option.initialStock && (
-                        <span className="text-xs text-red-500">품절</span>
-                      )}
+                    {option.isOutOfStock && <span className="text-xs text-red-500">품절</span>}
                   </div>
                 </div>
               </SelectItem>

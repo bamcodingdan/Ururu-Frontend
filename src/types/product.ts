@@ -18,6 +18,7 @@ export interface ProductOption {
   initialStock?: number; // 초기 재고
   currentStock?: number; // 현재 재고
   priceOverride?: number; // 공동구매 시작가
+  isOutOfStock?: boolean; // 품절 여부
 }
 
 // 상품 수정용 옵션 타입 (기존 옵션은 숫자 id, 새 옵션은 null)

@@ -45,6 +45,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       initialStock: option.initialStock, // 초기 재고
       currentStock: option.currentStock, // 현재 재고
       priceOverride: option.priceOverride, // 공동구매 시작가
+      isOutOfStock: option.isOutOfStock, // 품절 여부
     }));
 
     console.log('Original API options:', groupBuy.options);

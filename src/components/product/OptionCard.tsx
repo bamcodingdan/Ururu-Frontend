@@ -57,11 +57,7 @@ export const OptionCard = ({
             <div className="flex flex-col">
               <span className="text-sm text-text-100 md:text-base">{option.label}</span>
               {/* 품절 상태 표시 */}
-              {optionData?.initialStock !== undefined &&
-                optionData?.currentStock !== undefined &&
-                optionData.initialStock - optionData.currentStock === optionData.initialStock && (
-                  <span className="text-xs text-red-500">품절</span>
-                )}
+              {optionData?.isOutOfStock && <span className="text-xs text-red-500">품절</span>}
             </div>
           </div>
           <Button
