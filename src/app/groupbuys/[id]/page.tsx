@@ -55,6 +55,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
     const rewardTiers = groupBuy.discountStages.map((stage) => ({
       participants: stage.minQuantity,
       discount: `${stage.discountRate}% 할인`,
+      discountRate: stage.discountRate, // 숫자형 할인율 추가
       achieved: groupBuy.currentOrderCount >= stage.minQuantity,
     }));
 

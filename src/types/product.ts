@@ -34,6 +34,7 @@ export interface ProductEditOption {
 export interface RewardTier {
   participants: number;
   discount: string;
+  discountRate?: number; // 숫자형 할인율 추가
   achieved: boolean;
 }
 

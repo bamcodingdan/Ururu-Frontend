@@ -13,21 +13,38 @@ interface ProductInfoProps {
 // 🎯 현재 할인률 계산 함수
 const calculateCurrentDiscountRate = (
   participants: number,
-  rewardTiers: Array<{ participants: number; discount: string; achieved: boolean }>,
+  rewardTiers: Array<{
+    participants: number;
+    discount: string;
+    discountRate?: number;
+    achieved: boolean;
+  }>,
 ): number => {
   // 달성된 단계 중 최고 할인률 찾기
   const achievedTiers = rewardTiers.filter((tier) => participants >= tier.participants);
 
   if (achievedTiers.length === 0) return 0;
 
-  // 가장 높은 할인률 반환 (문자열에서 숫자 추출)
+  // 가장 높은 할인률 반환 (숫자형 discountRate 우선 사용, fallback으로 문자열 파싱)
   const highestTier = achievedTiers.reduce((max, tier) => {
-    const discountRate = parseInt(tier.discount.replace(/[^\d]/g, ''));
-    const maxDiscountRate = parseInt(max.discount.replace(/[^\d]/g, ''));
-    return discountRate > maxDiscountRate ? tier : max;
+    const currentDiscountRate = tier.discountRate ?? parseDiscountFromString(tier.discount);
+    const maxDiscountRate = max.discountRate ?? parseDiscountFromString(max.discount);
+    return currentDiscountRate > maxDiscountRate ? tier : max;
   });
 
-  return parseInt(highestTier.discount.replace(/[^\d]/g, ''));
+  return highestTier.discountRate ?? parseDiscountFromString(highestTier.discount);
+};
+
+// 🎯 문자열에서 할인율 파싱하는 안전한 함수
+const parseDiscountFromString = (discountString: string): number => {
+  const discountRate = parseInt(discountString.replace(/[^\d]/g, ''), 10);
+
+  if (isNaN(discountRate)) {
+    console.warn(`Invalid discount format: ${discountString}`);
+    return 0;
+  }
+
+  return discountRate;
 };
 
 export const ProductInfo = ({ product, className = '', variant = 'mobile' }: ProductInfoProps) => {
