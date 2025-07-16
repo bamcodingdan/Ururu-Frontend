@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback, useLayoutEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { MinimalLayout, SearchBar, MainNav } from '@/components/layout';
+import { FullLayout } from '@/components/layout/layouts';
 import { categoryItems } from '@/data/categories';
 import { fetchGroupBuyByCategoryId } from '@/services/groupbuyService';
 import type { GroupBuyTop3 } from '@/types/groupbuy';
@@ -215,7 +215,7 @@ export default function CategoryPage() {
   }, [newItemId]);
 
   return (
-    <MinimalLayout>
+    <FullLayout>
       {/* sub가 없을 때만 카테고리 그리드 노출 */}
       {!sub && (
         <>
@@ -293,9 +293,6 @@ export default function CategoryPage() {
           </div>
         </>
       )}
-      {/* 기존 데스크탑/공구 리스트 등은 아래에 그대로 유지 */}
-      <SearchBar />
-      <MainNav />
       <div
         className="container mx-auto max-w-[1280px] px-6 py-8 md:px-9 md:py-10 xl:px-12"
         style={{ scrollBehavior: 'auto' }}
@@ -335,6 +332,6 @@ export default function CategoryPage() {
           </div>
         )}
       </div>
-    </MinimalLayout>
+    </FullLayout>
   );
 }
