@@ -16,8 +16,9 @@ import {
   updateGroupBuyStatus,
 } from '@/services/groupbuyService';
 import type { SellerGroupBuy, SellerGroupBuyListResponse } from '@/types/groupbuy';
-import { Plus, Play, Pause } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Pagination } from '@/components/seller/common/Pagination';
+import { Badge } from '@/components/ui/badge';
 
 export function GroupBuyManagement() {
   const router = useRouter();
@@ -39,6 +40,15 @@ export function GroupBuyManagement() {
   const [deleteError, setDeleteError] = useState<{ isOpen: boolean; message: string }>({
     isOpen: false,
     message: '',
+  });
+  const [startConfirm, setStartConfirm] = useState<{
+    isOpen: boolean;
+    groupBuyId: number | null;
+    groupBuyTitle: string;
+  }>({
+    isOpen: false,
+    groupBuyId: null,
+    groupBuyTitle: '',
   });
 
   // 그룹바이 목록 조회
@@ -113,25 +123,34 @@ export function GroupBuyManagement() {
     setDeleteConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
   };
 
-  const handleStatusChange = async (groupBuyId: number, currentStatus: string) => {
+  const handleStartClick = (groupBuyId: number, groupBuyTitle: string) => {
+    setStartConfirm({
+      isOpen: true,
+      groupBuyId,
+      groupBuyTitle,
+    });
+  };
+
+  const handleStartConfirm = async () => {
+    if (!startConfirm.groupBuyId) return;
+
     try {
-      let newStatus: 'OPEN' | 'CLOSED' | 'ACTIVE';
-
-      if (currentStatus === 'CLOSED') {
-        newStatus = 'OPEN';
-      } else {
-        newStatus = 'CLOSED';
-      }
-
-      await updateGroupBuyStatus(groupBuyId, newStatus);
+      await updateGroupBuyStatus(startConfirm.groupBuyId, 'OPEN');
       await fetchGroupBuys(currentPage);
+      setStartConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
     } catch (error: any) {
-      console.error('Status change failed:', error);
-      setError('상태 변경에 실패했습니다.');
+      console.error('공구 시작 실패:', error);
+      setError('공구 시작에 실패했습니다.');
+      setStartConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const handleStartCancel = () => {
+    setStartConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
+  };
+
+  // 상태 뱃지 렌더링 함수
+  const renderStatusBadge = (status: string) => {
     switch (status) {
       case 'OPEN':
         return (
@@ -139,16 +158,16 @@ export function GroupBuyManagement() {
             진행중
           </span>
         );
-      case 'CLOSED':
+      case 'DRAFT':
         return (
-          <span className="inline-flex items-center rounded-lg bg-bg-200 px-3 py-1.5 text-xs font-medium text-text-200">
-            마감됨
+          <span className="inline-flex items-center rounded-lg border border-primary-300 bg-transparent px-3 py-1.5 text-xs font-medium text-primary-300">
+            대기중
           </span>
         );
-      case 'COMPLETED':
+      case 'CLOSED':
         return (
-          <span className="inline-flex items-center rounded-lg bg-green-100 px-3 py-1.5 text-xs font-medium text-green-600">
-            완료됨
+          <span className="inline-flex items-center rounded-lg border border-bg-300 bg-bg-200 px-3 py-1.5 text-xs font-medium text-text-200">
+            마감됨
           </span>
         );
       default:
@@ -256,21 +275,34 @@ export function GroupBuyManagement() {
                   <CardContent className="relative p-6">
                     {/* 상태 뱃지: 우측 상단 고정 */}
                     <div className="absolute right-6 top-6 z-10">
-                      {getStatusBadge(groupBuy.status)}
+                      {renderStatusBadge(groupBuy.status)}
                     </div>
-                    {/* 제목, 가격 정보 */}
-                    <div className="min-w-0 flex-1">
-                      <h2 className="text-lg font-semibold text-text-100">{groupBuy.title}</h2>
-                      <div className="mt-2 space-y-1 text-sm text-text-300">
+                    {/* 제목 */}
+                    <h2 className="mb-4 text-lg font-semibold text-text-100">{groupBuy.title}</h2>
+
+                    {/* 썸네일과 정보를 가로로 배치 */}
+                    <div className="flex gap-4">
+                      {/* 썸네일 이미지 */}
+                      <div className="flex-shrink-0">
+                        <img
+                          src={groupBuy.thumbnailUrl}
+                          alt={groupBuy.title}
+                          className="rounded-lg object-cover"
+                          style={{ width: '120px', height: '120px' }}
+                        />
+                      </div>
+
+                      {/* 가격 정보 */}
+                      <div className="flex-1 space-y-1 text-sm text-text-300">
                         <div>시작가: {groupBuy.startPrice.toLocaleString()}원</div>
-                        <div>최종가: {groupBuy.displayFinalPrice.toLocaleString()}원</div>
+                        <div>최대 할인 적용가: {groupBuy.displayFinalPrice.toLocaleString()}원</div>
                         <div>최대 할인율: {groupBuy.maxDiscountRate}%</div>
                         <div>
                           주문 수: {groupBuy.orderCount}개 | 재고:{' '}
                           {groupBuy.totalStock - groupBuy.soldQuantity}개
                         </div>
                         <div>
-                          시작일: {formatDate(groupBuy.startAt)} | 마감일:{' '}
+                          {groupBuy.startAt && `시작일: ${formatDate(groupBuy.startAt)} | `}마감일:{' '}
                           {formatDate(groupBuy.endsAt)}
                         </div>
                       </div>
@@ -283,34 +315,30 @@ export function GroupBuyManagement() {
                       >
                         상세보기
                       </Button>
-                      <Button
-                        onClick={() => handleEditGroupBuy(groupBuy.id)}
-                        className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-sm text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
-                      >
-                        수정하기
-                      </Button>
-                      <Button
-                        onClick={() => handleStatusChange(groupBuy.id, groupBuy.status)}
-                        className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-sm text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
-                      >
-                        {groupBuy.status === 'CLOSED' ? (
-                          <>
-                            <Play className="mr-2 h-4 w-4" />
-                            시작하기
-                          </>
-                        ) : (
-                          <>
-                            <Pause className="mr-2 h-4 w-4" />
-                            마감하기
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        onClick={() => handleDeleteClick(groupBuy.id, groupBuy.title)}
-                        className="h-10 rounded-lg border border-bg-300 bg-bg-100 px-6 text-sm text-text-300 shadow-none transition-colors hover:border-primary-200 hover:text-primary-200"
-                      >
-                        삭제하기
-                      </Button>
+                      {groupBuy.status === 'DRAFT' && (
+                        <Button
+                          onClick={() => handleEditGroupBuy(groupBuy.id)}
+                          className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-sm text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
+                        >
+                          수정하기
+                        </Button>
+                      )}
+                      {groupBuy.status === 'DRAFT' && (
+                        <Button
+                          onClick={() => handleStartClick(groupBuy.id, groupBuy.title)}
+                          className="h-10 rounded-lg border border-primary-300 bg-bg-100 px-6 text-sm text-primary-300 shadow-none transition-colors hover:bg-primary-100 active:bg-primary-100 active:text-primary-300"
+                        >
+                          공구시작
+                        </Button>
+                      )}
+                      {groupBuy.status !== 'OPEN' && (
+                        <Button
+                          onClick={() => handleDeleteClick(groupBuy.id, groupBuy.title)}
+                          className="h-10 rounded-lg border border-bg-300 bg-bg-100 px-6 text-sm text-text-300 shadow-none transition-colors hover:border-primary-200 hover:text-primary-200"
+                        >
+                          삭제하기
+                        </Button>
+                      )}
                     </div>
                     {/* 등록일/수정일: 오른쪽 하단, 글자 크기 text-sm */}
                     <div className="absolute bottom-6 right-6 whitespace-nowrap text-sm text-text-300">
@@ -357,6 +385,18 @@ export function GroupBuyManagement() {
         onClose={() => setDeleteError({ isOpen: false, message: '' })}
         title="공구 삭제 실패"
         message={deleteError.message}
+      />
+
+      {/* 공구 시작 확인 모달창 */}
+      <ConfirmDialog
+        isOpen={startConfirm.isOpen}
+        onClose={handleStartCancel}
+        onConfirm={handleStartConfirm}
+        title="공구 시작 확인"
+        message={`"${startConfirm.groupBuyTitle}"\n\n공동구매를 시작하시겠습니까? 시작 후 수정이 불가합니다.`}
+        confirmText="시작하기"
+        cancelText="취소"
+        variant="default"
       />
     </div>
   );
