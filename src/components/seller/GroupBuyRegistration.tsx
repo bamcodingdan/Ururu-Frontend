@@ -602,7 +602,11 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
               </FormField>
             )}
 
-            <FormField label="1인당 최대 구매 수량" required>
+            <FormField
+              label="1인당 최대 구매 수량"
+              required
+              helperText="최대 999개까지 설정 가능합니다"
+            >
               <Input
                 type="text"
                 inputMode="numeric"
@@ -614,7 +618,13 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
                     setMaxQuantityPerPerson(null);
                   } else {
                     const numValue = parseInt(value.replace(/[^0-9]/g, ''), 10);
-                    setMaxQuantityPerPerson(isNaN(numValue) ? null : numValue);
+                    // 999 제한 적용
+                    if (!isNaN(numValue)) {
+                      const limitedValue = Math.min(numValue, 999);
+                      setMaxQuantityPerPerson(limitedValue);
+                    } else {
+                      setMaxQuantityPerPerson(null);
+                    }
                   }
                 }}
                 placeholder="1"
