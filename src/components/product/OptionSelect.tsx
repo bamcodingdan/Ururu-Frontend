@@ -61,13 +61,18 @@ export const OptionSelect = ({
         <SelectContent className="z-[80] max-h-60 bg-bg-100">
           {product.options.map((option) => {
             const isSelected = selectedOptions.some((selected) => selected.value === option.id);
+            const isOutOfStock =
+              option.initialStock !== undefined &&
+              option.currentStock !== undefined &&
+              option.initialStock - option.currentStock === option.initialStock;
+
             return (
               <SelectItem
                 key={option.id}
                 value={option.id}
-                disabled={isSelected}
+                disabled={isSelected || isOutOfStock}
                 className={`text-sm ${
-                  isSelected
+                  isSelected || isOutOfStock
                     ? 'cursor-not-allowed text-text-300 line-through'
                     : 'cursor-pointer text-text-100 hover:bg-primary-100 hover:text-primary-300 focus:bg-primary-100 focus:text-primary-300'
                 }`}
@@ -97,6 +102,12 @@ export const OptionSelect = ({
                   <div className="flex flex-col">
                     <span>{option.name}</span>
                     <span className="text-xs text-text-300">{option.price.toLocaleString()}원</span>
+                    {/* 품절 상태 표시 */}
+                    {option.initialStock !== undefined &&
+                      option.currentStock !== undefined &&
+                      option.initialStock - option.currentStock === option.initialStock && (
+                        <span className="text-xs text-red-500">품절</span>
+                      )}
                   </div>
                 </div>
               </SelectItem>

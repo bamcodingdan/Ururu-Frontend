@@ -42,6 +42,8 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       imageUrl: option.optionImageUrl, // 옵션 이미지 URL 추가
       fullIngredients: option.fullIngredients || '',
       maxQuantity: groupBuy.limitQuantityPerMember, // 회원당 최대 구매 수량 제한
+      initialStock: option.initialStock, // 초기 재고
+      currentStock: option.currentStock, // 현재 재고
     }));
 
     console.log('Original API options:', groupBuy.options);
