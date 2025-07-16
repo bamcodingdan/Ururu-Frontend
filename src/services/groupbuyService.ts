@@ -88,3 +88,32 @@ export async function getGroupBuyDetail(groupBuyId: number): Promise<GroupBuyDet
   console.log('Raw API Response:', response);
   return response.data;
 }
+
+// 공동구매 상태 변경 API
+export async function updateGroupBuyStatus(
+  groupBuyId: number,
+  status: 'OPEN' | 'CLOSED' | 'ACTIVE',
+): Promise<any> {
+  console.log('상태 변경 API 호출:', { groupBuyId, status });
+  const res = await api.patch(`/groupbuys/${groupBuyId}/status`, { status });
+  console.log('상태 변경 API 응답:', res.data);
+  return res.data;
+}
+
+// 판매자 그룹바이 목록 조회 API
+export async function getSellerGroupBuys(page: number = 0, size: number = 10): Promise<any> {
+  const res = await api.get(`/groupbuys/seller?page=${page}&size=${size}`);
+  return res.data;
+}
+
+// 판매자 전체 그룹바이 목록 조회 API (카운트용)
+export async function getAllSellerGroupBuys(): Promise<any> {
+  const res = await api.get('/groupbuys/seller');
+  return res.data;
+}
+
+// 그룹바이 삭제 API
+export async function deleteGroupBuy(groupBuyId: number): Promise<any> {
+  const res = await api.delete(`/groupbuys/${groupBuyId}`);
+  return res.data;
+}

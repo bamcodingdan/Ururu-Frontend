@@ -160,3 +160,54 @@ export interface GroupBuyDetailResponse {
   message: string;
   data: GroupBuyDetail;
 }
+
+// 판매자 그룹바이 목록 관련 타입
+export interface SellerGroupBuy {
+  id: number;
+  title: string;
+  thumbnailUrl: string;
+  displayFinalPrice: number;
+  startPrice: number;
+  maxDiscountRate: number;
+  status: 'OPEN' | 'CLOSED' | 'COMPLETED';
+  startAt: string;
+  endsAt: string;
+  totalStock: number;
+  soldQuantity: number;
+  orderCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SellerGroupBuyListResponse {
+  success: boolean;
+  message: string;
+  data: {
+    content: SellerGroupBuy[];
+    totalElements: number;
+    totalPages: number;
+    size: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+    numberOfElements: number;
+    empty: boolean;
+    sort: {
+      empty: boolean;
+      sorted: boolean;
+      unsorted: boolean;
+    };
+    pageable: {
+      offset: number;
+      sort: {
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+      };
+      pageNumber: number;
+      pageSize: number;
+      paged: boolean;
+      unpaged: boolean;
+    };
+  };
+}
