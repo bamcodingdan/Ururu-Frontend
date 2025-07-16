@@ -44,6 +44,8 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       maxQuantity: groupBuy.limitQuantityPerMember, // 회원당 최대 구매 수량 제한
       initialStock: option.initialStock, // 초기 재고
       currentStock: option.currentStock, // 현재 재고
+      soldQuantity: option.soldQuantity, // 옵션별 판매량
+      currentOrderCount: groupBuy.currentOrderCount, // 공동구매 총 판매량
       priceOverride: option.priceOverride, // 공동구매 시작가
       isOutOfStock: option.isOutOfStock, // 품절 여부
     }));

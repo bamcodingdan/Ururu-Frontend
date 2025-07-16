@@ -56,6 +56,12 @@ export const OptionCard = ({
             {/* 옵션 이름 */}
             <div className="flex flex-col">
               <span className="text-sm text-text-100 md:text-base">{option.label}</span>
+              {/* 판매량 정보 표시 */}
+              {optionData?.currentOrderCount !== undefined && (
+                <span className="text-xs text-text-300">
+                  판매: {optionData.currentOrderCount}개
+                </span>
+              )}
               {/* 품절 상태 표시 */}
               {optionData?.isOutOfStock && <span className="text-xs text-red-500">품절</span>}
             </div>

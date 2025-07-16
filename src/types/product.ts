@@ -17,6 +17,8 @@ export interface ProductOption {
   maxQuantity?: number; // 회원당 최대 구매 수량 제한
   initialStock?: number; // 초기 재고
   currentStock?: number; // 현재 재고
+  soldQuantity?: number; // 옵션별 판매량 (API의 soldQuantity)
+  currentOrderCount?: number; // 공동구매 총 판매량 (API의 currentOrderCount)
   priceOverride?: number; // 공동구매 시작가
   isOutOfStock?: boolean; // 품절 여부
 }
