@@ -49,7 +49,11 @@ export default function PaymentSuccessPage() {
           });
         }
 
-        const result = await handlePaymentSuccess(paymentKey, orderId, parseInt(amount));
+        const parsedAmount = parseInt(amount, 10);
+        if (isNaN(parsedAmount) || parsedAmount <= 0) {
+          throw new Error('유효하지 않은 결제 금액입니다.');
+        }
+        const result = await handlePaymentSuccess(paymentKey, orderId, parsedAmount);
         if (process.env.NODE_ENV === 'development') {
           console.log('✅ [Success Page] 결제 승인 처리 완료:', result);
         }
@@ -133,7 +137,14 @@ export default function PaymentSuccessPage() {
                 <div className="flex justify-between">
                   <span className="text-text-200">결제금액:</span>
                   <span className="text-text-100">
-                    {amount && parseInt(amount).toLocaleString()}원
+                    {amount &&
+                      (() => {
+                        const parsedAmount = parseInt(amount, 10);
+                        return isNaN(parsedAmount) || parsedAmount <= 0
+                          ? '0'
+                          : parsedAmount.toLocaleString();
+                      })()}
+                    원
                   </span>
                 </div>
                 <div className="flex justify-between">
