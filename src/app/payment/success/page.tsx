@@ -41,14 +41,18 @@ export default function PaymentSuccessPage() {
     // 결제 성공 처리
     const processPayment = async () => {
       try {
-        console.log('📤 [Success Page] 결제 승인 처리 시작:', {
-          paymentKey,
-          orderId,
-          amount,
-        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📤 [Success Page] 결제 승인 처리 시작:', {
+            paymentKey,
+            orderId,
+            amount,
+          });
+        }
 
         const result = await handlePaymentSuccess(paymentKey, orderId, parseInt(amount));
-        console.log('✅ [Success Page] 결제 승인 처리 완료:', result);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ [Success Page] 결제 승인 처리 완료:', result);
+        }
 
         setPaymentResult(result.data);
         toast.success('결제가 완료되었습니다!');

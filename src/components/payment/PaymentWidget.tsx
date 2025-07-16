@@ -35,40 +35,56 @@ export function PaymentWidget({
   useEffect(() => {
     const initializeWidget = async () => {
       try {
-        console.log('결제위젯 초기화 시작...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제위젯 초기화 시작...');
+        }
 
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-        console.log('클라이언트 키:', clientKey);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('클라이언트 키:', clientKey);
+        }
 
         if (!clientKey) {
           throw new Error('토스페이먼츠 클라이언트 키가 설정되지 않았습니다.');
         }
 
-        console.log('토스페이먼츠 SDK 로딩 중...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('토스페이먼츠 SDK 로딩 중...');
+        }
         const tossPayments = await loadTossPayments(clientKey);
-        console.log('토스페이먼츠 SDK 로딩 완료');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('토스페이먼츠 SDK 로딩 완료');
+        }
 
         // 비회원 결제를 위한 익명 customerKey 사용
-        console.log('결제위젯 생성 중...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제위젯 생성 중...');
+        }
         const widgets = tossPayments.widgets({
           customerKey: ANONYMOUS,
         });
 
         // 결제 금액 설정
-        console.log('결제 금액 설정:', amount);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제 금액 설정:', amount);
+        }
         await widgets.setAmount({
           currency: 'KRW',
           value: amount,
         });
 
         // 결제 UI 렌더링
-        console.log('결제 UI 렌더링 중...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제 UI 렌더링 중...');
+        }
         const paymentMethodsWidget = await widgets.renderPaymentMethods({
           selector: '#payment-methods',
           variantKey: 'DEFAULT',
         });
 
-        console.log('결제위젯 초기화 완료');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제위젯 초기화 완료');
+        }
         widgetRef.current = widgets;
         paymentMethodsRef.current = paymentMethodsWidget;
         setIsReady(true);

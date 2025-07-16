@@ -46,28 +46,40 @@ export function PaymentWindow({
   useEffect(() => {
     const initializePayment = async () => {
       try {
-        console.log('결제창 초기화 시작...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제창 초기화 시작...');
+        }
 
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-        console.log('클라이언트 키:', clientKey);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('클라이언트 키:', clientKey);
+        }
 
         if (!clientKey) {
           throw new Error('토스페이먼츠 클라이언트 키가 설정되지 않았습니다.');
         }
 
-        console.log('토스페이먼츠 SDK 로딩 중...');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('토스페이먼츠 SDK 로딩 중...');
+        }
         const tossPayments = await loadTossPayments(clientKey);
-        console.log('토스페이먼츠 SDK 로딩 완료');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('토스페이먼츠 SDK 로딩 완료');
+        }
 
         // 결제창 인스턴스 생성
         const payment = tossPayments.payment({
           customerKey: 'anonymous-customer-key', // 비회원 결제
         });
-        console.log('결제창 인스턴스 생성 완료');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제창 인스턴스 생성 완료');
+        }
 
         tossPaymentsRef.current = payment;
         setIsInitialized(true);
-        console.log('결제창 초기화 완료');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('결제창 초기화 완료');
+        }
       } catch (error) {
         console.error('결제창 초기화 실패:', error);
         setInitError(error instanceof Error ? error.message : '결제창 초기화에 실패했습니다.');
@@ -85,15 +97,21 @@ export function PaymentWindow({
   }, [orderId]);
 
   const handlePayment = async () => {
-    console.log('🔥 [TEST] 결제 버튼 클릭됨!');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔥 [TEST] 결제 버튼 클릭됨!');
+    }
 
     if (!tossPaymentsRef.current || !isInitialized) {
-      console.log('❌ [TEST] 결제 시스템이 준비되지 않음');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('❌ [TEST] 결제 시스템이 준비되지 않음');
+      }
       toast.error('결제 시스템이 아직 준비되지 않았습니다.');
       return;
     }
 
-    console.log('✅ [TEST] 결제 시스템 준비 완료');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ [TEST] 결제 시스템 준비 완료');
+    }
     setIsLoading(true);
 
     try {
@@ -106,12 +124,16 @@ export function PaymentWindow({
         address2,
       };
 
-      console.log('📤 [PaymentWindow] 결제 요청 생성 시작:', requestData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📤 [PaymentWindow] 결제 요청 생성 시작:', requestData);
+      }
 
       // 1단계: 결제 요청 생성 (PaymentService 사용)
       const result = await createPaymentRequest(requestData);
 
-      console.log('✅ [PaymentWindow] 결제 요청 생성 완료:', result);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ [PaymentWindow] 결제 요청 생성 완료:', result);
+      }
 
       const { paymentId, customerName } = result.data;
 
@@ -139,11 +161,15 @@ export function PaymentWindow({
         ...(phone && { customerMobilePhone: phone }),
       };
 
-      console.log('🚀 [PaymentWindow] 토스페이먼츠 결제창 호출 데이터:', tossPaymentData);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🚀 [PaymentWindow] 토스페이먼츠 결제창 호출 데이터:', tossPaymentData);
+      }
 
       await tossPaymentsRef.current.requestPayment(tossPaymentData);
 
-      console.log('✅ [PaymentWindow] 토스페이먼츠 결제창 호출 완료');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ [PaymentWindow] 토스페이먼츠 결제창 호출 완료');
+      }
     } catch (error) {
       console.error('결제 요청 실패:', error);
       toast.error(error instanceof Error ? error.message : '결제 요청 중 오류가 발생했습니다.');
