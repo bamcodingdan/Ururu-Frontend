@@ -50,9 +50,6 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       isOutOfStock: option.isOutOfStock, // 품절 여부
     }));
 
-    console.log('Original API options:', groupBuy.options);
-    console.log('Converted options:', options);
-
     // 할인 단계를 rewardTiers로 변환 (실제 달성 여부만 반영)
     const rewardTiers = groupBuy.discountStages.map((stage) => ({
       participants: stage.minQuantity,
@@ -60,6 +57,23 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       discountRate: stage.discountRate, // 숫자형 할인율 추가
       achieved: groupBuy.currentOrderCount >= stage.minQuantity,
     }));
+
+    // productNotice 정보를 Product 타입 필드로 매핑
+    const productNoticeMapping = {
+      capacity: groupBuy.product.productNotice?.capacity,
+      specification: groupBuy.product.productNotice?.spec,
+      expiryDate: groupBuy.product.productNotice?.expiry,
+      usage: groupBuy.product.productNotice?.usage,
+      manufacturer: groupBuy.product.productNotice?.manufacturer,
+      seller: groupBuy.product.productNotice?.responsibleSeller,
+      country: groupBuy.product.productNotice?.countryOfOrigin,
+      functionalTest: groupBuy.product.productNotice?.functionalCosmetics
+        ? ('yes' as const)
+        : ('no' as const),
+      precautions: groupBuy.product.productNotice?.caution,
+      qualityStandard: groupBuy.product.productNotice?.warranty,
+      customerService: groupBuy.product.productNotice?.customerServiceNumber,
+    };
 
     return {
       id: String(groupBuy.id),
@@ -85,6 +99,7 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       },
       rewardTiers,
       options,
+      ...productNoticeMapping,
     };
   };
 
@@ -101,8 +116,6 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
         }
 
         const response = await getGroupBuyDetail(groupBuyId);
-        console.log('API Response:', response);
-        console.log('GroupBuy Data:', response.data);
         setGroupBuyData(response.data);
       } catch (err: any) {
         setError(err.message || '공동구매 정보를 불러오는데 실패했습니다.');

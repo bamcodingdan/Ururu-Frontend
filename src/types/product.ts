@@ -68,6 +68,17 @@ export interface Product {
   shippingInfo: ShippingInfo;
   rewardTiers: RewardTier[];
   options: ProductOption[];
+  capacity?: string; // 내용물의 용량 또는 중량
+  specification?: string; // 제품 주요 사양
+  expiryDate?: string; // 사용기한(또는 개봉 후 사용기간)
+  usage?: string; // 사용방법
+  manufacturer?: string; // 화장품제조업자
+  seller?: string; // 화장품책임판매업자
+  country?: string; // 제조국
+  functionalTest?: 'yes' | 'no'; // 기능성 화장품 식품의약품안전처 심사필 여부
+  precautions?: string; // 사용할 때의 주의사항
+  qualityStandard?: string; // 품질보증기준
+  customerService?: string; // 소비자상담 전화번호
 }
 
 export interface Category {

@@ -96,6 +96,7 @@ export interface GroupBuyProductDetail {
   description: string;
   categoryIds: string[];
   tags: string[];
+  productNotice: GroupBuyProductNotice;
 }
 
 export interface GroupBuyOptionDetail {
@@ -118,6 +119,21 @@ export interface GroupBuyImageDetail {
   displayOrder: number;
 }
 
+export interface GroupBuyProductNotice {
+  id: number;
+  capacity: string;
+  spec: string;
+  expiry: string;
+  usage: string;
+  manufacturer: string;
+  responsibleSeller: string;
+  countryOfOrigin: string;
+  functionalCosmetics: boolean;
+  caution: string;
+  warranty: string;
+  customerServiceNumber: string;
+}
+
 export interface GroupBuyDetail {
   id: number;
   title: string;
@@ -134,6 +150,7 @@ export interface GroupBuyDetail {
   product: GroupBuyProductDetail;
   options: GroupBuyOptionDetail[];
   images: GroupBuyImageDetail[];
+  productNotice: GroupBuyProductNotice;
   createdAt: string;
   updatedAt: string;
 }
