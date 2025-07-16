@@ -9,11 +9,18 @@ import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { toast } from 'sonner';
 import { usePaymentSuccess } from '@/hooks/usePayment';
 
+interface PaymentResult {
+  paymentId: string;
+  orderId?: string;
+  status?: string;
+  paidAt?: string;
+}
+
 function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isApproving, setIsApproving] = useState(true);
-  const [paymentResult, setPaymentResult] = useState<any>(null);
+  const [paymentResult, setPaymentResult] = useState<PaymentResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const hasProcessed = useRef(false); // 중복 처리 방지
 
