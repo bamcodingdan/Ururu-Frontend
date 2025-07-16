@@ -91,7 +91,7 @@ export function DeliveryButton({
   if (isInProgress) {
     return (
       <Button disabled className={`${FORM_STYLES.button.deliveryButton} h-10 w-full ${className}`}>
-        공구 등록
+        공구 진행중
       </Button>
     );
   }
