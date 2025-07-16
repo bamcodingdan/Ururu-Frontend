@@ -144,7 +144,7 @@ export interface GroupBuyDetail {
   maxDiscountRate: number;
   discountStages: GroupBuyDiscountStage[];
   limitQuantityPerMember: number;
-  status: 'OPEN' | 'CLOSED' | 'COMPLETED';
+  status: 'OPEN' | 'CLOSED' | 'DRAFT';
   endsAt: string;
   currentOrderCount: number;
   product: GroupBuyProductDetail;
@@ -169,7 +169,7 @@ export interface SellerGroupBuy {
   displayFinalPrice: number;
   startPrice: number;
   maxDiscountRate: number;
-  status: 'OPEN' | 'CLOSED' | 'COMPLETED';
+  status: 'OPEN' | 'CLOSED' | 'DRAFT';
   startAt: string;
   endsAt: string;
   totalStock: number;

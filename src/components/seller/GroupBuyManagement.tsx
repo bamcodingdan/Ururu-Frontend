@@ -50,7 +50,7 @@ export function GroupBuyManagement() {
       setGroupBuyData(data);
       setAllGroupBuys(data.data.content || []);
     } catch (err: any) {
-      setError(err.message || '그룹바이 목록을 불러오는데 실패했습니다.');
+      setError(err.message || '공구 목록을 불러오는데 실패했습니다.');
     } finally {
       setIsLoading(false);
     }
@@ -170,8 +170,8 @@ export function GroupBuyManagement() {
 
   // 전체 데이터에서 카운트 계산
   const openCount = allGroupBuys.filter((g) => g.status === 'OPEN').length;
+  const draftCount = allGroupBuys.filter((g) => g.status === 'DRAFT').length;
   const closedCount = allGroupBuys.filter((g) => g.status === 'CLOSED').length;
-  const completedCount = allGroupBuys.filter((g) => g.status === 'COMPLETED').length;
   const totalCount = allGroupBuys.length;
 
   if (error) {
@@ -180,7 +180,7 @@ export function GroupBuyManagement() {
   if (isLoading) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
-        <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">그룹바이 관리</h1>
+        <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">공구 관리</h1>
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
             <LoadingSkeleton key={index} className="h-24 w-full" />
@@ -194,7 +194,7 @@ export function GroupBuyManagement() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 md:px-0">
       {/* 타이틀 */}
-      <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">그룹바이 관리</h1>
+      <h1 className="mb-10 text-center text-3xl font-semibold text-text-100">공구 관리</h1>
 
       {/* 상단 카운트 4개 */}
       <div className="mx-auto mb-10 flex w-full max-w-lg justify-center">
@@ -207,38 +207,38 @@ export function GroupBuyManagement() {
         <div className="flex flex-1 flex-col items-center">
           <span className="text-2xl font-bold text-text-100 md:text-4xl">{openCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            진행중
+            공구 진행중
+          </span>
+        </div>
+        <div className="flex flex-1 flex-col items-center">
+          <span className="text-2xl font-bold text-text-100 md:text-4xl">{draftCount}</span>
+          <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
+            공구 대기
           </span>
         </div>
         <div className="flex flex-1 flex-col items-center">
           <span className="text-2xl font-bold text-text-100 md:text-4xl">{closedCount}</span>
           <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            마감됨
-          </span>
-        </div>
-        <div className="flex flex-1 flex-col items-center">
-          <span className="text-2xl font-bold text-text-100 md:text-4xl">{completedCount}</span>
-          <span className="mt-1 text-center text-sm font-medium text-text-200 md:text-lg">
-            완료됨
+            공구 마감
           </span>
         </div>
       </div>
 
-      {/* 그룹바이 목록 섹션 */}
+      {/* 공구 목록 섹션 */}
       <section>
-        <SectionHeader title="등록된 그룹바이" />
+        <SectionHeader title="등록된 공구" />
         <div className="mt-4">
           {groupBuys.length === 0 ? (
             <div className="space-y-6">
               <EmptyState
                 icon="🤝"
-                title="등록된 그룹바이가 없습니다"
-                description="첫 번째 그룹바이를 등록해보세요"
+                title="등록된 공구가 없습니다"
+                description="첫 번째 공구를 등록해보세요"
               />
               <div className="text-center">
                 <Button onClick={handleRegisterGroupBuy} className={FORM_STYLES.button.submit}>
                   <Plus className="mr-2 h-4 w-4" />
-                  그룹바이 등록하기
+                  공구 등록하기
                 </Button>
               </div>
             </div>
@@ -325,7 +325,7 @@ export function GroupBuyManagement() {
         </div>
       </section>
 
-      {/* 페이지네이션: 그룹바이 관리 페이지 하단 */}
+      {/* 페이지네이션: 공구 관리 페이지 하단 */}
       {totalPages > 1 && (
         <div className="mt-12">
           <Pagination
@@ -344,8 +344,8 @@ export function GroupBuyManagement() {
         isOpen={deleteConfirm.isOpen}
         onClose={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
-        title="그룹바이 삭제 확인"
-        message={`"${deleteConfirm.groupBuyTitle}"\n\n그룹바이를 삭제하시겠습니까? 삭제하면 복구가 불가능합니다.`}
+        title="공구 삭제 확인"
+        message={`"${deleteConfirm.groupBuyTitle}"\n\n공구를 삭제하시겠습니까? 삭제하면 복구가 불가능합니다.`}
         confirmText="삭제하기"
         cancelText="취소"
         variant="danger"
@@ -355,7 +355,7 @@ export function GroupBuyManagement() {
       <ErrorDialog
         isOpen={deleteError.isOpen}
         onClose={() => setDeleteError({ isOpen: false, message: '' })}
-        title="그룹바이 삭제 실패"
+        title="공구 삭제 실패"
         message={deleteError.message}
       />
     </div>
