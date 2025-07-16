@@ -26,10 +26,12 @@ export default function GroupBuyDetailPage({ params }: GroupBuyDetailPageProps) 
       Math.ceil((new Date(groupBuy.endsAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
     );
 
-    // 이미지 배열 생성 (thumbnailUrl을 첫 번째로, images를 순서대로)
+    // 이미지 배열 생성
+    // thumbnails: 메인 썸네일만 포함 (캐러셀용)
+    // detailImages: API의 images 배열 (상세 탭용)
     const sortedImages = [...groupBuy.images].sort((a, b) => a.displayOrder - b.displayOrder);
-    const thumbnails = sortedImages.map((img) => img.imageUrl);
-    const detailImages = sortedImages.map((img) => img.imageUrl);
+    const thumbnails = [groupBuy.thumbnailUrl]; // 메인 썸네일만
+    const detailImages = sortedImages.map((img) => img.imageUrl); // 상세 이미지들
 
     // 옵션 변환 - API 데이터의 모든 필드를 활용
     const options = groupBuy.options.map((option) => ({

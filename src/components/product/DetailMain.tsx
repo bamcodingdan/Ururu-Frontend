@@ -23,9 +23,10 @@ export const DetailMain = ({ product }: DetailMainProps) => {
   const { selectedOptions, handleSelectOption } = useProductOptions(product);
   const router = useRouter();
 
-  // 옵션 이미지와 상품 썸네일을 모두 포함
+  // 메인 이미지, 썸네일, 옵션 이미지만 포함 (detailImages 제외)
   const allThumbnails = [
-    ...product.thumbnails, // 상품 썸네일 이미지들
+    product.mainImage, // 메인 이미지 포함
+    ...product.thumbnails.filter((img) => img !== product.mainImage), // 중복 제거
     ...product.options
       .filter((option) => option.imageUrl) // 이미지가 있는 옵션만
       .map((option) => option.imageUrl!),
@@ -54,7 +55,9 @@ export const DetailMain = ({ product }: DetailMainProps) => {
     setMainImage(imageUrl);
 
     // 옵션 이미지인 경우 해당 옵션 선택
-    const optionIndex = index - product.thumbnails.length;
+    // 메인 이미지(1개) + 썸네일들 이후부터 옵션 이미지 시작
+    const thumbnailCount = 1 + product.thumbnails.filter((img) => img !== product.mainImage).length;
+    const optionIndex = index - thumbnailCount;
     if (optionIndex >= 0 && optionIndex < product.options.length) {
       const option = product.options[optionIndex];
       if (option && !selectedOptions.some((selected) => selected.value === option.id)) {
@@ -103,8 +106,11 @@ export const DetailMain = ({ product }: DetailMainProps) => {
             onScroll={checkScrollButtons}
           >
             {safeImages.map((thumb, idx) => {
-              const isOptionThumbnail = idx >= product.thumbnails.length;
-              const optionIndex = idx - product.thumbnails.length;
+              // 메인 이미지(1개) + 썸네일들 이후부터 옵션 이미지 시작
+              const thumbnailCount =
+                1 + product.thumbnails.filter((img) => img !== product.mainImage).length;
+              const isOptionThumbnail = idx >= thumbnailCount;
+              const optionIndex = idx - thumbnailCount;
               const option = isOptionThumbnail ? product.options[optionIndex] : null;
               const isSelected = option
                 ? selectedOptions.some((selected) => selected.value === option.id)
