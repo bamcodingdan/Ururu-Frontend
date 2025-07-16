@@ -6,8 +6,9 @@ import { NoFooterLayout } from '@/components/layout/layouts';
 import { CartItem as CartItemComponent, CartSelectAll, CartSummary } from '@/components/cart';
 import { useCart } from '@/hooks/useCart';
 import { useAuthStore } from '@/store';
-import { mockCartData, calculateCartSummary } from '@/data/cart';
+import { calculateCartSummary } from '@/data/cart';
 import { AuthGuard } from '@/components/auth/AuthGuard';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import type { CartItem } from '@/types/cart';
 
 // 빈 장바구니 컴포넌트
@@ -52,13 +53,16 @@ function CartPageContent() {
   // 장바구니 훅을 먼저 호출 (React Hook 규칙)
   const {
     cartItems,
+    isLoading,
+    error,
+    loadCartItems,
     toggleSelectAll,
     toggleSelectItem,
     updateQuantity,
     removeItem,
     isAllSelected,
     isPartiallySelected,
-  } = useCart(mockCartData);
+  } = useCart();
 
   const summary = calculateCartSummary(cartItems);
 
@@ -67,8 +71,56 @@ function CartPageContent() {
     console.log('구매하기 클릭');
   };
 
+  // 로딩 상태 처리
+  if (isLoading) {
+    return (
+      <NoFooterLayout>
+        <div className="container mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-12">
+          <h1 className="mb-8 text-center text-2xl font-semibold text-text-100 md:text-3xl">
+            장바구니
+          </h1>
+          <LoadingSkeleton />
+        </div>
+      </NoFooterLayout>
+    );
+  }
+
+  // 에러 상태 처리
+  if (error) {
+    return (
+      <NoFooterLayout>
+        <div className="container mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-12">
+          <h1 className="mb-8 text-center text-2xl font-semibold text-text-100 md:text-3xl">
+            장바구니
+          </h1>
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="mb-4 text-6xl">⚠️</div>
+            <h2 className="mb-2 text-xl font-semibold text-text-100">오류가 발생했습니다</h2>
+            <p className="mb-4 text-text-200">{error}</p>
+            <button
+              onClick={loadCartItems}
+              className="rounded-lg bg-primary-300 px-4 py-2 text-text-on transition hover:opacity-80"
+            >
+              다시 시도
+            </button>
+          </div>
+        </div>
+      </NoFooterLayout>
+    );
+  }
+
+  // 빈 장바구니 상태 처리
   if (cartItems.length === 0) {
-    return <EmptyCart />;
+    return (
+      <NoFooterLayout>
+        <div className="container mx-auto max-w-4xl px-6 py-8 md:px-8 md:py-12">
+          <h1 className="mb-8 text-center text-2xl font-semibold text-text-100 md:text-3xl">
+            장바구니
+          </h1>
+          <EmptyCart />
+        </div>
+      </NoFooterLayout>
+    );
   }
 
   return (

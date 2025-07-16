@@ -1,8 +1,38 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { CartItem } from '@/types/cart';
+import { getCart } from '@/services/cartService';
+import { convertApiCartItemsToCartItems } from '@/lib/cart-utils';
 
-export const useCart = (initialCartItems: CartItem[]) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
+export const useCart = () => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 장바구니 데이터 로드
+  const loadCartItems = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await getCart();
+      if (response.success) {
+        const convertedItems = convertApiCartItemsToCartItems(response.data.cartItems);
+        setCartItems(convertedItems);
+      } else {
+        setError('장바구니를 불러오는데 실패했습니다.');
+      }
+    } catch (err) {
+      setError('장바구니를 불러오는데 실패했습니다.');
+      console.error('장바구니 로드 실패:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // 컴포넌트 마운트 시 장바구니 로드
+  useEffect(() => {
+    loadCartItems();
+  }, [loadCartItems]);
 
   // 전체 선택/해제
   const toggleSelectAll = useCallback(() => {
@@ -38,6 +68,9 @@ export const useCart = (initialCartItems: CartItem[]) => {
 
   return {
     cartItems,
+    isLoading,
+    error,
+    loadCartItems,
     toggleSelectAll,
     toggleSelectItem,
     updateQuantity,

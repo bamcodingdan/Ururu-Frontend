@@ -46,6 +46,22 @@ export interface SocialLoginRequest {
   code: string;
 }
 
+// 장바구니 관련 타입
+export interface ApiCartItem {
+  cartItemId: number;
+  groupbuyOptionId: number;
+  quantity: number;
+  productName: string;
+  optionName: string;
+  optionImage: string;
+  price: number;
+  endsAt: string;
+}
+
+export interface ApiCartResponse {
+  cartItems: ApiCartItem[];
+}
+
 // 배송지 관련 타입
 export interface ShippingAddress {
   id: number;
