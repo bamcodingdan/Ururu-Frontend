@@ -58,6 +58,7 @@ function CartPageContent() {
   const {
     cartItems,
     isLoading,
+    isCreatingOrder,
     error,
     updatingItems,
     loadCartItems,
@@ -65,6 +66,7 @@ function CartPageContent() {
     toggleSelectItem,
     updateQuantity,
     removeItem,
+    createOrder,
     isAllSelected,
     isPartiallySelected,
     errorDialog,
@@ -74,8 +76,7 @@ function CartPageContent() {
   const summary = calculateCartSummary(cartItems);
 
   const handlePurchase = () => {
-    // TODO: 결제 페이지로 이동
-    console.log('구매하기 클릭');
+    createOrder();
   };
 
   // 로딩 상태 처리
@@ -163,6 +164,7 @@ function CartPageContent() {
             shippingFee={summary.shippingFee}
             totalPrice={summary.totalPrice}
             selectedCount={summary.selectedCount}
+            isLoading={isCreatingOrder}
             onPurchase={handlePurchase}
           />
         </div>

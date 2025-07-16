@@ -1,11 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import type { CartItem } from '@/types/cart';
-import { getCart, updateCartQuantity, deleteCartItem } from '@/services/cartService';
+import {
+  getCart,
+  updateCartQuantity,
+  deleteCartItem,
+  createOrderFromCart,
+} from '@/services/cartService';
 import { convertApiCartItemsToCartItems } from '@/lib/cart-utils';
 
 export const useCart = () => {
+  const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
 
@@ -210,6 +218,71 @@ export const useCart = () => {
     });
   }, []);
 
+  // 장바구니에서 주문 생성
+  const createOrder = useCallback(async () => {
+    // 선택된 아이템들 필터링
+    const selectedItems = cartItems.filter((item) => item.isSelected);
+
+    if (selectedItems.length === 0) {
+      setErrorDialog({
+        isOpen: true,
+        title: '주문 불가',
+        message: '주문할 상품을 선택해주세요.',
+      });
+      return;
+    }
+
+    // 선택된 아이템들의 ID 추출 (문자열 ID를 숫자로 변환)
+    const cartItemIds = selectedItems.map((item) => parseInt(item.id));
+
+    // 주문 생성 로딩 상태 시작
+    setIsCreatingOrder(true);
+
+    try {
+      const response = await createOrderFromCart(cartItemIds);
+
+      if (response.success) {
+        // 주문 생성 전 현재 페이지 저장 (만료 시 돌아갈 페이지)
+        sessionStorage.setItem('orderReferrer', window.location.pathname);
+
+        // 주문 데이터에 생성 시간 추가
+        const orderDataWithTimestamp = {
+          ...response.data,
+          createdAt: Date.now(),
+        };
+
+        // 주문 데이터를 sessionStorage에 저장
+        sessionStorage.setItem('orderData', JSON.stringify(orderDataWithTimestamp));
+
+        // 주문 생성 성공 시 order 페이지로 이동
+        router.push(`/order/${response.data.orderId}`);
+      } else {
+        throw new Error(response.message || '주문 생성에 실패했습니다.');
+      }
+    } catch (error: any) {
+      // 에러 처리
+      let errorTitle = '주문 생성 실패';
+      let errorMessage = '알 수 없는 오류가 발생했습니다.';
+
+      if (error?.status === 400) {
+        errorTitle = '잘못된 요청';
+        errorMessage = error.message || '유효하지 않은 상품이 포함되어 있습니다.';
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
+
+      // 에러 다이얼로그 표시
+      setErrorDialog({
+        isOpen: true,
+        title: errorTitle,
+        message: errorMessage,
+      });
+    } finally {
+      // 주문 생성 로딩 상태 종료
+      setIsCreatingOrder(false);
+    }
+  }, [cartItems, router]);
+
   // 전체 선택 여부
   const isAllSelected = cartItems.length > 0 && cartItems.every((item) => item.isSelected);
 
@@ -219,6 +292,7 @@ export const useCart = () => {
   return {
     cartItems,
     isLoading,
+    isCreatingOrder,
     error,
     updatingItems,
     loadCartItems,
@@ -226,6 +300,7 @@ export const useCart = () => {
     toggleSelectItem,
     updateQuantity,
     removeItem,
+    createOrder,
     isAllSelected,
     isPartiallySelected,
     errorDialog,

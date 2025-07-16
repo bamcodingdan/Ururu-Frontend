@@ -5,6 +5,8 @@ import {
   ApiUpdateCartQuantityRequest,
   ApiUpdateCartQuantityResponse,
   ApiDeleteCartItemResponse,
+  ApiCreateOrderRequest,
+  ApiCreateOrderResponse,
 } from '@/types/api';
 
 /**
@@ -53,6 +55,24 @@ export async function deleteCartItem(
     const response = await api.delete<ApiResponseFormat<ApiDeleteCartItemResponse>>(
       `/cart/items/${cartItemId}`,
     );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+/**
+ * 장바구니에서 주문 생성
+ * @param cartItemIds - 주문할 장바구니 아이템 ID 목록
+ * @returns 생성된 주문 정보
+ */
+export async function createOrderFromCart(
+  cartItemIds: number[],
+): Promise<ApiResponseFormat<ApiCreateOrderResponse>> {
+  try {
+    const response = await api.post<ApiResponseFormat<ApiCreateOrderResponse>>('/cart/orders', {
+      cartItemIds,
+    });
     return response.data;
   } catch (error) {
     throw error;

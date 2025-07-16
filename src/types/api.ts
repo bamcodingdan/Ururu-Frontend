@@ -78,6 +78,28 @@ export interface ApiDeleteCartItemResponse {
   message: string;
 }
 
+// 장바구니 주문 생성 관련 타입
+export interface ApiCreateOrderRequest {
+  cartItemIds: number[];
+}
+
+export interface ApiOrderItem {
+  groupbuyOptionId: number;
+  quantity: number;
+  productName: string;
+  optionName: string;
+  price: number;
+  optionImage: string;
+}
+
+export interface ApiCreateOrderResponse {
+  orderId: string;
+  orderItems: ApiOrderItem[];
+  totalAmount: number;
+  availablePoints: number;
+  shippingFee: number;
+}
+
 // 배송지 관련 타입
 export interface ShippingAddress {
   id: number;
