@@ -29,8 +29,23 @@ export function PaymentWidget({
   const [isReady, setIsReady] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [initError, setInitError] = useState<string | null>(null);
-  const widgetRef = useRef<any>(null);
-  const paymentMethodsRef = useRef<any>(null);
+  // 토스페이먼츠 SDK 타입 정의
+  interface TossPaymentsWidget {
+    setAmount: (amount: { currency: string; value: number }) => Promise<void>;
+    renderPaymentMethods: (options: { selector: string; variantKey: string }) => Promise<unknown>;
+    requestPayment: (options: {
+      orderId: string;
+      orderName: string;
+      customerName?: string;
+      customerEmail?: string;
+      customerMobilePhone?: string;
+      successUrl: string;
+      failUrl: string;
+    }) => Promise<void>;
+  }
+
+  const widgetRef = useRef<TossPaymentsWidget | null>(null);
+  const paymentMethodsRef = useRef<unknown>(null);
 
   useEffect(() => {
     const initializeWidget = async () => {

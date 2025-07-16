@@ -34,7 +34,8 @@ export function PaymentWindow({
   const [isInitialized, setIsInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
   const [initError, setInitError] = useState<string | null>(null);
-  const tossPaymentsRef = useRef<any>(null);
+  // unknown 타입을 사용하여 any보다 안전하게 처리
+  const tossPaymentsRef = useRef<unknown>(null);
 
   // 결제 요청 훅 사용
   const {
@@ -165,7 +166,7 @@ export function PaymentWindow({
         console.log('🚀 [PaymentWindow] 토스페이먼츠 결제창 호출 데이터:', tossPaymentData);
       }
 
-      await tossPaymentsRef.current.requestPayment(tossPaymentData);
+      await (tossPaymentsRef.current as any).requestPayment(tossPaymentData);
 
       if (process.env.NODE_ENV === 'development') {
         console.log('✅ [PaymentWindow] 토스페이먼츠 결제창 호출 완료');

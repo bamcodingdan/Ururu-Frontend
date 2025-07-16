@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { toast } from 'sonner';
 import { usePaymentSuccess } from '@/hooks/usePayment';
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isApproving, setIsApproving] = useState(true);
@@ -177,5 +177,13 @@ export default function PaymentSuccessPage() {
         </Card>
       </div>
     </NoFooterLayout>
+  );
+}
+
+export default function PaymentSuccessPage() {
+  return (
+    <Suspense fallback={<LoadingSkeleton lines={5} className="h-screen" />}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }

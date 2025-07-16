@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { NoFooterLayout } from '@/components/layout/layouts';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { toast } from 'sonner';
 
-export default function PaymentFailPage() {
+function PaymentFailContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -80,5 +81,13 @@ export default function PaymentFailPage() {
         </Card>
       </div>
     </NoFooterLayout>
+  );
+}
+
+export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={<LoadingSkeleton lines={5} className="h-screen" />}>
+      <PaymentFailContent />
+    </Suspense>
   );
 }
