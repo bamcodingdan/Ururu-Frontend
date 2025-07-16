@@ -33,6 +33,9 @@ export const DEFAULT_PRODUCT_BREADCRUMB: BreadcrumbItem[] = [
   { label: '스킨/토너', href: '/category/skincare/skin-toner' },
 ];
 
+// 브레드크럼 최대 깊이 상수
+const MAX_BREADCRUMB_DEPTH = 2;
+
 // 브레드크럼 생성 유틸리티 함수
 export const generateBreadcrumb = (category: ProductCategory): BreadcrumbItem[] => {
   // 메인 카테고리 확인
@@ -61,41 +64,20 @@ export const generateBreadcrumbFromCategoryIds = (categoryIds: string[]): Breadc
     return DEFAULT_PRODUCT_BREADCRUMB;
   }
 
-  // 🎯 카테고리가 이미 이름인지 ID인지 확인 (더 안전한 방식)
-  const isAlreadyName = (() => {
-    // 1. 알려진 카테고리 이름 패턴과 비교
-    const knownCategories = Object.keys(CATEGORY_BREADCRUMB_MAP);
-    const hasKnownCategory = knownCategories.some((key) =>
-      categoryIds.some((id) => id.toLowerCase().includes(key.toLowerCase())),
-    );
-
-    if (hasKnownCategory) return true;
-
-    // 2. 한글이 포함되어 있으면 이름으로 간주
-    const hasKorean = categoryIds.some((id) => /[가-힣]/.test(id));
-    if (hasKorean) return true;
-
-    // 3. 공백이나 특수문자가 포함되어 있으면 이름으로 간주
-    const hasSpacesOrSpecialChars = categoryIds.some((id) => /[\s\-_\/&]/.test(id));
-    if (hasSpacesOrSpecialChars) return true;
-
-    // 4. 순수 숫자나 UUID 패턴이면 ID로 간주
-    const isPureId = categoryIds.every(
-      (id) =>
-        /^[\da-f-]+$/i.test(id) &&
-        (id.length <= 10 || /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(id)),
-    );
-
-    return !isPureId;
-  })();
+  // 🎯 모든 카테고리가 이름인지 확인 (더 안전한 검증)
+  const isAlreadyName = categoryIds.every(
+    (id) =>
+      typeof id === 'string' &&
+      id.trim().length > 0 &&
+      !id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i), // UUID 제외
+  );
 
   if (isAlreadyName) {
     // 이미 카테고리 이름이 온 경우
 
     const breadcrumb: BreadcrumbItem[] = [];
 
-    // 첫 번째와 두 번째 카테고리만 표시 (최대 2개)
-    const categoriesToShow = categoryIds.slice(0, 2);
+    const categoriesToShow = categoryIds.slice(0, MAX_BREADCRUMB_DEPTH);
 
     categoriesToShow.forEach((categoryName, index) => {
       if (categoryName) {
