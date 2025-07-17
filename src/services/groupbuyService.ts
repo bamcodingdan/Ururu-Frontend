@@ -76,19 +76,12 @@ export async function createGroupBuy({
   return res.data;
 }
 
-<<<<<<< Updated upstream
 // 공동구매 상세 조회 API (인증 불필요)
 export async function getGroupBuyDetail(groupBuyId: number): Promise<GroupBuyDetailResponse> {
-  console.log('Requesting groupbuy detail for ID:', groupBuyId);
-  console.log(
-    'Full URL:',
-    `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api'}/groupbuys/${groupBuyId}`,
-  );
-
   const response = await publicApi.get<GroupBuyDetailResponse>(`/groupbuys/${groupBuyId}`);
-  console.log('Raw API Response:', response);
   return response.data;
-=======
+}
+
 // 공구 주문 생성 API
 export async function createGroupBuyOrder({
   groupbuyId,
@@ -101,5 +94,4 @@ export async function createGroupBuyOrder({
     orderItems,
   });
   return res.data;
->>>>>>> Stashed changes
 }

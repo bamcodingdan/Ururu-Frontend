@@ -25,9 +25,15 @@ export function OrderFloatingBar({ product }: OrderFloatingBarProps) {
     handleChangeQuantity,
   } = useProductOptions(product);
 
-  const { handleShare, handlePurchase, handleBuyNow } = useProductActions();
+  const {
+    handleShare,
+    handlePurchase,
+    handleBuyNow,
+    handleAddToCart: addItemsToCart,
+  } = useProductActions();
   const router = useRouter();
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
   // Drawer 열림/닫힘에 따라 body 스크롤 제어
   useEffect(() => {
@@ -65,9 +71,14 @@ export function OrderFloatingBar({ product }: OrderFloatingBarProps) {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCartClick = async () => {
     if (isDrawerOpen && selectedOptions.length > 0) {
-      alert('장바구니에 성공적으로 담았습니다!');
+      setIsAddingToCart(true);
+      try {
+        await addItemsToCart(selectedOptions, product.options);
+      } finally {
+        setIsAddingToCart(false);
+      }
     } else {
       openDrawer();
     }
@@ -92,9 +103,12 @@ export function OrderFloatingBar({ product }: OrderFloatingBarProps) {
           <Button
             variant="outline"
             className={PRODUCT_STYLES.button.cart}
-            onClick={handleAddToCart}
+            onClick={handleAddToCartClick}
+            disabled={isAddingToCart}
           >
-            <span className="text-xs font-medium md:text-sm">장바구니</span>
+            <span className="text-xs font-medium md:text-sm">
+              {isAddingToCart ? '담는 중...' : '장바구니'}
+            </span>
           </Button>
           <Button
             className={PRODUCT_STYLES.button.buyNow}

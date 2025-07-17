@@ -62,3 +62,13 @@ export async function createOrderFromCart(
   });
   return response.data;
 }
+
+/**
+ * 여러 옵션을 한 번에 장바구니에 담기
+ * @param items - [{ groupbuyOptionId, quantity }, ...]
+ * @returns 추가된 장바구니 아이템 정보
+ */
+export async function addItemsToCart(items: Array<{ groupbuyOptionId: number; quantity: number }>) {
+  const response = await api.post('/cart/items', items);
+  return response.data;
+}

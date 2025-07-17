@@ -36,6 +36,18 @@ export const OrderBox = ({ product }: OrderBoxProps) => {
 
   const { handleShare, handleAddToCart, handleBuyNow } = useProductActions();
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+  const handleAddToCartClick = async () => {
+    if (selectedOptions.length > 0) {
+      setIsAddingToCart(true);
+      try {
+        await handleAddToCart(selectedOptions, product.options);
+      } finally {
+        setIsAddingToCart(false);
+      }
+    }
+  };
 
   const handleBuyNowClick = async () => {
     if (selectedOptions.length > 0) {
@@ -95,9 +107,10 @@ export const OrderBox = ({ product }: OrderBoxProps) => {
         {/* 액션 버튼 */}
         <ActionButtons
           onShare={handleShare}
-          onAddToCart={handleAddToCart}
+          onAddToCart={handleAddToCartClick}
           onBuyNow={handleBuyNowClick}
           isBuyNowLoading={isCreatingOrder}
+          isAddToCartLoading={isAddingToCart}
         />
       </Card>
     </>

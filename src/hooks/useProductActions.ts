@@ -1,7 +1,9 @@
 import { createGroupBuyOrder } from '@/services/groupbuyService';
+import { addItemsToCart } from '@/services/cartService';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { SelectedOption } from '@/types/product';
+import type { ProductOption } from '@/types/product';
 
 export const useProductActions = () => {
   const router = useRouter();
@@ -11,12 +13,55 @@ export const useProductActions = () => {
     // TODO: 실제 공유 기능 구현
   };
 
-  const handleAddToCart = () => {
-    // 장바구니 추가 로직
-    // TODO: 실제 장바구니 추가 기능 구현
+  // groupbuyId, selectedOptions를 인자로 받음
+  const handleAddToCart = async (
+    selectedOptions: SelectedOption[],
+    productOptions?: ProductOption[],
+  ) => {
+    if (!selectedOptions.length) {
+      toast.error('옵션을 선택해 주세요.');
+      return;
+    }
+    try {
+      const items = selectedOptions.map((opt) => ({
+        groupbuyOptionId: Number(opt.value),
+        quantity: opt.quantity,
+      }));
+      const result = await addItemsToCart(items);
+      if (result.success) {
+        toast.success('장바구니에 추가되었습니다!');
+      } else {
+        let errorMessage = result.message || '장바구니 담기에 실패했습니다.';
+        // %d 치환 로직
+        if (errorMessage.includes('%d') && productOptions) {
+          // 여러 옵션 중 가장 작은 maxQuantity를 사용 (보통 동일 제한)
+          const maxQ = Math.min(
+            ...selectedOptions.map((opt) => {
+              const found = productOptions.find((po) => String(po.id) === opt.value);
+              return found?.maxQuantity ?? 1;
+            }),
+          );
+          errorMessage = errorMessage.replace('%d', String(maxQ));
+        }
+        toast.error(errorMessage);
+      }
+    } catch (error: any) {
+      let errorMessage =
+        error?.response?.data?.message || error.message || '장바구니 담기 중 오류가 발생했습니다.';
+      // %d 치환 로직 (catch 블록에서도)
+      if (errorMessage.includes('%d') && productOptions) {
+        const maxQ = Math.min(
+          ...selectedOptions.map((opt) => {
+            const found = productOptions.find((po) => String(po.id) === opt.value);
+            return found?.maxQuantity ?? 1;
+          }),
+        );
+        errorMessage = errorMessage.replace('%d', String(maxQ));
+      }
+      toast.error(errorMessage);
+    }
   };
 
-  // groupbuyId, selectedOptions를 인자로 받음
   const handleBuyNow = async (groupbuyId: string | number, selectedOptions: SelectedOption[]) => {
     if (!groupbuyId || !selectedOptions.length) {
       toast.error('옵션을 선택해 주세요.');
