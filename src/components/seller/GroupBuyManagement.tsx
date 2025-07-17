@@ -187,6 +187,11 @@ export function GroupBuyManagement() {
   const isFirst = groupBuyData?.data?.first || true;
   const isLast = groupBuyData?.data?.last || true;
 
+  // 최신순으로 정렬 (updatedAt 기준)
+  const sortedGroupBuys = [...groupBuys].sort((a, b) => {
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+
   // 전체 데이터에서 카운트 계산
   const openCount = allGroupBuys.filter((g) => g.status === 'OPEN').length;
   const draftCount = allGroupBuys.filter((g) => g.status === 'DRAFT').length;
@@ -288,7 +293,7 @@ export function GroupBuyManagement() {
                 msOverflowStyle: 'none',
               }}
             >
-              {groupBuys.map((groupBuy) => (
+              {sortedGroupBuys.map((groupBuy) => (
                 <Card key={groupBuy.id} className={FORM_STYLES.card.seller}>
                   <CardContent className="relative p-6">
                     {/* 상태 뱃지: 우측 상단 고정 */}

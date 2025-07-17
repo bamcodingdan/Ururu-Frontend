@@ -220,7 +220,11 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
   const handleErrorDialogClose = () => setSubmitError(null);
-  const handleSuccessDialogClose = () => setSubmitSuccess(null);
+  const handleSuccessDialogClose = () => {
+    setSubmitSuccess(null);
+    // 성공 모달창에서 확인 버튼을 누르면 공구 관리 페이지로 이동
+    router.push('/seller/group-buys');
+  };
 
   // 상품 1개만 선택
   const [selectedProductId, setSelectedProductId] = useState(initialData?.selectedProductId || '');
