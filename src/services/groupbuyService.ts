@@ -9,6 +9,7 @@ import type {
   GroupBuyDetailResponse,
   GroupBuyDetail,
 } from '@/types/groupbuy';
+import type { ApiResponseFormat, ApiCreateOrderResponse } from '@/types/api';
 import { Suspense } from 'react';
 
 // 인증이 필요하지 않은 API 호출을 위한 별도 인스턴스
@@ -82,16 +83,19 @@ export async function getGroupBuyDetail(groupBuyId: number): Promise<GroupBuyDet
   return response.data;
 }
 
-// 공구 주문 생성 API
-export async function createGroupBuyOrder({
-  groupbuyId,
-  orderItems,
-}: {
-  groupbuyId: number | string;
-  orderItems: Array<{ groupbuyOptionId: number; quantity: number }>;
-}) {
-  const res = await api.post(`/groupbuys/${groupbuyId}/orders`, {
-    orderItems,
-  });
+/**
+ * 공동구매 주문 생성
+ * @param groupbuyId - 공동구매 ID
+ * @param orderItems - 주문할 아이템 목록
+ * @returns 생성된 주문 정보
+ */
+export async function createGroupBuyOrder(
+  groupbuyId: number,
+  orderItems: Array<{ groupbuyOptionId: number; quantity: number }>,
+): Promise<ApiResponseFormat<ApiCreateOrderResponse>> {
+  const res = await api.post<ApiResponseFormat<ApiCreateOrderResponse>>(
+    `/groupbuys/${groupbuyId}/orders`,
+    { orderItems },
+  );
   return res.data;
 }
