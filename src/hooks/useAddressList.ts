@@ -11,8 +11,8 @@ export function useAddressList() {
     try {
       setLoading(true);
       setError(null);
-      const response = await getShippingAddresses();
-      setAddresses(response.data || []);
+      const data = await getShippingAddresses();
+      setAddresses(data || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
       setError(errorMessage || '주소 목록을 불러오는데 실패했습니다.');
