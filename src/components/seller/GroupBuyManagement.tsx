@@ -59,8 +59,11 @@ export function GroupBuyManagement() {
       const data = await getSellerGroupBuys(page, pageSize);
       setGroupBuyData(data);
       setAllGroupBuys(data.data.content || []);
-    } catch (err: any) {
-      setError(err.message || '공구 목록을 불러오는데 실패했습니다.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
+      setError(errorMessage || '공구 목록을 불러오는데 실패했습니다.');
+      // TODO: 에러 로깅 서비스 연동
+      console.error('공구 목록 조회 실패:', err);
     } finally {
       setIsLoading(false);
     }
@@ -109,11 +112,12 @@ export function GroupBuyManagement() {
       // 삭제 후 목록 새로고침
       await fetchGroupBuys(currentPage);
       setDeleteConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
-    } catch (error: any) {
-      console.error('Delete failed:', error);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
+      console.error('공구 삭제 실패:', err);
       setDeleteError({
         isOpen: true,
-        message: `"${groupBuyTitle}" ${error.message || '그룹바이 삭제에 실패했습니다.'}`,
+        message: `"${groupBuyTitle}" ${errorMessage || '그룹바이 삭제에 실패했습니다.'}`,
       });
       setDeleteConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
     }
@@ -138,9 +142,10 @@ export function GroupBuyManagement() {
       await updateGroupBuyStatus(startConfirm.groupBuyId, 'OPEN');
       await fetchGroupBuys(currentPage);
       setStartConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
-    } catch (error: any) {
-      console.error('공구 시작 실패:', error);
-      setError('공구 시작에 실패했습니다.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
+      console.error('공구 시작 실패:', err);
+      setError(errorMessage || '공구 시작에 실패했습니다.');
       setStartConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
     }
   };

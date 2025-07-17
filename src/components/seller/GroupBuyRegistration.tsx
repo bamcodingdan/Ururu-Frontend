@@ -260,17 +260,20 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
         setError(null);
         const response = await fetchGroupBuyCreateData();
         setProducts(response.data.products);
-      } catch (err: any) {
-        // 409 에러나 상품이 없다는 에러는 EmptyState로 처리
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
+        // 49 상품이 없다는 에러는 EmptyState로 처리
         if (
-          err.message?.includes('공동구매 등록 가능한 상품 없습니다') ||
-          err.message?.includes('상품이 없습니다') ||
-          err.status === 409
+          errorMessage?.includes('공동구매 등록 가능한 상품 없습니다') ||
+          errorMessage?.includes('상품이 없습니다') ||
+          (err as any)?.status === 409
         ) {
           setProducts([]); // 빈 배열로 설정하여 EmptyState 표시
         } else {
-          setError(err.message || '상품 데이터를 불러오지 못했습니다.');
+          setError(errorMessage || '상품 데이터를 불러오지 못했습니다.');
         }
+        // TODO: 에러 로깅 서비스 연동
+        console.error('상품 데이터 로드 실패:', err);
       } finally {
         setIsLoading(false);
       }
@@ -451,8 +454,11 @@ export function GroupBuyForm({ mode, initialData, onSubmit }: GroupBuyFormProps)
         await createGroupBuy({ request, thumbnail, detailImages });
         setSubmitSuccess('공동구매가 성공적으로 등록되었습니다!');
         // TODO: 등록 후 이동 (예: 라우터 push)
-      } catch (err: any) {
-        setSubmitError(err?.message || '공동구매 등록에 실패했습니다.');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
+        setSubmitError(errorMessage || '공동구매 등록에 실패했습니다.');
+        // TODO: 에러 로깅 서비스 연동
+        console.error('공구 등록 실패:', err);
       } finally {
         setIsSubmitting(false);
       }

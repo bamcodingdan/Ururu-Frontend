@@ -11,11 +11,13 @@ export function useAddressList() {
     try {
       setLoading(true);
       setError(null);
-      const data = await getShippingAddresses();
-      setAddresses(data.addresses);
-    } catch (err: any) {
-      console.error('배송지 조회 오류:', err);
-      setError('배송지 조회 중 오류가 발생했습니다.');
+      const response = await getShippingAddresses();
+      setAddresses(response.data);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 알수 없는 오류가 발생했습니다';
+      setError(errorMessage || '주소 목록을 불러오는데 실패했습니다.);
+      // TODO: 에러 로깅 서비스 연동
+      console.error('주소 목록 조회 실패:', err);
     } finally {
       setLoading(false);
     }
