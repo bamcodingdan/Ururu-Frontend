@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import type { Product } from '@/types/product';
 import { Card } from '@/components/ui/card';
 import { useProductOptions, useProductActions } from '@/hooks';
@@ -35,6 +35,18 @@ export const OrderBox = ({ product }: OrderBoxProps) => {
   } = useProductOptions(product);
 
   const { handleShare, handleAddToCart, handleBuyNow } = useProductActions();
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+
+  const handleBuyNowClick = async () => {
+    if (selectedOptions.length > 0) {
+      setIsCreatingOrder(true);
+      try {
+        await handleBuyNow(product.id, selectedOptions);
+      } finally {
+        setIsCreatingOrder(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -84,7 +96,8 @@ export const OrderBox = ({ product }: OrderBoxProps) => {
         <ActionButtons
           onShare={handleShare}
           onAddToCart={handleAddToCart}
-          onBuyNow={handleBuyNow}
+          onBuyNow={handleBuyNowClick}
+          isBuyNowLoading={isCreatingOrder}
         />
       </Card>
     </>
