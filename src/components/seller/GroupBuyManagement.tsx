@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge';
 export function GroupBuyManagement() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingCounts, setIsLoadingCounts] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [groupBuyData, setGroupBuyData] = useState<SellerGroupBuyListResponse | null>(null);
   const [allGroupBuys, setAllGroupBuys] = useState<SellerGroupBuy[]>([]);
@@ -58,7 +59,6 @@ export function GroupBuyManagement() {
     try {
       const data = await getSellerGroupBuys(page, pageSize);
       setGroupBuyData(data);
-      setAllGroupBuys(data.data.content || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
       setError(errorMessage || '공구 목록을 불러오는데 실패했습니다.');
@@ -69,8 +69,23 @@ export function GroupBuyManagement() {
     }
   };
 
+  // 전체 그룹바이 목록 조회 (카운트용)
+  const fetchAllGroupBuys = async () => {
+    setIsLoadingCounts(true);
+    try {
+      const data = await getAllSellerGroupBuys();
+      setAllGroupBuys(data.data.content || []);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
+      console.error('전체공구 목록 조회 실패:', err);
+    } finally {
+      setIsLoadingCounts(false);
+    }
+  };
+
   useEffect(() => {
     fetchGroupBuys(currentPage);
+    fetchAllGroupBuys();
   }, [currentPage]);
 
   const handleRefresh = () => {
@@ -111,6 +126,7 @@ export function GroupBuyManagement() {
 
       // 삭제 후 목록 새로고침
       await fetchGroupBuys(currentPage);
+      await fetchAllGroupBuys(); // 전체 카운트도 새로고침
       setDeleteConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
@@ -141,6 +157,7 @@ export function GroupBuyManagement() {
     try {
       await updateGroupBuyStatus(startConfirm.groupBuyId, 'OPEN');
       await fetchGroupBuys(currentPage);
+      await fetchAllGroupBuys(); // 전체 카운트도 새로고침
       setStartConfirm({ isOpen: false, groupBuyId: null, groupBuyTitle: '' });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '알수 없는 오류가 발생했습니다';
